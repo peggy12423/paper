@@ -1,4 +1,10 @@
 #include "common.h"
+#include <iostream>
+#include <time.h>
+#include <math.h>
+#include <fstream>
+#include <queue>  
+
 
 /*變動實驗參數設定*/
 #define S_NUM 1000 //感測器總數
