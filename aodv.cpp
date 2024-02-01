@@ -117,7 +117,7 @@ int Packet_Dliver(int sender, int receiver) // 有能耗
 	double d = distance(sender, receiver);
 	node[sender].energy -= TransmitEnergy + d*d*AmplifierEnergy;
 	int rate = rand() % 100 + 1;
-	if (rate > 5)  /*10% drop rate or CH自己將senodee的封包放自己的buffer*/
+	if (rate > 5)  /*10% drop rate or CH自己將sense的封包放自己的buffer*/
 	{
 		node[receiver].sense.dst = node[sender].sense.dst;
 		node[receiver].sense.src = node[sender].sense.src;
@@ -250,7 +250,7 @@ int CheckEnergy()
 
 int main()
 {
-	/*senodeor initialization*/
+	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
 	for (int rn = 0; rn < roundnumber; rn++)
 	{
