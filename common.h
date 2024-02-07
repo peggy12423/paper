@@ -9,10 +9,12 @@
 
 #define roundnumber 20
 #define MAX_energy 6480//j (1.5V*600mA*3600sec*2 = 6480j) 2*3號電池
-#define SINKBUFFER 10000000
+#define SINK_BUFFER_SIZE 10000000
 #define SINKID 2000
 #define SINK_X 400
 #define SINK_Y 0
+#define NODE_BUFFER1 100 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 200 //50~100 特別的傳輸用
 
 #define ProbeEnergy 0.03 //j (8*200bit*1.5V*25mA*0.5mS = 0.00375j*8 = 0.03j) !/*(查到的論文:bit*50nj+bit*distance(m)平方*100nj)*/
 #define TransmitEnergy 0.00008 //0.000000001*50*200*8 j (50nj/bit by冠中) bit * 8 = byte !(是這樣算嗎)
@@ -21,6 +23,7 @@
 #define Package_size 200 //bytes 
 #define node_buffer 20 //Kbytes (100格)
 #define trans_dis 60 //m 80幾乎可以確定他傳的到sink
+#define round_number 20
 
 using namespace std;
 struct Package{
@@ -30,23 +33,9 @@ struct Package{
 	int time;
 };
 
-struct Node{
-	int id, x, y, CH, type, region1;//region1 for 第一層grid , region2 for 第二層grid
-	double random_num;
-	double energy;//node information
-	Package receive;
-	Package sense;
-	Package buffer[100];//buffer in sensor node
-	double dtc;//dist = distance to sink
-	int non; //nomber of negihbor
-	int neighbor[1000]; //存取節點的鄰居
-    int visited;
-	queue<int>route;
-};
-
 struct Sink{
 	int id;//node information
-	Package buffer[SINKBUFFER];//buffer
+	Package buffer[SINK_BUFFER_SIZE];//buffer
 };
 
 struct RREQ{
