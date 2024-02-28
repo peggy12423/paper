@@ -452,10 +452,10 @@ int main(){
 		}
 		cout << rn+1 << endl;
 	}
-	total /= roundnumber;
-	avg_t /= roundnumber;
-	drop /= roundnumber;
-	macdrop /= roundnumber;
+	total /= round_number;
+	avg_t /= round_number;
+	drop /= round_number;
+	macdrop /= round_number;
 	double PLR = (drop + macdrop)/ total;
 	fout << "avg_t : " << avg_t << endl;
 	fout << "avg_total : " << total << endl;
