@@ -140,7 +140,6 @@ void sink_buffer_init(int sink_buffer_size){
 	}
 }
 
-
 void packet_init(){
 	for (int i = 0; i < S_NUM; i++){
 		node[i].receive.data = -1;
