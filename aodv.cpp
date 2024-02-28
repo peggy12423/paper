@@ -295,7 +295,7 @@ int CheckEnergy()
 int main(){
 	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
-	for (int rn = 0; rn < roundnumber; rn++){
+	for (int rn = 0; rn < round_number; rn++){
 		node_deployed();
 		packet_init();
 		/*sink initialization*/
