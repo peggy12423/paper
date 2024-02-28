@@ -14,6 +14,19 @@
 #define bomb_f4 60
 #define bomb_f5 90
 /**/
+struct Node{
+	int id, x, y, CH, type, region1;//region1 for 第一層grid , region2 for 第二層grid
+	double random_num;
+	double energy;//node information
+	Package receive;
+	Package sense;
+	Package buffer[100];//buffer in sensor node
+	double dtc;//dist = distance to sink
+	int non; //nomber of negihbor
+	int neighbor[1000]; //存取節點的鄰居
+    int visited;
+	queue<int>route;
+};
 
 Node node[S_NUM];
 Sink sink;
@@ -21,12 +34,11 @@ int R2 = S_NUM / 4;
 int R3 = S_NUM / 2;
 int R4 = S_NUM * 0.75;
 
-ofstream fout("output.txt");
+ofstream fout("AODV_output.txt");
 
-void print_energy()
-{
-	for (int i = 0; i < S_NUM; i++)
-	{
+
+void print_energy(){
+	for (int i = 0; i < S_NUM; i++){
 		fout << "node" << node[i].id << " x : " << node[i].x << " y : " << node[i].y << " type : " << node[i].type << " energy : " << node[i].energy << " visited = " << node[i].visited << endl;
 	}
 	fout << "--------------------------------------------------\n";
@@ -42,8 +54,7 @@ double distance(int sender, int receiver)
 		return sqrt(pow(abs(node[sender].x - SINK_X), 2) + pow(abs(node[sender].y - SINK_Y), 2));
 	}
 }
-void neighbor_init()
-{
+void neighbor_init(){
 	for (int i = 0; i < S_NUM; i++)
 	{
 		for (int j = 0; j < S_NUM; j++)
@@ -51,25 +62,55 @@ void neighbor_init()
 			if (i != j && distance(i, j) <= trans_dis)
 			{
 				node[i].neighbor[node[i].non] = j;
-				node[i].non++;
-			}
+				node[i].non++;			}
 		}
 	}
 }
 queue<RREQ> route_table;
 queue<RREQ> Q; //用來裝每一條路徑
-void RREQ_BC(RREQ r) //廣播=把自己鄰近的鄰居改成1,並且繼承路徑父點
-{
-	if (distance(r.route.back(), SINKID) <= trans_dis)
-	{
+
+void node_deployed(){
+    for(int n = 0 ; n < S_NUM ; n++ ){
+        node[n].id = n;
+		node[n].x = rand() % 400 + 1;  //節點x座標1~400隨機值
+		node[n].y = rand() % 400 + 1;  //節點y座標1~400隨機值
+        node[n].type = rand() % 3 + 3;//3 4 5
+		node[n].energy = MAX_energy;
+		node[n].visited = 0;
+		node[n].non = 0;
+		if( node[n].x <= 200 && node[n].y <= 200 ){
+            //(x,y) = (1~200, 1~200)
+			node[n].region1 = 1;
+        }
+        else if( node[n].x > 200 && node[n].y <= 200 ){
+			//(x,y) = (201~400, 1~200)
+            node[n].region1 = 2;
+        }        
+        else if( node[n].x <= 200 && node[n].y > 200 ){
+            //(x,y) = (1~200, 201~400)
+			node[n].region1 = 3;
+        }        
+        else{
+			//(x,y) = (201~400, 201~400)
+            node[n].region1 = 4;
+        }
+    }
+}
+void sink_buffer_init(int sink_buffer){
+	for (int b = 0; b < sink_buffer; b++){
+			sink.buffer[b].data = -1;
+			sink.buffer[b].dst = -1;
+			sink.buffer[b].src = -1;
+			sink.buffer[b].time = -1;
+		}
+}
+void RREQ_BC(RREQ r){ //廣播=把自己鄰近的鄰居改成1,並且繼承路徑父點
+	if (distance(r.route.back(), SINKID) <= trans_dis){
 		route_table.push(r);
 	}
-	else
-	{
-		for (int i = 0; i < node[r.route.back()].non; i++)
-		{
-			if (node[node[r.route.back()].neighbor[i]].visited == 0)
-			{
+	else{
+		for (int i = 0; i < node[r.route.back()].non; i++){
+			if (node[node[r.route.back()].neighbor[i]].visited == 0){
 				RREQ rreq;
 				rreq = r;
 				rreq.route.push(node[r.route.back()].neighbor[i]);
@@ -80,10 +121,8 @@ void RREQ_BC(RREQ r) //廣播=把自己鄰近的鄰居改成1,並且繼承路徑父點
 		}
 	}
 }
-void packet_init()
-{
-	for (int a = 0; a < S_NUM; a++)
-	{
+void packet_init(){
+	for (int a = 0; a < S_NUM; a++){
 		node[a].receive.data = -1;
 		node[a].receive.dst = -1;
 		node[a].receive.src = -1;
@@ -92,8 +131,7 @@ void packet_init()
 		node[a].sense.dst = -1;
 		node[a].sense.src = -1;
 		node[a].sense.time = -1;
-		for (int b = 0; b < 100; b++)
-		{
+		for (int b = 0; b < 100; b++){
 			node[a].buffer[b].data = -1;
 			node[a].buffer[b].dst = -1;
 			node[a].buffer[b].src = -1;
@@ -101,8 +139,7 @@ void packet_init()
 		}
 	}
 }
-void Packet_Generate(int now, int t) //generate packet 有能耗
-{
+void Packet_Generate(int now, int t){//generate packet 有能耗
 	total++;
 	node[now].sense.src = node[now].id;
 	node[now].sense.dst = SINKID;
@@ -117,7 +154,7 @@ int Packet_Dliver(int sender, int receiver) // 有能耗
 	double d = distance(sender, receiver);
 	node[sender].energy -= TransmitEnergy + d*d*AmplifierEnergy;
 	int rate = rand() % 100 + 1;
-	if (rate > 5)  /*10% drop rate or CH自己將senodee的封包放自己的buffer*/
+	if (rate > 5)  /*10% drop rate or CH自己將sense的封包放自己的buffer*/
 	{
 		node[receiver].sense.dst = node[sender].sense.dst;
 		node[receiver].sense.src = node[sender].sense.src;
@@ -248,69 +285,19 @@ int CheckEnergy()
 	return SINKID;
 }
 
-int main()
-{
-	/*senodeor initialization*/
+
+
+int main(){
+	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
-	for (int rn = 0; rn < roundnumber; rn++)
-	{
-		int i = 0;
-		for (i; i < R2; i++)
-		{
-			node[i].id = i;
-			node[i].x = rand() % 200 + 1;
-			node[i].y = rand() % 200 + 1;
-			node[i].type = rand() % 3 + 3;//3 4 5
-			node[i].energy = MAX_energy;
-			node[i].visited = 0;
-			node[i].non = 0;
-			node[i].region1 = 1;
-		}
-		for (i; i < R3; i++)
-		{
-			node[i].id = i;
-			node[i].x = rand() % 200 + 201;
-			node[i].y = rand() % 200 + 1;
-			node[i].type = rand() % 3 + 3;
-			node[i].energy = MAX_energy;
-			node[i].visited = 0;
-			node[i].non = 0;
-			node[i].region1 = 2;
-		}
-		for (i; i < R4; i++)
-		{
-			node[i].id = i;
-			node[i].x = rand() % 200 + 1;
-			node[i].y = rand() % 200 + 201;
-			node[i].type = rand() % 3 + 3;
-			node[i].energy = MAX_energy;
-			node[i].visited = 0;
-			node[i].non = 0;
-			node[i].region1 = 3;
-		}
-		for (i; i < S_NUM; i++)
-		{
-			node[i].id = i;
-			node[i].x = rand() % 200 + 201;
-			node[i].y = rand() % 200 + 201;
-			node[i].type = rand() % 3 + 3;
-			node[i].energy = MAX_energy;
-			node[i].visited = 0;
-			node[i].non = 0;
-			node[i].region1 = 4;
-		}
+	for (int rn = 0; rn < roundnumber; rn++){
+		node_deployed();
 		packet_init();
 		/*sink initialization*/
 		sink.id = SINKID;
+		sink_buffer_init(SINK_BUFFER_SIZE);
 		/*neighbor_initialization*/
 		neighbor_init();
-		for (int b = 0; b < SINKBUFFER; b++)
-		{
-			sink.buffer[b].data = -1;
-			sink.buffer[b].dst = -1;
-			sink.buffer[b].src = -1;
-			sink.buffer[b].time = -1;
-		}
 		/*AODV路徑產生*/
 		AODV_path_assign();
 		/*traffic start*/
@@ -458,7 +445,7 @@ int main()
 
 			t++;
 		}
-		cout << rn << endl;
+		cout << rn+1 << endl;
 	}
 	total /= roundnumber;
 	avg_t /= roundnumber;
