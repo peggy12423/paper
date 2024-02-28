@@ -20,7 +20,7 @@ struct C{
 
 struct Node
 {
-	int id, x, y, CH, type, region1;//region1 for 第一層grid , region2 for 第二層grid
+	int id, x, y, CH, type, region1, RegionID;  //RegionID用於紀錄該節點在這個region內的ID
 	double energy;//node information
 	Package receive;
 	Package sense;
@@ -31,18 +31,20 @@ struct Node
 ofstream fout("NRCA_output.txt");
 Node node[S_NUM];
 Sink sink;
+list<Node> R1_cluster, R2_cluster, R3_cluster, R4_cluster;
 double cons[4] = { 0,0,0,0 };
 int trans_time[4] = { 0,0,0,0 };
 double consToR2[4] = { 0,0,0,0 };
 int ToR2_time[4] = { 0,0,0,0 };
 int toSink(0);
 double SD(0);
-int R2 = S_NUM / 4;
-int R3 = S_NUM / 2;
-int R4 = S_NUM * 0.75;
-int R_NUM = R2;
+// int R2 = S_NUM / 4;
+// int R3 = S_NUM / 2;
+// int R4 = S_NUM * 0.75;
+// int R_NUM = R2;
 
 double type_a = 33, type_b = 33, type_c = 34; //調整QUERE裡面感測資料的比例
+
 void print_energy()
 {
 	fout << node[0].CH << " " << node[R2].CH << " " << node[R3].CH << " " << node[R4].CH << endl;
@@ -52,6 +54,7 @@ void print_energy()
 	}
 	fout << "--------------------------------------------------\n";
 }
+
 double distance(int a, int b){
 	if (b != SINKID){
 		return sqrt(pow(abs(node[a].x - node[b].x), 2) + pow(abs(node[a].y - node[b].y), 2));
@@ -62,7 +65,42 @@ double distance(int a, int b){
 }
 
 void node_deployed(){
+	R1_cluster.clear();
+	R2_cluster.clear();
+	R3_cluster.clear();
+	R4_cluster.clear();
     for(int n = 0 ; n < S_NUM ; n++ ){
+        // 檢查該節點是否已經被放入了某個區域中
+        bool nodeAlreadyInCluster = false;
+        for (const auto& nodeInCluster : R1_cluster) {
+            if (nodeInCluster.id == n) {
+                nodeAlreadyInCluster = true;
+                break;
+            }
+        }
+        for (const auto& nodeInCluster : R2_cluster) {
+            if (nodeInCluster.id == n) {
+                nodeAlreadyInCluster = true;
+                break;
+            }
+        }
+        for (const auto& nodeInCluster : R3_cluster) {
+            if (nodeInCluster.id == n) {
+                nodeAlreadyInCluster = true;
+                break;
+            }
+        }
+        for (const auto& nodeInCluster : R4_cluster) {
+            if (nodeInCluster.id == n) {
+                nodeAlreadyInCluster = true;
+                break;
+            }
+        }
+        
+        if (nodeAlreadyInCluster) {
+            continue; // 如果節點已經被放入了某個區域中，則跳過本次迴圈
+        }
+
         node[n].id = n;
 		node[n].x = rand() % 400 + 1;  //節點x座標1~400隨機值
 		node[n].y = rand() % 400 + 1;  //節點y座標1~400隨機值
@@ -73,106 +111,102 @@ void node_deployed(){
 		if( node[n].x <= 200 && node[n].y <= 200 ){
             //(x,y) = (1~200, 1~200)
 			node[n].region1 = 1;
+			R1_cluster.push_back(node[n]);
         }
         else if( node[n].x > 200 && node[n].y <= 200 ){
 			//(x,y) = (201~400, 1~200)
-            node[n].region1 = 2;
+			node[n].region1 = 2;
+			R2_cluster.push_back(node[n]);
         }        
         else if( node[n].x <= 200 && node[n].y > 200 ){
             //(x,y) = (1~200, 201~400)
 			node[n].region1 = 3;
+			R3_cluster.push_back(node[n]);
         }        
         else{
 			//(x,y) = (201~400, 201~400)
-            node[n].region1 = 4;
+			node[n].region1 = 4;
+			R4_cluster.push_back(node[n]);
         }
     }
 }
 
-void sink_buffer_init(int sink_buffer){
-	for (int b = 0; b < sink_buffer; b++){
-			sink.buffer[b].data = -1;
-			sink.buffer[b].dst = -1;
-			sink.buffer[b].src = -1;
-			sink.buffer[b].time = -1;
-		}
-}
-
-
-void packet_init()
-{
-	for (int a = 0; a < S_NUM; a++)
-	{
-		node[a].receive.data = -1;
-		node[a].receive.dst = -1;
-		node[a].receive.src = -1;
-		node[a].receive.time = -1;
-		node[a].sense.data = -1;
-		node[a].sense.dst = -1;
-		node[a].sense.src = -1;
-		node[a].sense.time = -1;
-		for (int b = 0; b < NODE_BUFFER2; b++)
-		{
-			node[a].buffer[b].data = -1;
-			node[a].buffer[b].dst = -1;
-			node[a].buffer[b].src = -1;
-			node[a].buffer[b].time = -1;
-		}
+void sink_buffer_init(int sink_buffer_size){
+	for (int i = 0; i < sink_buffer_size; i++){
+		sink.buffer[i].data = -1;
+		sink.buffer[i].dst = -1;
+		sink.buffer[i].src = -1;
+		sink.buffer[i].time = -1;
 	}
 }
 
 
-double find_max_energy(int s, int e) //!energy的預扣
-{
-	double max(0);
-	for (int i = s; i <= e; i++)
-	{
-		if (max < node[i].energy)
-		{
-			max = node[i].energy;
+void packet_init(){
+	for (int i = 0; i < S_NUM; i++){
+		node[i].receive.data = -1;
+		node[i].receive.dst = -1;
+		node[i].receive.src = -1;
+		node[i].receive.time = -1;
+		node[i].sense.data = -1;
+		node[i].sense.dst = -1;
+		node[i].sense.src = -1;
+		node[i].sense.time = -1;
+		for (int j = 0; j < NODE_BUFFER2; j++){
+			node[i].buffer[j].data = -1;
+			node[i].buffer[j].dst = -1;
+			node[i].buffer[j].src = -1;
+			node[i].buffer[j].time = -1;
 		}
 	}
-	return max;
 }
-double find_avg_energy(int s, int e, int rnum)
+
+double find_max_energy(const list<Node>& Region_cluster){     //!energy的預扣
+	double cluster_max_energy = Region_cluster.front().energy;
+	for(const auto& node : Region_cluster){
+        if(node.energy > cluster_max_energy){
+            cluster_max_energy = node.energy;
+        }
+	}
+	return cluster_max_energy;
+}
+
+/*
+double find_avg_energy(int start_node, int end_node, int rnum)
 {
 	double avg_energy(0.0);
-	for (int i = s; i <= e; i++)
-	{
+	for (int i = start_node; i <= end_node; i++){
 		avg_energy += node[i].energy;
 	}
 	avg_energy /= rnum;
 	return avg_energy;
 }
+*/
 
-void CH_Selection(int s, int e) //s=start e=end
-{
-	double E = find_max_energy(s, e);
-	int start = s;
-	int end = e;
+Node CH_Selection(list<Node>& region){
+	double cluster_max_energy = find_max_energy(region);
 	queue<int> CH_cdd; //cdd candidate
 	int CH;
-	for (int i = s; i <= e; i++)//selecting
-	{
-		if (node[i].energy == E)
-		{
-			CH_cdd.push(i);
+	Node selected_CH;
+	for(auto& nd : region){  //在cluster內尋找最大剩餘能量(En)的node作為候選CH(cch)
+		if (nd.energy == cluster_max_energy){
+			CH_cdd.push(nd.id);
 		}
 	}
 	CH = CH_cdd.front();
 	CH_cdd.pop();
-	while (!CH_cdd.empty())
-	{
-		if (node[CH_cdd.front()].dtc < node[CH].dtc)
-		{
+	while (!CH_cdd.empty()){
+		if (node[CH_cdd.front()].dtc < node[CH].dtc){
 			CH = CH_cdd.front();
 		}
 		CH_cdd.pop();
 	}
-	for (start; start <= end; start++)//start to change CH
-	{
-		node[start].CH = CH;
+	for (auto& nd : region){ //start to change CH
+		nd.CH = CH;
+		if (nd.id == CH) {
+            selected_CH = nd;
+        }
 	}
+	return selected_CH;
 }
 
 void Packet_Generate(int now, int t) //generate packet 有能耗
@@ -211,7 +245,6 @@ void Packet_Dliver(int sender, int CH) // 有能耗
 		//fout << "node : " << sender << "能量減少 "<< TransmitEnergy + d*d*AmplifierEnergy <<" ,因為傳送給節點 " << CH << " 感測封包" << endl;
 	} //1個封包
 }
-
 void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
 {
 	if (node[CH].receive.src != CH) //不是來自自己的才要扣能量
@@ -252,7 +285,6 @@ void clean(int CH, int start, int end)
 		node[CH].buffer[start].time = -1;
 	}
 }
-
 void CH2Sink(int CH) //有能耗
 {
 	int start(0);/*sink的buffer從哪邊開始是空的*/
@@ -362,15 +394,10 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 	//fout <<"我是節點 "<< dst << " 收到別人的" << endl;
 	CH2Sink(dst);
 }
-
-
-int CheckEnergy()
-{
-	for (int b = 0; b < S_NUM; b++)
-	{
+int CheckEnergy(){
+	for (int b = 0; b < S_NUM; b++){
 		//fout << "node " << b << "'s energy = " << node[b].energy << endl;
-		if (node[b].energy <= 0)
-		{
+		if (node[b].energy <= 0){
 			return b;
 			break;
 		}
@@ -400,7 +427,6 @@ void CH_Reselection()
 	Reselection_judge(R3, R4 - 1, R_NUM);
 	Reselection_judge(R4, S_NUM - 1, R_NUM);
 }
-
 double threshold(int s, int e, int rnum)
 {
 	double t; //threshold
@@ -436,11 +462,11 @@ double standard_deviation()
 	b /= S_NUM;
 	return b;
 }
+
 int main(){
 	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
-	for (int round = 0; round < round_number; round++)
-	{
+	for (int round = 0; round < round_number; round++){
 		node_deployed();
 		packet_init();
 
@@ -449,10 +475,11 @@ int main(){
 		sink_buffer_init(SINK_BUFFER_SIZE);
 
 		/*firts CH selection*/
-		CH_Selection(0, R2 - 1);
-		CH_Selection(R2, R3 - 1);
-		CH_Selection(R3, R4 - 1);
-		CH_Selection(R4, S_NUM - 1);
+		Node R1_CH = CH_Selection(R1_cluster);
+		Node R2_CH = CH_Selection(R2_cluster);
+		Node R3_CH = CH_Selection(R3_cluster);
+		Node R4_CH = CH_Selection(R4_cluster);
+		//------------2/28 修改到這---------------
 		int countround[4] = { 0,0,0,0 };
 		/*traffic start*/
 		int bombing(0);

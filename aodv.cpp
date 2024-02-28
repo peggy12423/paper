@@ -28,6 +28,11 @@ struct Node{
 	queue<int>route;
 };
 
+struct RREQ{
+	queue<int>route;
+	int hop_count;
+};
+
 Node node[S_NUM];
 Sink sink;
 int R2 = S_NUM / 4;

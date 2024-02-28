@@ -25,7 +25,7 @@
 #define Package_size 200 //bytes 
 #define node_buffer 20 //Kbytes (100格)
 #define trans_dis 60 //公尺 80幾乎可以確定他傳的到sink
-#define round_number 20
+#define round_number 5
 
 using namespace std;
 struct Package{
