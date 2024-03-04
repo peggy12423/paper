@@ -41,11 +41,11 @@ double SD(0);
 // int R2 = S_NUM / 4;
 // int R3 = S_NUM / 2;
 // int R4 = S_NUM * 0.75;
-// int R_NUM = R2;
+int R_NUM = S_NUM / 4;
 
 double type_a = 33, type_b = 33, type_c = 34; //調整QUERE裡面感測資料的比例
 
-void print_energy()
+/*void print_energy()
 {
 	fout << node[0].CH << " " << node[R2].CH << " " << node[R3].CH << " " << node[R4].CH << endl;
 	for (int i = 0; i < S_NUM; i++)
@@ -53,7 +53,8 @@ void print_energy()
 		fout << "node" << node[i].id << " x : " << node[i].x << " y : " << node[i].y << " type : " << node[i].type << " energy : " << node[i].energy << " dtc : " << node[i].dtc << endl;
 	}
 	fout << "--------------------------------------------------\n";
-}
+}*/
+
 
 double distance(int a, int b){
 	if (b != SINKID){
@@ -349,7 +350,7 @@ void CH2Sink(int CH) //有能耗
 void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 {
 	/*取CH到2區+2區到sink的距離相加與其剩餘能量值做加權*/
-	int dst = node[R2].CH;
+	int dst = R2_cluster.front().CH;
 	double rate(0);/*壓縮率0.25*/
 	if (v == 1)
 	{
@@ -403,6 +404,7 @@ int CheckEnergy(){
 	}
 	return SINKID;
 }
+/*
 void Reselection_judge(int s, int e, int rnum)
 {
 	double t; //threshold
@@ -419,6 +421,9 @@ void Reselection_judge(int s, int e, int rnum)
 	t = (node[CH].energy * avg_d) / (avg_e * node[CH].dtc);
 	cout << t << endl;
 }
+*/
+
+/*
 void CH_Reselection()
 {
 	Reselection_judge(0, R2 - 1, R_NUM);
@@ -426,6 +431,9 @@ void CH_Reselection()
 	Reselection_judge(R3, R4 - 1, R_NUM);
 	Reselection_judge(R4, S_NUM - 1, R_NUM);
 }
+*/
+
+/*
 double threshold(int s, int e, int rnum)
 {
 	double t; //threshold
@@ -442,6 +450,8 @@ double threshold(int s, int e, int rnum)
 	t = (node[CH].energy * avg_d) / (avg_e * node[CH].dtc);
 	return t;
 }
+*/
+
 void transaction(int j, int t)
 {
 	Packet_Generate(j, t);
@@ -650,10 +660,10 @@ int main(){
 			if (t % CHf == 0) //每一分鐘傳到sink 1次
 			{
 				int CH[4];
-				CH[0] = node[0].CH;
-				CH[1] = node[R2].CH;
-				CH[2] = node[R3].CH;
-				CH[3] = node[R4].CH;
+				CH[0] = R1_CH.id;
+				CH[1] = R2_CH.id;
+				CH[2] = R3_CH.id;
+				CH[3] = R4_CH.id;
 
 				CH2Sink(CH[1]);
 				CHtoRegion2(CH[0], 1);
@@ -662,13 +672,13 @@ int main(){
 				//CH_Reselection();
 
 				countround[0]--;
-				if (countround[0] == 0) { CH_Selection(0, R2 - 1); }
+				if (countround[0] == 0) { CH_Selection(R1_cluster); }
 				countround[1]--;
-				if (countround[1] == 0) { CH_Selection(R2, R3 - 1); }
+				if (countround[1] == 0) { CH_Selection(R2_cluster); }
 				countround[2]--;
-				if (countround[2] == 0) { CH_Selection(R3, R4 - 1); }
+				if (countround[2] == 0) { CH_Selection(R3_cluster); }
 				countround[3]--;
-				if (countround[3] == 0) { CH_Selection(R4, S_NUM - 1); }
+				if (countround[3] == 0) { CH_Selection(R4_cluster); }
 			}
 			t++;
 		}

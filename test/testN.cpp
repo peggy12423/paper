@@ -94,7 +94,9 @@ void node_deployed(){
 		node[n].y = rand() % 400 + 1;  //節點y座標1~400隨機值
 		node[n].CH = n;
         node[n].type = rand() % 3 + 3;//3 4 5
-		node[n].energy = MAX_energy;
+		// node[n].energy = MAX_energy;
+		node[n].energy = rand() % 400+1;
+
 		node[n].dtc = distance(n, SINKID);  //距離區sink
 		if( node[n].x <= 200 && node[n].y <= 200 ){
             //(x,y) = (1~200, 1~200)
@@ -159,7 +161,7 @@ Node CH_Selection(list<Node>& region){
 void printCluster(const list<Node>& cluster) {
     for (const auto& node : cluster) {
         cout << "Node ID: " << node.id << ", "
-                  << "Region: " << node.region1 << ", "
+                  << "Energy: " << node.energy << ", "
                   << "(X, Y): " << node.x << ", "<< node.y << endl;
     }
 }
@@ -169,14 +171,14 @@ int main() {
     for (int round = 0; round < round_number; round++){
 		cout<<endl<<"--------------ROUND "<< round+1 <<"------------------"<<endl;
 		node_deployed();
-		// cout<<"[REGION 1]"<<endl;
-		// printCluster(R1_cluster);
-		// cout<<"[REGION 2]"<<endl;
-		// printCluster(R2_cluster);
-		// cout<<"[REGION 3]"<<endl;
-		// printCluster(R3_cluster);
-		// cout<<"[REGION 4]"<<endl;
-		// printCluster(R4_cluster);
+		cout<<"[REGION 1]"<<endl;
+		printCluster(R1_cluster);
+		cout<<"[REGION 2]"<<endl;
+		printCluster(R2_cluster);
+		cout<<"[REGION 3]"<<endl;
+		printCluster(R3_cluster);
+		cout<<"[REGION 4]"<<endl;
+		printCluster(R4_cluster);
 
 		packet_init();
 

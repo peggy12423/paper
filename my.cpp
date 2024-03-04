@@ -23,28 +23,72 @@ int R3 = S_NUM / 2;
 int R4 = S_NUM * 0.75;
 
 void node_deployed(){
+	R1_cluster.clear();
+	R2_cluster.clear();
+	R3_cluster.clear();
+	R4_cluster.clear();
     for(int n = 0 ; n < S_NUM ; n++ ){
-        node[n].id = node;
-		node[n].energy = MAX_energy;
-		node[n].visited = 0;
-		node[n].non = 0;
+        // 檢查該節點是否已經被放入了某個區域中
+        bool nodeAlreadyInCluster = false;
+        for (const auto& nodeInCluster : R1_cluster) {
+            if (nodeInCluster.id == n) {
+                nodeAlreadyInCluster = true;
+                break;
+            }
+        }
+        for (const auto& nodeInCluster : R2_cluster) {
+            if (nodeInCluster.id == n) {
+                nodeAlreadyInCluster = true;
+                break;
+            }
+        }
+        for (const auto& nodeInCluster : R3_cluster) {
+            if (nodeInCluster.id == n) {
+                nodeAlreadyInCluster = true;
+                break;
+            }
+        }
+        for (const auto& nodeInCluster : R4_cluster) {
+            if (nodeInCluster.id == n) {
+                nodeAlreadyInCluster = true;
+                break;
+            }
+        }
+        
+        if (nodeAlreadyInCluster) {
+            continue; // 如果節點已經被放入了某個區域中，則跳過本次迴圈
+        }
+
+        node[n].id = n;
+		node[n].x = rand() % 400 + 1;  //節點x座標1~400隨機值
+		node[n].y = rand() % 400 + 1;  //節點y座標1~400隨機值
+		node[n].CH = n;
         node[n].type = rand() % 3 + 3;//3 4 5
-		node[n].x = rand() % 400 + 1;
-		node[n].y = rand() % 400 + 1;
-        if( node[n].x <= 200 && node[n].y <= 200 ){
-            node[n].region1 = 1;
+		node[n].energy = MAX_energy;
+		node[n].dtc = distance(n, SINKID);  //距離區sink
+		if( node[n].x <= 200 && node[n].y <= 200 ){
+            //(x,y) = (1~200, 1~200)
+			node[n].region1 = 1;
+			R1_cluster.push_back(node[n]);
         }
         else if( node[n].x > 200 && node[n].y <= 200 ){
-            node[n].region1 = 2;
+			//(x,y) = (201~400, 1~200)
+			node[n].region1 = 2;
+			R2_cluster.push_back(node[n]);
         }        
         else if( node[n].x <= 200 && node[n].y > 200 ){
-            node[n].region1 = 3;
+            //(x,y) = (1~200, 201~400)
+			node[n].region1 = 3;
+			R3_cluster.push_back(node[n]);
         }        
         else{
-            node[n].region1 = 4;
+			//(x,y) = (201~400, 201~400)
+			node[n].region1 = 4;
+			R4_cluster.push_back(node[n]);
         }
     }
 }
+
 
 void node_density(){
     
@@ -79,7 +123,7 @@ void neighbor_init(){
 	}
 }
 int main(){
-    for( int rn = 0 ; rn < roundnumber ; rn++){
+    for( int rn = 0 ; rn < round_number ; rn++){
         node_deployed();
         packet_init();
         neighbor_init();
