@@ -36,14 +36,14 @@ struct Package{
 };
 
 struct Sink{
-	int id;//node information
+	int id = SINKID;//node information
 	Package buffer[SINK_BUFFER_SIZE];//buffer
 };
 
-double avg_t(0);
-double drop(0);
-double macdrop(0);
-double total(0);
+double avg_time = 0;
+double drop = 0;
+double macdrop = 0;
+double total = 0;
 
 
 #endif
