@@ -4,9 +4,9 @@
 #define S_NUM 900 //感測器總數
 #define compression_rate 0.25 //壓縮率 設1則沒有壓縮
 #define CH_transmit 120 //CH trans frequency
-#define sensing_frequency_type1 360
-#define sensing_frequency_type2 480
-#define sensing_frequency_type3 720
+#define SensingRate_type1f 360
+#define SensingRate_type2f 480
+#define SensingRate_type3f 720
 
 struct C{
 	double x, y;
