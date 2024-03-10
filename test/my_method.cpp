@@ -44,7 +44,7 @@ void node_deployed(){
 	R4_cluster.clear();
 	WSN.clear();
     for(int n = 0 ; n < S_NUM ; n++ ){
-		// 檢查該節點是否已經被放入了某個區域中
+		/* 檢查該節點是否已經被放入了某個區域中*/
         bool nodeAlreadyInCluster = false;
         for (const auto& wsn : WSN) {
             if (wsn.id == n) {
@@ -64,23 +64,23 @@ void node_deployed(){
 		node[n].energy = MAX_energy;
 		node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
 		if( node[n].x <= 200 && node[n].y <= 200 ){  //(x,y) = (1~200, 1~200)
-			node[n].region = 1;
-			R1_cluster.push_back(node[n]);
-			WSN.push_back(node[n]);
-        }
-        else if( node[n].x > 200 && node[n].y <= 200 ){  //(x,y) = (201~400, 1~200)
-			node[n].region = 2;
-			R2_cluster.push_back(node[n]);
-			WSN.push_back(node[n]);
-        }        
-        else if( node[n].x <= 200 && node[n].y > 200 ){  //(x,y) = (1~200, 201~400)
 			node[n].region = 3;
 			R3_cluster.push_back(node[n]);
 			WSN.push_back(node[n]);
-        }        
-        else{			//(x,y) = (201~400, 201~400)
+        }
+        else if( node[n].x > 200 && node[n].y <= 200 ){  //(x,y) = (201~400, 1~200)
 			node[n].region = 4;
 			R4_cluster.push_back(node[n]);
+			WSN.push_back(node[n]);
+        }        
+        else if( node[n].x <= 200 && node[n].y > 200 ){  //(x,y) = (1~200, 201~400)
+			node[n].region = 1;
+			R1_cluster.push_back(node[n]);
+			WSN.push_back(node[n]);
+        }        
+        else{			//(x,y) = (201~400, 201~400)
+			node[n].region = 2;
+			R2_cluster.push_back(node[n]);
 			WSN.push_back(node[n]);
         }
     }
@@ -201,4 +201,13 @@ double node_density(list<Node>& cluster){
     }
     double node_density = node_count / 40000;
     return node_density;
+}
+
+int main(){
+    srand((unsigned)time(NULL));
+    for(int round = 0; round < round_number; round++){
+        node_deployed();
+        // special_node_deployed();
+
+    }
 }
