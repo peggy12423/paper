@@ -14,7 +14,7 @@ struct C{
 
 struct Node
 {
-	int id, x, y, CH, region;  //
+	int id, x, y, CH, region, type;  //
     double energy = 0.0;//node information
 	double dist_to_sink = 0.0;//dist = distance to sink
 	Package receive;
