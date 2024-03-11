@@ -36,7 +36,7 @@ ofstream fout("NRCA_output.txt");
 Node node[S_NUM];
 Sink sink;
 list<Node> R1_cluster, R2_cluster, R3_cluster, R4_cluster;
-int R1_S_num = 0, R2_S_num = 0, R3_S_num = 0; R4_S_num = 0;
+int R1_S_num = 0, R2_S_num = 0, R3_S_num = 0, R4_S_num = 0;
 int R2_start_index = 0, R3_start_index = 0, R4_start_index = 0;
 list<Node> WSN;
 
@@ -103,13 +103,85 @@ void node_deployed(){
 	WSN.insert(WSN.end(), R3_cluster.begin(), R3_cluster.end());
 	WSN.insert(WSN.end(), R4_cluster.begin(), R4_cluster.end());
 	
-	R2_start_index = R1_S_num-1;
+	R2_start_index = R1_S_num;
 	R3_start_index = R2_start_index + R2_S_num;
 	R4_start_index = R3_start_index + R3_S_num;
 }
 
-void packet_init(list<Node>& cluster){
-	for(auto& node : cluster){
+void special_node_deployed(){
+   	R1_cluster.clear();
+	R2_cluster.clear();
+	R3_cluster.clear();
+	R4_cluster.clear();
+	WSN.clear();
+    int R1 = S_NUM * 0.1;
+    int R2 = S_NUM * 0.4;
+    int R3 = S_NUM * 0.2;
+    int R4 = S_NUM * 0.3;
+
+	int n = 0;
+    for( n ; n < R1 ; n++){
+        node[n].id = n;
+        node[n].x = rand() % 200 + 1;  //節點x座標1~400隨機值
+        node[n].y = rand() % 400 + 201;  //節點y座標1~400隨機值
+        node[n].CH = n;
+        node[n].type = rand() % 2 + 2; //sensing rate 2or3
+        node[n].energy = MAX_energy;
+        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+		node[n].region = 1;
+		R1_cluster.push_back(node[n]);
+        R1_S_num++;
+    }
+    for( n ; n < R1+R2 ; n++){
+        node[n].id = n;
+        node[n].x = rand() % 400 + 201;  //節點x座標1~400隨機值
+        node[n].y = rand() % 200 + 201;  //節點y座標1~400隨機值
+        node[n].CH = n;
+        node[n].type = 1; //sensing rate 1
+        node[n].energy = MAX_energy;
+        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+		node[n].region = 2;
+		R2_cluster.push_back(node[n]);
+		R2_S_num++;
+    }
+    for( n ; n < R1+R2+R3 ; n++){
+        node[n].id = n;
+        node[n].x = rand() % 200 + 1;  //節點x座標1~400隨機值
+        node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
+        node[n].CH = n;
+        node[n].type = rand() % 2 + 1; //sensing rate 1or2
+        node[n].energy = MAX_energy;
+        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+		node[n].region = 3;
+		R3_cluster.push_back(node[n]);
+        R3_S_num++;
+    }
+    for( n ; n < S_NUM; n++){
+        node[n].id = n;
+        node[n].x = rand() % 400 + 201;  //節點x座標1~400隨機值
+        node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
+        node[n].CH = n;
+        node[n].type = 2; //sensing rate
+        node[n].energy = MAX_energy;
+        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+		node[n].region = 1;
+		R4_cluster.push_back(node[n]);
+        R4_S_num++;
+    }
+    /*把所有節點放入list WSN*/
+	WSN.clear();			
+	WSN.insert(WSN.end(), R1_cluster.begin(), R1_cluster.end());
+	WSN.insert(WSN.end(), R2_cluster.begin(), R2_cluster.end());
+	WSN.insert(WSN.end(), R3_cluster.begin(), R3_cluster.end());
+	WSN.insert(WSN.end(), R4_cluster.begin(), R4_cluster.end());
+	
+	R2_start_index = R1_S_num;
+	R3_start_index = R2_start_index + R2_S_num;
+	R4_start_index = R3_start_index + R3_S_num;
+}
+
+void packet_init(list<Node>& wsn){
+	for(auto& node : wsn){
 		node.receive.data = -1;
 		node.receive.dst = -1;
 		node.receive.src = -1;
@@ -137,38 +209,73 @@ void sink_buffer_init(){
 	}
 }
 
-double find_max_energy(int start_index, int end_index){     //找cluster內的最大能量
-	double cluster_max_energy = 0;
-	for( int i = start_index; i <= end_index; i++){
-        if(cluster_max_energy < WSN[i]){
-            cluster_max_energy = WSN[i].energy;
+double find_max_energy(const list<Node>& WSN, int start_index, int end_index) {
+    double cluster_max_energy = 0;
+    auto it = next(WSN.begin(), start_index);
+    auto end_it = next(WSN.begin(), end_index + 1);
+    for (; it != end_it; ++it) {
+        if (cluster_max_energy < it->energy) {
+            cluster_max_energy = it->energy;
         }
-	}
-	return cluster_max_energy;
+    }
+    return cluster_max_energy;
 }
 
-void CH_Selection(list<Node>& WSN, int start_index, int end_index ){
-	double cluster_max_energy = find_max_energy(start_index, end_index);
-	queue<Node> CH_cdd; //cdd candidate
-	Node select_CH;
-	for(int i = start_index; i <= end_index; i++){  //在cluster內尋找最大剩餘能量(En)的node作為候選CH(cch)
-		if (WSN[i].energy == cluster_max_energy){
-			CH_cdd.push(WSN[i]);
+int Find_Index(list<Node>& WSN, int nodeID){
+	int index = 0;
+    for (auto it = WSN.begin(); it != WSN.end(); ++it) {
+        if (it->id == nodeID) {
+            return index;
+        }
+        index++;
+    }
+    // 如果未找到相應的 CH，返回 -1
+    return -1;
+}
+
+Node get_node(list<Node>& WSN, int index) {
+    if (index >= 0 && index < WSN.size()) {
+        auto it = next(WSN.begin(), index);
+        return *it;
+    } else {
+        // 處理索引超出範圍的情況，例如拋出異常或返回一個適當的默認值
+        return Node(); // 返回一個適當的默認值
+    }
+}
+
+Node CH_Selection(list<Node>& WSN, int start_index, int end_index) {
+    double cluster_max_energy = find_max_energy(WSN, start_index, end_index);
+    queue<Node> CH_cdd; // cdd candidate
+    Node select_CH;
+    
+    // 在 cluster 內尋找最大剩餘能量的節點作為候選 CH
+    for (auto it = next(WSN.begin(), start_index); it != next(WSN.begin(), end_index + 1); ++it) {
+        if (it->energy == cluster_max_energy) {
+            CH_cdd.push(*it);
+        }
+    }
+    
+    select_CH = CH_cdd.front();
+    int cdd_index = Find_Index(WSN, select_CH.id);
+    CH_cdd.pop();
+
+    // 比較現有 CH 和 cdd 中第一位到 sink 的距離，選擇最適合的 CH
+    while (!CH_cdd.empty()) {
+        int CH_index = Find_Index(WSN, select_CH.id);
+        auto it_cdd = next(WSN.begin(), cdd_index);
+		auto it_ch = next(WSN.begin(), CH_index);
+
+		if (it_cdd->dist_to_sink < it_ch->dist_to_sink) {
+			select_CH = *it_cdd;
 		}
-	}
-	select_CH = CH_cdd.front();
-	int cdd_index = Find_Index( WSN, CH_cdd)
-	CH_cdd.pop();
-	while(!CH_cdd.empty()){
-		int CH_index = Find_Index( WSN, select_CH);
-		if( WSN[cdd_index].dist_to_sink < WSN[CH_index].dist_to_sink){  //比較現有CH和cdd第一位到sink的距離
-			select_CH = CH_cdd.front();
-		}
-		CH_cdd.pop();
-	}
-	for ( int j = start_index; j <= end_index; j++){ //改變cluster內的所有節點CH為CH
-		WSN[j].CH = select_CH.id;
-	}
+        CH_cdd.pop();
+    }
+    
+    // 改變 cluster 內的所有節點的 CH 為選擇的 CH
+    for (auto it = next(WSN.begin(), start_index); it != next(WSN.begin(), end_index + 1); ++it) {
+        it->CH = select_CH.id;
+    }
+	return select_CH;
 }
 
 int Check_Life(list<Node>& WSN){   //有節點死掉返回該節點ID，沒有就返回SinkID
@@ -182,12 +289,15 @@ int Check_Life(list<Node>& WSN){   //有節點死掉返回該節點ID，沒有就返回SinkID
 }
 
 int Find_Index(list<Node>& WSN, Node trans_node){
-	for(int w = 0; w < WSN.size(); ++w ){
-		if( WSN[w].id == trans_node.CH){
-			return w;
-		}
-	}
-	return -1;
+	int index = 0;
+    for (auto it = WSN.begin(); it != WSN.end(); ++it) {
+        if (it->CH == trans_node.id) {
+            return index;
+        }
+        index++;
+    }
+    // 如果未找到相應的 CH，返回 -1
+    return -1;
 }
 
 void transaction( Node trans_node, int time){
@@ -365,8 +475,8 @@ int main(){
 
 		/*firts CH selection*/
 		CH_Selection( 0, R1_S_num-1 );
-		CH_Selection( R2_start_index, R2_start_index+R2_S_num-1);
-		CH_Selection( R3_start_index, R3_start_index+R3_S_num-1);
+		CH_Selection( R2_start_index, R3_start_index-1);
+		CH_Selection( R3_start_index, R4_start_index-1);
 		CH_Selection( R4_start_index, S_NUM-1);
 		int R1_CHid = WSN[0].CH;
 		int R2_CHid = WSN[R2_start_index].CH;
@@ -439,15 +549,14 @@ int main(){
 				if(countround[0] == 0)
 					CH_Selection(0, R1_S_num-1 );
 				if(countround[1] == 0)
-					CH_Selection(R1_S_num, R1_S_num+R2_S_num-1);
+					CH_Selection(R2_start_index, R3_start_index-1);
 				if(countround[2] == 0)
-					CH_Selection(R1_S_num+R2_S_num, R1_S_num+R2_S_num+R3_S_num-1 );
+					CH_Selection(R3_start_index, R4_start_index-1 );
 				if(countround[3] == 0)
-					CH_Selection(R1_S_num+R2_S_num+R3_S_num, S_NUM-1);
+					CH_Selection(R4_start_index, S_NUM-1);
 			}
 			time++;
 		}
-	}
 	total /= round_number;
 	macdrop /= round_number;
 	drop /= round_number;

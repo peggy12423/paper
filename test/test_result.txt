@@ -1,0 +1,630 @@
+
+--------------ROUND 1------------------
+[REGION 1]
+竊翴计10
+CH: 1
+WSN_index: 1
+CH energy: 936
+
+[REGION 2]
+竊翴计40
+CH id: 33
+WSN_index: 43
+CH energy: 965
+
+[REGION 3]
+竊翴计20
+CH id: 16
+WSN_index: 26
+CH energy: 894
+
+[REGION 4]
+竊翴计30
+CH id: 2
+WSN_index: 2
+CH energy: 983
+
+[0]  Region: 1, CH: 1, Node ID: 0, Energy: 216, (X, Y): 152, 341
+[1]  Region: 1, CH: 1, Node ID: 1, Energy: 936, (X, Y): 37, 250
+[2]  Region: 1, CH: 1, Node ID: 2, Energy: 497, (X, Y): 53, 217
+[3]  Region: 1, CH: 1, Node ID: 3, Energy: 904, (X, Y): 107, 463
+[4]  Region: 1, CH: 1, Node ID: 4, Energy: 104, (X, Y): 159, 324
+[5]  Region: 1, CH: 1, Node ID: 5, Energy: 150, (X, Y): 66, 515
+[6]  Region: 1, CH: 1, Node ID: 6, Energy: 829, (X, Y): 108, 265
+[7]  Region: 1, CH: 1, Node ID: 7, Energy: 883, (X, Y): 188, 476
+[8]  Region: 1, CH: 1, Node ID: 8, Energy: 99, (X, Y): 160, 510
+[9]  Region: 1, CH: 1, Node ID: 9, Energy: 157, (X, Y): 53, 530
+[10]  Region: 2, CH: 33, Node ID: 0, Energy: 34, (X, Y): 433, 278
+[11]  Region: 2, CH: 33, Node ID: 1, Energy: 113, (X, Y): 499, 375
+[12]  Region: 2, CH: 33, Node ID: 2, Energy: 44, (X, Y): 519, 381
+[13]  Region: 2, CH: 33, Node ID: 3, Energy: 543, (X, Y): 391, 350
+[14]  Region: 2, CH: 33, Node ID: 4, Energy: 492, (X, Y): 264, 378
+[15]  Region: 2, CH: 33, Node ID: 5, Energy: 948, (X, Y): 433, 374
+[16]  Region: 2, CH: 33, Node ID: 6, Energy: 879, (X, Y): 242, 287
+[17]  Region: 2, CH: 33, Node ID: 7, Energy: 123, (X, Y): 419, 393
+[18]  Region: 2, CH: 33, Node ID: 8, Energy: 514, (X, Y): 555, 372
+[19]  Region: 2, CH: 33, Node ID: 9, Energy: 195, (X, Y): 328, 314
+[20]  Region: 2, CH: 33, Node ID: 10, Energy: 243, (X, Y): 411, 368
+[21]  Region: 2, CH: 33, Node ID: 11, Energy: 168, (X, Y): 505, 359
+[22]  Region: 2, CH: 33, Node ID: 12, Energy: 748, (X, Y): 211, 311
+[23]  Region: 2, CH: 33, Node ID: 13, Energy: 250, (X, Y): 481, 384
+[24]  Region: 2, CH: 33, Node ID: 14, Energy: 566, (X, Y): 595, 211
+[25]  Region: 2, CH: 33, Node ID: 15, Energy: 206, (X, Y): 207, 380
+[26]  Region: 2, CH: 33, Node ID: 16, Energy: 521, (X, Y): 482, 393
+[27]  Region: 2, CH: 33, Node ID: 17, Energy: 393, (X, Y): 417, 341
+[28]  Region: 2, CH: 33, Node ID: 18, Energy: 427, (X, Y): 395, 294
+[29]  Region: 2, CH: 33, Node ID: 19, Energy: 221, (X, Y): 462, 394
+[30]  Region: 2, CH: 33, Node ID: 20, Energy: 409, (X, Y): 324, 221
+[31]  Region: 2, CH: 33, Node ID: 21, Energy: 714, (X, Y): 465, 387
+[32]  Region: 2, CH: 33, Node ID: 22, Energy: 197, (X, Y): 552, 288
+[33]  Region: 2, CH: 33, Node ID: 23, Energy: 110, (X, Y): 296, 391
+[34]  Region: 2, CH: 33, Node ID: 24, Energy: 655, (X, Y): 524, 357
+[35]  Region: 2, CH: 33, Node ID: 25, Energy: 562, (X, Y): 444, 229
+[36]  Region: 2, CH: 33, Node ID: 26, Energy: 511, (X, Y): 211, 341
+[37]  Region: 2, CH: 33, Node ID: 27, Energy: 98, (X, Y): 249, 255
+[38]  Region: 2, CH: 33, Node ID: 28, Energy: 24, (X, Y): 494, 399
+[39]  Region: 2, CH: 33, Node ID: 29, Energy: 253, (X, Y): 494, 246
+[40]  Region: 2, CH: 33, Node ID: 30, Energy: 123, (X, Y): 436, 396
+[41]  Region: 2, CH: 33, Node ID: 31, Energy: 128, (X, Y): 450, 203
+[42]  Region: 2, CH: 33, Node ID: 32, Energy: 174, (X, Y): 488, 395
+[43]  Region: 2, CH: 33, Node ID: 33, Energy: 965, (X, Y): 267, 223
+[44]  Region: 2, CH: 33, Node ID: 34, Energy: 665, (X, Y): 351, 219
+[45]  Region: 2, CH: 33, Node ID: 35, Energy: 474, (X, Y): 305, 369
+[46]  Region: 2, CH: 33, Node ID: 36, Energy: 330, (X, Y): 278, 322
+[47]  Region: 2, CH: 33, Node ID: 37, Energy: 812, (X, Y): 590, 231
+[48]  Region: 2, CH: 33, Node ID: 38, Energy: 25, (X, Y): 494, 273
+[49]  Region: 2, CH: 33, Node ID: 39, Energy: 666, (X, Y): 229, 325
+[50]  Region: 3, CH: 16, Node ID: 0, Energy: 68, (X, Y): 5, 160
+[51]  Region: 3, CH: 16, Node ID: 1, Energy: 749, (X, Y): 23, 71
+[52]  Region: 3, CH: 16, Node ID: 2, Energy: 353, (X, Y): 123, 73
+[53]  Region: 3, CH: 16, Node ID: 3, Energy: 344, (X, Y): 111, 5
+[54]  Region: 3, CH: 16, Node ID: 4, Energy: 501, (X, Y): 157, 30
+[55]  Region: 3, CH: 16, Node ID: 5, Energy: 889, (X, Y): 175, 127
+[56]  Region: 3, CH: 16, Node ID: 6, Energy: 24, (X, Y): 24, 177
+[57]  Region: 3, CH: 16, Node ID: 7, Energy: 602, (X, Y): 128, 34
+[58]  Region: 3, CH: 16, Node ID: 8, Energy: 284, (X, Y): 184, 72
+[59]  Region: 3, CH: 16, Node ID: 9, Energy: 40, (X, Y): 135, 71
+[60]  Region: 3, CH: 16, Node ID: 10, Energy: 490, (X, Y): 188, 55
+[61]  Region: 3, CH: 16, Node ID: 11, Energy: 669, (X, Y): 21, 161
+[62]  Region: 3, CH: 16, Node ID: 12, Energy: 622, (X, Y): 104, 139
+[63]  Region: 3, CH: 16, Node ID: 13, Energy: 454, (X, Y): 184, 43
+[64]  Region: 3, CH: 16, Node ID: 14, Energy: 526, (X, Y): 67, 152
+[65]  Region: 3, CH: 16, Node ID: 15, Energy: 478, (X, Y): 97, 151
+[66]  Region: 3, CH: 16, Node ID: 16, Energy: 894, (X, Y): 79, 53
+[67]  Region: 3, CH: 16, Node ID: 17, Energy: 257, (X, Y): 44, 24
+[68]  Region: 3, CH: 16, Node ID: 18, Energy: 319, (X, Y): 99, 115
+[69]  Region: 3, CH: 16, Node ID: 19, Energy: 162, (X, Y): 51, 1
+[70]  Region: 1, CH: 2, Node ID: 0, Energy: 798, (X, Y): 236, 17
+[71]  Region: 1, CH: 2, Node ID: 1, Energy: 19, (X, Y): 467, 75
+[72]  Region: 1, CH: 2, Node ID: 2, Energy: 983, (X, Y): 233, 53
+[73]  Region: 1, CH: 2, Node ID: 3, Energy: 186, (X, Y): 387, 165
+[74]  Region: 1, CH: 2, Node ID: 4, Energy: 486, (X, Y): 397, 179
+[75]  Region: 1, CH: 2, Node ID: 5, Energy: 70, (X, Y): 518, 9
+[76]  Region: 1, CH: 2, Node ID: 6, Energy: 670, (X, Y): 211, 9
+[77]  Region: 1, CH: 2, Node ID: 7, Energy: 176, (X, Y): 562, 51
+[78]  Region: 1, CH: 2, Node ID: 8, Energy: 248, (X, Y): 360, 5
+[79]  Region: 1, CH: 2, Node ID: 9, Energy: 916, (X, Y): 582, 32
+[80]  Region: 1, CH: 2, Node ID: 10, Energy: 95, (X, Y): 276, 71
+[81]  Region: 1, CH: 2, Node ID: 11, Energy: 365, (X, Y): 488, 145
+[82]  Region: 1, CH: 2, Node ID: 12, Energy: 829, (X, Y): 318, 169
+[83]  Region: 1, CH: 2, Node ID: 13, Energy: 767, (X, Y): 567, 86
+[84]  Region: 1, CH: 2, Node ID: 14, Energy: 596, (X, Y): 573, 14
+[85]  Region: 1, CH: 2, Node ID: 15, Energy: 930, (X, Y): 439, 137
+[86]  Region: 1, CH: 2, Node ID: 16, Energy: 737, (X, Y): 247, 35
+[87]  Region: 1, CH: 2, Node ID: 17, Energy: 710, (X, Y): 541, 69
+[88]  Region: 1, CH: 2, Node ID: 18, Energy: 890, (X, Y): 502, 86
+[89]  Region: 1, CH: 2, Node ID: 19, Energy: 920, (X, Y): 350, 12
+[90]  Region: 1, CH: 2, Node ID: 20, Energy: 262, (X, Y): 203, 59
+[91]  Region: 1, CH: 2, Node ID: 21, Energy: 214, (X, Y): 428, 178
+[92]  Region: 1, CH: 2, Node ID: 22, Energy: 523, (X, Y): 595, 77
+[93]  Region: 1, CH: 2, Node ID: 23, Energy: 226, (X, Y): 493, 200
+[94]  Region: 1, CH: 2, Node ID: 24, Energy: 302, (X, Y): 206, 55
+[95]  Region: 1, CH: 2, Node ID: 25, Energy: 443, (X, Y): 417, 166
+[96]  Region: 1, CH: 2, Node ID: 26, Energy: 617, (X, Y): 229, 2
+[97]  Region: 1, CH: 2, Node ID: 27, Energy: 434, (X, Y): 502, 48
+[98]  Region: 1, CH: 2, Node ID: 28, Energy: 131, (X, Y): 433, 12
+[99]  Region: 1, CH: 2, Node ID: 29, Energy: 950, (X, Y): 225, 67
+
+--------------ROUND 2------------------
+[REGION 1]
+竊翴计20
+CH: 1
+WSN_index: 1
+CH energy: 919
+
+[REGION 2]
+竊翴计80
+CH id: 17
+WSN_index: 27
+CH energy: 994
+
+[REGION 3]
+竊翴计40
+CH id: 1
+WSN_index: 1
+CH energy: 919
+
+[REGION 4]
+竊翴计60
+CH id: 17
+WSN_index: 27
+CH energy: 994
+
+[0]  Region: 1, CH: 1, Node ID: 0, Energy: 701, (X, Y): 3, 374
+[1]  Region: 1, CH: 1, Node ID: 1, Energy: 902, (X, Y): 166, 377
+[2]  Region: 1, CH: 1, Node ID: 2, Energy: 519, (X, Y): 123, 497
+[3]  Region: 1, CH: 1, Node ID: 3, Energy: 153, (X, Y): 26, 311
+[4]  Region: 1, CH: 1, Node ID: 4, Energy: 326, (X, Y): 134, 299
+[5]  Region: 1, CH: 1, Node ID: 5, Energy: 724, (X, Y): 114, 406
+[6]  Region: 1, CH: 1, Node ID: 6, Energy: 307, (X, Y): 195, 432
+[7]  Region: 1, CH: 1, Node ID: 7, Energy: 76, (X, Y): 52, 482
+[8]  Region: 1, CH: 1, Node ID: 8, Energy: 275, (X, Y): 95, 414
+[9]  Region: 1, CH: 1, Node ID: 9, Energy: 862, (X, Y): 187, 318
+[10]  Region: 2, CH: 1, Node ID: 0, Energy: 726, (X, Y): 553, 219
+[11]  Region: 2, CH: 1, Node ID: 1, Energy: 919, (X, Y): 294, 220
+[12]  Region: 2, CH: 1, Node ID: 2, Energy: 168, (X, Y): 365, 205
+[13]  Region: 2, CH: 1, Node ID: 3, Energy: 280, (X, Y): 300, 281
+[14]  Region: 2, CH: 1, Node ID: 4, Energy: 249, (X, Y): 337, 262
+[15]  Region: 2, CH: 1, Node ID: 5, Energy: 543, (X, Y): 304, 303
+[16]  Region: 2, CH: 1, Node ID: 6, Energy: 105, (X, Y): 510, 324
+[17]  Region: 2, CH: 1, Node ID: 7, Energy: 177, (X, Y): 362, 293
+[18]  Region: 2, CH: 1, Node ID: 8, Energy: 718, (X, Y): 440, 346
+[19]  Region: 2, CH: 1, Node ID: 9, Energy: 459, (X, Y): 500, 349
+[20]  Region: 2, CH: 1, Node ID: 10, Energy: 718, (X, Y): 459, 383
+[21]  Region: 2, CH: 1, Node ID: 11, Energy: 458, (X, Y): 265, 388
+[22]  Region: 2, CH: 1, Node ID: 12, Energy: 98, (X, Y): 517, 393
+[23]  Region: 2, CH: 1, Node ID: 13, Energy: 724, (X, Y): 260, 241
+[24]  Region: 2, CH: 1, Node ID: 14, Energy: 473, (X, Y): 419, 291
+[25]  Region: 2, CH: 1, Node ID: 15, Energy: 648, (X, Y): 507, 359
+[26]  Region: 2, CH: 1, Node ID: 16, Energy: 792, (X, Y): 446, 207
+[27]  Region: 2, CH: 1, Node ID: 17, Energy: 680, (X, Y): 246, 224
+[28]  Region: 2, CH: 1, Node ID: 18, Energy: 700, (X, Y): 391, 204
+[29]  Region: 2, CH: 1, Node ID: 19, Energy: 225, (X, Y): 505, 332
+[30]  Region: 2, CH: 1, Node ID: 20, Energy: 53, (X, Y): 245, 329
+[31]  Region: 2, CH: 1, Node ID: 21, Energy: 93, (X, Y): 288, 329
+[32]  Region: 2, CH: 1, Node ID: 22, Energy: 85, (X, Y): 508, 276
+[33]  Region: 2, CH: 1, Node ID: 23, Energy: 110, (X, Y): 324, 378
+[34]  Region: 2, CH: 1, Node ID: 24, Energy: 208, (X, Y): 275, 372
+[35]  Region: 2, CH: 1, Node ID: 25, Energy: 123, (X, Y): 532, 290
+[36]  Region: 2, CH: 1, Node ID: 26, Energy: 407, (X, Y): 464, 268
+[37]  Region: 2, CH: 1, Node ID: 27, Energy: 18, (X, Y): 432, 207
+[38]  Region: 2, CH: 1, Node ID: 28, Energy: 502, (X, Y): 307, 339
+[39]  Region: 2, CH: 17, Node ID: 29, Energy: 794, (X, Y): 286, 349
+[40]  Region: 2, CH: 17, Node ID: 30, Energy: 354, (X, Y): 529, 249
+[41]  Region: 2, CH: 17, Node ID: 31, Energy: 314, (X, Y): 270, 360
+[42]  Region: 2, CH: 17, Node ID: 32, Energy: 740, (X, Y): 210, 294
+[43]  Region: 2, CH: 17, Node ID: 33, Energy: 626, (X, Y): 204, 317
+[44]  Region: 2, CH: 17, Node ID: 34, Energy: 197, (X, Y): 300, 354
+[45]  Region: 2, CH: 17, Node ID: 35, Energy: 534, (X, Y): 346, 304
+[46]  Region: 2, CH: 17, Node ID: 36, Energy: 453, (X, Y): 421, 248
+[47]  Region: 2, CH: 17, Node ID: 37, Energy: 490, (X, Y): 253, 250
+[48]  Region: 2, CH: 17, Node ID: 38, Energy: 746, (X, Y): 499, 239
+[49]  Region: 2, CH: 17, Node ID: 39, Energy: 726, (X, Y): 357, 299
+[50]  Region: 3, CH: 17, Node ID: 0, Energy: 469, (X, Y): 75, 47
+[51]  Region: 3, CH: 17, Node ID: 1, Energy: 268, (X, Y): 188, 108
+[52]  Region: 3, CH: 17, Node ID: 2, Energy: 585, (X, Y): 193, 156
+[53]  Region: 3, CH: 17, Node ID: 3, Energy: 328, (X, Y): 35, 154
+[54]  Region: 3, CH: 17, Node ID: 4, Energy: 86, (X, Y): 183, 47
+[55]  Region: 3, CH: 17, Node ID: 5, Energy: 499, (X, Y): 121, 160
+[56]  Region: 3, CH: 17, Node ID: 6, Energy: 934, (X, Y): 80, 86
+[57]  Region: 3, CH: 17, Node ID: 7, Energy: 701, (X, Y): 59, 165
+[58]  Region: 3, CH: 17, Node ID: 8, Energy: 501, (X, Y): 4, 199
+[59]  Region: 3, CH: 17, Node ID: 9, Energy: 31, (X, Y): 20, 81
+[60]  Region: 3, CH: 17, Node ID: 10, Energy: 924, (X, Y): 159, 30
+[61]  Region: 3, CH: 17, Node ID: 11, Energy: 850, (X, Y): 58, 115
+[62]  Region: 3, CH: 17, Node ID: 12, Energy: 335, (X, Y): 186, 108
+[63]  Region: 3, CH: 17, Node ID: 13, Energy: 605, (X, Y): 78, 61
+[64]  Region: 3, CH: 17, Node ID: 14, Energy: 783, (X, Y): 16, 122
+[65]  Region: 3, CH: 17, Node ID: 15, Energy: 491, (X, Y): 96, 179
+[66]  Region: 3, CH: 17, Node ID: 16, Energy: 120, (X, Y): 82, 146
+[67]  Region: 3, CH: 17, Node ID: 17, Energy: 994, (X, Y): 17, 47
+[68]  Region: 3, CH: 17, Node ID: 18, Energy: 812, (X, Y): 100, 6
+[69]  Region: 3, CH: 17, Node ID: 19, Energy: 302, (X, Y): 95, 199
+[70]  Region: 1, CH: 17, Node ID: 0, Energy: 440, (X, Y): 237, 127
+[71]  Region: 1, CH: 17, Node ID: 1, Energy: 629, (X, Y): 551, 109
+[72]  Region: 1, CH: 17, Node ID: 2, Energy: 554, (X, Y): 331, 84
+[73]  Region: 1, CH: 17, Node ID: 3, Energy: 25, (X, Y): 336, 91
+[74]  Region: 1, CH: 17, Node ID: 4, Energy: 518, (X, Y): 464, 94
+[75]  Region: 1, CH: 17, Node ID: 5, Energy: 88, (X, Y): 423, 60
+[76]  Region: 1, CH: 17, Node ID: 6, Energy: 675, (X, Y): 427, 159
+[77]  Region: 1, CH: 17, Node ID: 7, Energy: 118, (X, Y): 245, 143
+[78]  Region: 1, CH: 17, Node ID: 8, Energy: 677, (X, Y): 582, 67
+[79]  Region: 1, CH: 17, Node ID: 9, Energy: 477, (X, Y): 434, 156
+[80]  Region: 1, CH: 17, Node ID: 10, Energy: 112, (X, Y): 563, 180
+[81]  Region: 1, CH: 17, Node ID: 11, Energy: 494, (X, Y): 570, 155
+[82]  Region: 1, CH: 17, Node ID: 12, Energy: 192, (X, Y): 221, 130
+[83]  Region: 1, CH: 17, Node ID: 13, Energy: 494, (X, Y): 383, 103
+[84]  Region: 1, CH: 17, Node ID: 14, Energy: 436, (X, Y): 498, 188
+[85]  Region: 1, CH: 17, Node ID: 15, Energy: 26, (X, Y): 360, 35
+[86]  Region: 1, CH: 17, Node ID: 16, Energy: 58, (X, Y): 539, 89
+[87]  Region: 1, CH: 17, Node ID: 17, Energy: 194, (X, Y): 305, 19
+[88]  Region: 1, CH: 17, Node ID: 18, Energy: 487, (X, Y): 392, 43
+[89]  Region: 1, CH: 17, Node ID: 19, Energy: 197, (X, Y): 365, 2
+[90]  Region: 1, CH: 17, Node ID: 20, Energy: 126, (X, Y): 440, 37
+[91]  Region: 1, CH: 17, Node ID: 21, Energy: 363, (X, Y): 453, 132
+[92]  Region: 1, CH: 17, Node ID: 22, Energy: 118, (X, Y): 489, 149
+[93]  Region: 1, CH: 17, Node ID: 23, Energy: 695, (X, Y): 307, 120
+[94]  Region: 1, CH: 17, Node ID: 24, Energy: 70, (X, Y): 382, 30
+[95]  Region: 1, CH: 17, Node ID: 25, Energy: 568, (X, Y): 362, 43
+[96]  Region: 1, CH: 17, Node ID: 26, Energy: 693, (X, Y): 373, 139
+[97]  Region: 1, CH: 17, Node ID: 27, Energy: 639, (X, Y): 445, 48
+[98]  Region: 1, CH: 17, Node ID: 28, Energy: 417, (X, Y): 464, 200
+[99]  Region: 1, CH: 17, Node ID: 29, Energy: 116, (X, Y): 512, 174
+
+--------------ROUND 3------------------
+[REGION 1]
+竊翴计30
+CH: 16
+WSN_index: 26
+CH energy: 990
+
+[REGION 2]
+竊翴计120
+CH id: 31
+WSN_index: 41
+CH energy: 989
+
+[REGION 3]
+竊翴计60
+CH id: 14
+WSN_index: 24
+CH energy: 986
+
+[REGION 4]
+竊翴计90
+CH id: 16
+WSN_index: 26
+CH energy: 990
+
+[0]  Region: 1, CH: 14, Node ID: 0, Energy: 215, (X, Y): 79, 534
+[1]  Region: 1, CH: 14, Node ID: 1, Energy: 972, (X, Y): 66, 328
+[2]  Region: 1, CH: 14, Node ID: 2, Energy: 88, (X, Y): 82, 324
+[3]  Region: 1, CH: 14, Node ID: 3, Energy: 710, (X, Y): 188, 451
+[4]  Region: 1, CH: 14, Node ID: 4, Energy: 831, (X, Y): 198, 320
+[5]  Region: 1, CH: 14, Node ID: 5, Energy: 316, (X, Y): 94, 475
+[6]  Region: 1, CH: 14, Node ID: 6, Energy: 878, (X, Y): 6, 233
+[7]  Region: 1, CH: 14, Node ID: 7, Energy: 137, (X, Y): 122, 542
+[8]  Region: 1, CH: 16, Node ID: 8, Energy: 563, (X, Y): 53, 333
+[9]  Region: 1, CH: 16, Node ID: 9, Energy: 523, (X, Y): 120, 223
+[10]  Region: 2, CH: 16, Node ID: 0, Energy: 229, (X, Y): 341, 386
+[11]  Region: 2, CH: 16, Node ID: 1, Energy: 556, (X, Y): 216, 228
+[12]  Region: 2, CH: 16, Node ID: 2, Energy: 684, (X, Y): 427, 400
+[13]  Region: 2, CH: 16, Node ID: 3, Energy: 707, (X, Y): 433, 298
+[14]  Region: 2, CH: 16, Node ID: 4, Energy: 624, (X, Y): 276, 353
+[15]  Region: 2, CH: 16, Node ID: 5, Energy: 846, (X, Y): 230, 273
+[16]  Region: 2, CH: 16, Node ID: 6, Energy: 795, (X, Y): 345, 332
+[17]  Region: 2, CH: 16, Node ID: 7, Energy: 106, (X, Y): 460, 279
+[18]  Region: 2, CH: 16, Node ID: 8, Energy: 441, (X, Y): 308, 209
+[19]  Region: 2, CH: 16, Node ID: 9, Energy: 759, (X, Y): 314, 280
+[20]  Region: 2, CH: 16, Node ID: 10, Energy: 979, (X, Y): 369, 242
+[21]  Region: 2, CH: 16, Node ID: 11, Energy: 485, (X, Y): 392, 258
+[22]  Region: 2, CH: 16, Node ID: 12, Energy: 425, (X, Y): 288, 290
+[23]  Region: 2, CH: 16, Node ID: 13, Energy: 891, (X, Y): 363, 390
+[24]  Region: 2, CH: 16, Node ID: 14, Energy: 984, (X, Y): 219, 205
+[25]  Region: 2, CH: 16, Node ID: 15, Energy: 780, (X, Y): 566, 312
+[26]  Region: 2, CH: 16, Node ID: 16, Energy: 990, (X, Y): 564, 398
+[27]  Region: 2, CH: 16, Node ID: 17, Energy: 299, (X, Y): 578, 243
+[28]  Region: 2, CH: 16, Node ID: 18, Energy: 627, (X, Y): 273, 304
+[29]  Region: 2, CH: 16, Node ID: 19, Energy: 218, (X, Y): 363, 298
+[30]  Region: 2, CH: 16, Node ID: 20, Energy: 134, (X, Y): 586, 202
+[31]  Region: 2, CH: 16, Node ID: 21, Energy: 853, (X, Y): 256, 244
+[32]  Region: 2, CH: 16, Node ID: 22, Energy: 167, (X, Y): 472, 334
+[33]  Region: 2, CH: 16, Node ID: 23, Energy: 495, (X, Y): 572, 377
+[34]  Region: 2, CH: 16, Node ID: 24, Energy: 551, (X, Y): 453, 342
+[35]  Region: 2, CH: 16, Node ID: 25, Energy: 217, (X, Y): 317, 305
+[36]  Region: 2, CH: 16, Node ID: 26, Energy: 493, (X, Y): 428, 324
+[37]  Region: 2, CH: 16, Node ID: 27, Energy: 80, (X, Y): 298, 328
+[38]  Region: 2, CH: 16, Node ID: 28, Energy: 930, (X, Y): 396, 266
+[39]  Region: 2, CH: 16, Node ID: 29, Energy: 258, (X, Y): 580, 332
+[40]  Region: 2, CH: 16, Node ID: 30, Energy: 502, (X, Y): 443, 308
+[41]  Region: 2, CH: 16, Node ID: 31, Energy: 989, (X, Y): 256, 219
+[42]  Region: 2, CH: 16, Node ID: 32, Energy: 416, (X, Y): 488, 210
+[43]  Region: 2, CH: 16, Node ID: 33, Energy: 962, (X, Y): 587, 322
+[44]  Region: 2, CH: 16, Node ID: 34, Energy: 49, (X, Y): 260, 292
+[45]  Region: 2, CH: 16, Node ID: 35, Energy: 716, (X, Y): 395, 334
+[46]  Region: 2, CH: 16, Node ID: 36, Energy: 340, (X, Y): 545, 379
+[47]  Region: 2, CH: 16, Node ID: 37, Energy: 978, (X, Y): 519, 382
+[48]  Region: 2, CH: 16, Node ID: 38, Energy: 300, (X, Y): 448, 254
+[49]  Region: 2, CH: 16, Node ID: 39, Energy: 740, (X, Y): 442, 296
+[50]  Region: 3, CH: 16, Node ID: 0, Energy: 664, (X, Y): 13, 111
+[51]  Region: 3, CH: 16, Node ID: 1, Energy: 697, (X, Y): 107, 200
+[52]  Region: 3, CH: 16, Node ID: 2, Energy: 917, (X, Y): 31, 23
+[53]  Region: 3, CH: 16, Node ID: 3, Energy: 314, (X, Y): 161, 30
+[54]  Region: 3, CH: 16, Node ID: 4, Energy: 56, (X, Y): 17, 178
+[55]  Region: 3, CH: 16, Node ID: 5, Energy: 390, (X, Y): 62, 36
+[56]  Region: 3, CH: 16, Node ID: 6, Energy: 396, (X, Y): 53, 197
+[57]  Region: 3, CH: 16, Node ID: 7, Energy: 465, (X, Y): 124, 114
+[58]  Region: 3, CH: 16, Node ID: 8, Energy: 183, (X, Y): 199, 65
+[59]  Region: 3, CH: 16, Node ID: 9, Energy: 4, (X, Y): 74, 51
+[60]  Region: 3, CH: 16, Node ID: 10, Energy: 210, (X, Y): 96, 11
+[61]  Region: 3, CH: 16, Node ID: 11, Energy: 121, (X, Y): 12, 149
+[62]  Region: 3, CH: 16, Node ID: 12, Energy: 674, (X, Y): 39, 146
+[63]  Region: 3, CH: 16, Node ID: 13, Energy: 191, (X, Y): 1, 75
+[64]  Region: 3, CH: 16, Node ID: 14, Energy: 986, (X, Y): 131, 68
+[65]  Region: 3, CH: 16, Node ID: 15, Energy: 396, (X, Y): 124, 12
+[66]  Region: 3, CH: 16, Node ID: 16, Energy: 743, (X, Y): 154, 185
+[67]  Region: 3, CH: 16, Node ID: 17, Energy: 198, (X, Y): 155, 73
+[68]  Region: 3, CH: 16, Node ID: 18, Energy: 339, (X, Y): 13, 150
+[69]  Region: 3, CH: 16, Node ID: 19, Energy: 705, (X, Y): 155, 138
+[70]  Region: 1, CH: 16, Node ID: 0, Energy: 544, (X, Y): 529, 44
+[71]  Region: 1, CH: 16, Node ID: 1, Energy: 329, (X, Y): 427, 162
+[72]  Region: 1, CH: 16, Node ID: 2, Energy: 911, (X, Y): 295, 76
+[73]  Region: 1, CH: 16, Node ID: 3, Energy: 185, (X, Y): 462, 190
+[74]  Region: 1, CH: 16, Node ID: 4, Energy: 530, (X, Y): 203, 5
+[75]  Region: 1, CH: 16, Node ID: 5, Energy: 863, (X, Y): 308, 77
+[76]  Region: 1, CH: 16, Node ID: 6, Energy: 926, (X, Y): 311, 106
+[77]  Region: 1, CH: 16, Node ID: 7, Energy: 631, (X, Y): 561, 115
+[78]  Region: 1, CH: 16, Node ID: 8, Energy: 236, (X, Y): 244, 9
+[79]  Region: 1, CH: 16, Node ID: 9, Energy: 483, (X, Y): 488, 158
+[80]  Region: 1, CH: 16, Node ID: 10, Energy: 672, (X, Y): 373, 90
+[81]  Region: 1, CH: 16, Node ID: 11, Energy: 681, (X, Y): 207, 93
+[82]  Region: 1, CH: 16, Node ID: 12, Energy: 57, (X, Y): 361, 165
+[83]  Region: 1, CH: 16, Node ID: 13, Energy: 676, (X, Y): 532, 195
+[84]  Region: 1, CH: 16, Node ID: 14, Energy: 427, (X, Y): 531, 103
+[85]  Region: 1, CH: 16, Node ID: 15, Energy: 808, (X, Y): 303, 130
+[86]  Region: 1, CH: 16, Node ID: 16, Energy: 4, (X, Y): 274, 178
+[87]  Region: 1, CH: 16, Node ID: 17, Energy: 827, (X, Y): 583, 115
+[88]  Region: 1, CH: 16, Node ID: 18, Energy: 22, (X, Y): 234, 23
+[89]  Region: 1, CH: 16, Node ID: 19, Energy: 626, (X, Y): 244, 187
+[90]  Region: 1, CH: 16, Node ID: 20, Energy: 563, (X, Y): 540, 48
+[91]  Region: 1, CH: 16, Node ID: 21, Energy: 628, (X, Y): 500, 92
+[92]  Region: 1, CH: 16, Node ID: 22, Energy: 637, (X, Y): 277, 54
+[93]  Region: 1, CH: 16, Node ID: 23, Energy: 942, (X, Y): 232, 55
+[94]  Region: 1, CH: 16, Node ID: 24, Energy: 5, (X, Y): 581, 30
+[95]  Region: 1, CH: 16, Node ID: 25, Energy: 490, (X, Y): 333, 106
+[96]  Region: 1, CH: 16, Node ID: 26, Energy: 183, (X, Y): 224, 2
+[97]  Region: 1, CH: 16, Node ID: 27, Energy: 197, (X, Y): 202, 193
+[98]  Region: 1, CH: 16, Node ID: 28, Energy: 481, (X, Y): 569, 17
+[99]  Region: 1, CH: 16, Node ID: 29, Energy: 270, (X, Y): 494, 187
+
+--------------ROUND 4------------------
+[REGION 1]
+竊翴计40
+CH: 16
+WSN_index: 26
+CH energy: 968
+
+[REGION 2]
+竊翴计160
+CH id: 0
+WSN_index: 0
+CH energy: 989
+
+[REGION 3]
+竊翴计80
+CH id: 0
+WSN_index: 0
+CH energy: 989
+
+[REGION 4]
+竊翴计120
+CH id: 14
+WSN_index: 24
+CH energy: 950
+
+[0]  Region: 1, CH: 0, Node ID: 0, Energy: 674, (X, Y): 194, 303
+[1]  Region: 1, CH: 0, Node ID: 1, Energy: 890, (X, Y): 51, 423
+[2]  Region: 1, CH: 0, Node ID: 2, Energy: 346, (X, Y): 8, 249
+[3]  Region: 1, CH: 0, Node ID: 3, Energy: 499, (X, Y): 25, 428
+[4]  Region: 1, CH: 0, Node ID: 4, Energy: 325, (X, Y): 108, 452
+[5]  Region: 1, CH: 0, Node ID: 5, Energy: 465, (X, Y): 165, 529
+[6]  Region: 1, CH: 0, Node ID: 6, Energy: 888, (X, Y): 85, 326
+[7]  Region: 1, CH: 0, Node ID: 7, Energy: 792, (X, Y): 80, 493
+[8]  Region: 1, CH: 0, Node ID: 8, Energy: 769, (X, Y): 67, 553
+[9]  Region: 1, CH: 0, Node ID: 9, Energy: 834, (X, Y): 62, 348
+[10]  Region: 2, CH: 0, Node ID: 0, Energy: 736, (X, Y): 255, 378
+[11]  Region: 2, CH: 0, Node ID: 1, Energy: 5, (X, Y): 434, 247
+[12]  Region: 2, CH: 0, Node ID: 2, Energy: 529, (X, Y): 454, 283
+[13]  Region: 2, CH: 0, Node ID: 3, Energy: 705, (X, Y): 346, 352
+[14]  Region: 2, CH: 0, Node ID: 4, Energy: 116, (X, Y): 248, 325
+[15]  Region: 2, CH: 0, Node ID: 5, Energy: 625, (X, Y): 484, 280
+[16]  Region: 2, CH: 0, Node ID: 6, Energy: 168, (X, Y): 332, 202
+[17]  Region: 2, CH: 0, Node ID: 7, Energy: 42, (X, Y): 570, 396
+[18]  Region: 2, CH: 0, Node ID: 8, Energy: 902, (X, Y): 542, 222
+[19]  Region: 2, CH: 0, Node ID: 9, Energy: 761, (X, Y): 588, 363
+[20]  Region: 2, CH: 0, Node ID: 10, Energy: 881, (X, Y): 204, 292
+[21]  Region: 2, CH: 0, Node ID: 11, Energy: 160, (X, Y): 440, 334
+[22]  Region: 2, CH: 0, Node ID: 12, Energy: 293, (X, Y): 314, 321
+[23]  Region: 2, CH: 0, Node ID: 13, Energy: 825, (X, Y): 512, 251
+[24]  Region: 2, CH: 0, Node ID: 14, Energy: 713, (X, Y): 479, 270
+[25]  Region: 2, CH: 0, Node ID: 15, Energy: 238, (X, Y): 294, 236
+[26]  Region: 2, CH: 0, Node ID: 16, Energy: 968, (X, Y): 538, 334
+[27]  Region: 2, CH: 0, Node ID: 17, Energy: 7, (X, Y): 463, 392
+[28]  Region: 2, CH: 0, Node ID: 18, Energy: 817, (X, Y): 234, 203
+[29]  Region: 2, CH: 0, Node ID: 19, Energy: 788, (X, Y): 576, 203
+[30]  Region: 2, CH: 0, Node ID: 20, Energy: 508, (X, Y): 267, 247
+[31]  Region: 2, CH: 0, Node ID: 21, Energy: 485, (X, Y): 351, 214
+[32]  Region: 2, CH: 0, Node ID: 22, Energy: 129, (X, Y): 258, 301
+[33]  Region: 2, CH: 0, Node ID: 23, Energy: 95, (X, Y): 592, 275
+[34]  Region: 2, CH: 0, Node ID: 24, Energy: 413, (X, Y): 386, 344
+[35]  Region: 2, CH: 0, Node ID: 25, Energy: 772, (X, Y): 467, 281
+[36]  Region: 2, CH: 0, Node ID: 26, Energy: 84, (X, Y): 260, 325
+[37]  Region: 2, CH: 0, Node ID: 27, Energy: 615, (X, Y): 373, 325
+[38]  Region: 2, CH: 0, Node ID: 28, Energy: 266, (X, Y): 512, 250
+[39]  Region: 2, CH: 0, Node ID: 29, Energy: 294, (X, Y): 587, 318
+[40]  Region: 2, CH: 0, Node ID: 30, Energy: 932, (X, Y): 485, 304
+[41]  Region: 2, CH: 0, Node ID: 31, Energy: 892, (X, Y): 559, 343
+[42]  Region: 2, CH: 0, Node ID: 32, Energy: 11, (X, Y): 406, 240
+[43]  Region: 2, CH: 0, Node ID: 33, Energy: 298, (X, Y): 305, 341
+[44]  Region: 2, CH: 0, Node ID: 34, Energy: 943, (X, Y): 215, 275
+[45]  Region: 2, CH: 0, Node ID: 35, Energy: 248, (X, Y): 270, 203
+[46]  Region: 2, CH: 0, Node ID: 36, Energy: 78, (X, Y): 246, 391
+[47]  Region: 2, CH: 0, Node ID: 37, Energy: 182, (X, Y): 337, 237
+[48]  Region: 2, CH: 0, Node ID: 38, Energy: 865, (X, Y): 317, 377
+[49]  Region: 2, CH: 0, Node ID: 39, Energy: 331, (X, Y): 349, 380
+[50]  Region: 3, CH: 0, Node ID: 0, Energy: 977, (X, Y): 133, 71
+[51]  Region: 3, CH: 0, Node ID: 1, Energy: 282, (X, Y): 160, 80
+[52]  Region: 3, CH: 0, Node ID: 2, Energy: 291, (X, Y): 74, 17
+[53]  Region: 3, CH: 0, Node ID: 3, Energy: 82, (X, Y): 141, 151
+[54]  Region: 3, CH: 0, Node ID: 4, Energy: 142, (X, Y): 89, 61
+[55]  Region: 3, CH: 0, Node ID: 5, Energy: 91, (X, Y): 19, 119
+[56]  Region: 3, CH: 0, Node ID: 6, Energy: 405, (X, Y): 110, 177
+[57]  Region: 3, CH: 0, Node ID: 7, Energy: 91, (X, Y): 66, 78
+[58]  Region: 3, CH: 0, Node ID: 8, Energy: 854, (X, Y): 44, 53
+[59]  Region: 3, CH: 0, Node ID: 9, Energy: 218, (X, Y): 134, 25
+[60]  Region: 3, CH: 0, Node ID: 10, Energy: 756, (X, Y): 129, 176
+[61]  Region: 3, CH: 0, Node ID: 11, Energy: 68, (X, Y): 1, 63
+[62]  Region: 3, CH: 0, Node ID: 12, Energy: 485, (X, Y): 88, 116
+[63]  Region: 3, CH: 0, Node ID: 13, Energy: 291, (X, Y): 85, 188
+[64]  Region: 3, CH: 0, Node ID: 14, Energy: 468, (X, Y): 142, 30
+[65]  Region: 3, CH: 0, Node ID: 15, Energy: 650, (X, Y): 75, 119
+[66]  Region: 3, CH: 0, Node ID: 16, Energy: 224, (X, Y): 29, 31
+[67]  Region: 3, CH: 0, Node ID: 17, Energy: 883, (X, Y): 111, 44
+[68]  Region: 3, CH: 0, Node ID: 18, Energy: 803, (X, Y): 108, 62
+[69]  Region: 3, CH: 0, Node ID: 19, Energy: 346, (X, Y): 137, 178
+[70]  Region: 1, CH: 0, Node ID: 0, Energy: 989, (X, Y): 596, 155
+[71]  Region: 1, CH: 0, Node ID: 1, Energy: 262, (X, Y): 252, 142
+[72]  Region: 1, CH: 0, Node ID: 2, Energy: 869, (X, Y): 463, 32
+[73]  Region: 1, CH: 0, Node ID: 3, Energy: 406, (X, Y): 389, 30
+[74]  Region: 1, CH: 0, Node ID: 4, Energy: 286, (X, Y): 565, 47
+[75]  Region: 1, CH: 0, Node ID: 5, Energy: 581, (X, Y): 249, 127
+[76]  Region: 1, CH: 0, Node ID: 6, Energy: 194, (X, Y): 449, 151
+[77]  Region: 1, CH: 0, Node ID: 7, Energy: 718, (X, Y): 584, 63
+[78]  Region: 1, CH: 14, Node ID: 8, Energy: 220, (X, Y): 378, 65
+[79]  Region: 1, CH: 14, Node ID: 9, Energy: 73, (X, Y): 577, 78
+[80]  Region: 1, CH: 14, Node ID: 10, Energy: 934, (X, Y): 397, 84
+[81]  Region: 1, CH: 14, Node ID: 11, Energy: 524, (X, Y): 442, 19
+[82]  Region: 1, CH: 14, Node ID: 12, Energy: 307, (X, Y): 333, 5
+[83]  Region: 1, CH: 14, Node ID: 13, Energy: 22, (X, Y): 570, 91
+[84]  Region: 1, CH: 14, Node ID: 14, Energy: 950, (X, Y): 557, 130
+[85]  Region: 1, CH: 14, Node ID: 15, Energy: 383, (X, Y): 270, 180
+[86]  Region: 1, CH: 14, Node ID: 16, Energy: 709, (X, Y): 371, 127
+[87]  Region: 1, CH: 14, Node ID: 17, Energy: 357, (X, Y): 570, 167
+[88]  Region: 1, CH: 14, Node ID: 18, Energy: 67, (X, Y): 563, 122
+[89]  Region: 1, CH: 14, Node ID: 19, Energy: 262, (X, Y): 426, 66
+[90]  Region: 1, CH: 14, Node ID: 20, Energy: 539, (X, Y): 327, 154
+[91]  Region: 1, CH: 14, Node ID: 21, Energy: 761, (X, Y): 273, 117
+[92]  Region: 1, CH: 14, Node ID: 22, Energy: 546, (X, Y): 296, 28
+[93]  Region: 1, CH: 14, Node ID: 23, Energy: 683, (X, Y): 346, 137
+[94]  Region: 1, CH: 14, Node ID: 24, Energy: 349, (X, Y): 297, 177
+[95]  Region: 1, CH: 14, Node ID: 25, Energy: 563, (X, Y): 265, 161
+[96]  Region: 1, CH: 14, Node ID: 26, Energy: 455, (X, Y): 565, 109
+[97]  Region: 1, CH: 14, Node ID: 27, Energy: 825, (X, Y): 277, 13
+[98]  Region: 1, CH: 14, Node ID: 28, Energy: 820, (X, Y): 423, 74
+[99]  Region: 1, CH: 14, Node ID: 29, Energy: 401, (X, Y): 320, 31
+
+--------------ROUND 5------------------
+[REGION 1]
+竊翴计50
+CH: 38
+WSN_index: 48
+CH energy: 993
+
+[REGION 2]
+竊翴计200
+CH id: 16
+WSN_index: 26
+CH energy: 999
+
+[REGION 3]
+竊翴计100
+CH id: 16
+WSN_index: 26
+CH energy: 999
+
+[REGION 4]
+竊翴计150
+CH id: 16
+WSN_index: 26
+CH energy: 999
+
+[0]  Region: 1, CH: 16, Node ID: 0, Energy: 230, (X, Y): 47, 313
+[1]  Region: 1, CH: 16, Node ID: 1, Energy: 808, (X, Y): 113, 497
+[2]  Region: 1, CH: 16, Node ID: 2, Energy: 611, (X, Y): 85, 325
+[3]  Region: 1, CH: 16, Node ID: 3, Energy: 719, (X, Y): 127, 304
+[4]  Region: 1, CH: 16, Node ID: 4, Energy: 800, (X, Y): 40, 370
+[5]  Region: 1, CH: 16, Node ID: 5, Energy: 887, (X, Y): 144, 370
+[6]  Region: 1, CH: 16, Node ID: 6, Energy: 281, (X, Y): 153, 502
+[7]  Region: 1, CH: 16, Node ID: 7, Energy: 31, (X, Y): 58, 224
+[8]  Region: 1, CH: 16, Node ID: 8, Energy: 774, (X, Y): 169, 266
+[9]  Region: 1, CH: 16, Node ID: 9, Energy: 399, (X, Y): 21, 566
+[10]  Region: 2, CH: 16, Node ID: 0, Energy: 112, (X, Y): 338, 223
+[11]  Region: 2, CH: 16, Node ID: 1, Energy: 460, (X, Y): 498, 222
+[12]  Region: 2, CH: 16, Node ID: 2, Energy: 12, (X, Y): 442, 294
+[13]  Region: 2, CH: 16, Node ID: 3, Energy: 820, (X, Y): 582, 358
+[14]  Region: 2, CH: 16, Node ID: 4, Energy: 501, (X, Y): 527, 272
+[15]  Region: 2, CH: 16, Node ID: 5, Energy: 958, (X, Y): 493, 273
+[16]  Region: 2, CH: 16, Node ID: 6, Energy: 140, (X, Y): 477, 353
+[17]  Region: 2, CH: 16, Node ID: 7, Energy: 802, (X, Y): 337, 218
+[18]  Region: 2, CH: 16, Node ID: 8, Energy: 324, (X, Y): 329, 258
+[19]  Region: 2, CH: 16, Node ID: 9, Energy: 973, (X, Y): 224, 240
+[20]  Region: 2, CH: 16, Node ID: 10, Energy: 927, (X, Y): 395, 295
+[21]  Region: 2, CH: 16, Node ID: 11, Energy: 461, (X, Y): 497, 296
+[22]  Region: 2, CH: 16, Node ID: 12, Energy: 406, (X, Y): 302, 333
+[23]  Region: 2, CH: 16, Node ID: 13, Energy: 77, (X, Y): 464, 338
+[24]  Region: 2, CH: 16, Node ID: 14, Energy: 688, (X, Y): 257, 295
+[25]  Region: 2, CH: 16, Node ID: 15, Energy: 384, (X, Y): 236, 326
+[26]  Region: 2, CH: 16, Node ID: 16, Energy: 19, (X, Y): 205, 260
+[27]  Region: 2, CH: 16, Node ID: 17, Energy: 756, (X, Y): 466, 300
+[28]  Region: 2, CH: 16, Node ID: 18, Energy: 239, (X, Y): 560, 284
+[29]  Region: 2, CH: 16, Node ID: 19, Energy: 918, (X, Y): 337, 294
+[30]  Region: 2, CH: 16, Node ID: 20, Energy: 759, (X, Y): 249, 377
+[31]  Region: 2, CH: 16, Node ID: 21, Energy: 804, (X, Y): 542, 308
+[32]  Region: 2, CH: 16, Node ID: 22, Energy: 718, (X, Y): 567, 262
+[33]  Region: 2, CH: 16, Node ID: 23, Energy: 307, (X, Y): 563, 337
+[34]  Region: 2, CH: 16, Node ID: 24, Energy: 741, (X, Y): 578, 206
+[35]  Region: 2, CH: 16, Node ID: 25, Energy: 848, (X, Y): 562, 244
+[36]  Region: 2, CH: 16, Node ID: 26, Energy: 397, (X, Y): 320, 294
+[37]  Region: 2, CH: 16, Node ID: 27, Energy: 829, (X, Y): 246, 332
+[38]  Region: 2, CH: 16, Node ID: 28, Energy: 850, (X, Y): 304, 232
+[39]  Region: 2, CH: 16, Node ID: 29, Energy: 159, (X, Y): 563, 371
+[40]  Region: 2, CH: 16, Node ID: 30, Energy: 266, (X, Y): 573, 327
+[41]  Region: 2, CH: 16, Node ID: 31, Energy: 797, (X, Y): 520, 393
+[42]  Region: 2, CH: 16, Node ID: 32, Energy: 236, (X, Y): 256, 367
+[43]  Region: 2, CH: 16, Node ID: 33, Energy: 247, (X, Y): 556, 256
+[44]  Region: 2, CH: 16, Node ID: 34, Energy: 708, (X, Y): 403, 249
+[45]  Region: 2, CH: 16, Node ID: 35, Energy: 923, (X, Y): 593, 360
+[46]  Region: 2, CH: 16, Node ID: 36, Energy: 851, (X, Y): 243, 284
+[47]  Region: 2, CH: 16, Node ID: 37, Energy: 764, (X, Y): 576, 288
+[48]  Region: 2, CH: 16, Node ID: 38, Energy: 993, (X, Y): 599, 312
+[49]  Region: 2, CH: 16, Node ID: 39, Energy: 641, (X, Y): 542, 319
+[50]  Region: 3, CH: 16, Node ID: 0, Energy: 450, (X, Y): 77, 114
+[51]  Region: 3, CH: 16, Node ID: 1, Energy: 541, (X, Y): 105, 106
+[52]  Region: 3, CH: 16, Node ID: 2, Energy: 198, (X, Y): 173, 123
+[53]  Region: 3, CH: 16, Node ID: 3, Energy: 201, (X, Y): 74, 9
+[54]  Region: 3, CH: 16, Node ID: 4, Energy: 579, (X, Y): 159, 103
+[55]  Region: 3, CH: 16, Node ID: 5, Energy: 663, (X, Y): 173, 39
+[56]  Region: 3, CH: 16, Node ID: 6, Energy: 756, (X, Y): 135, 135
+[57]  Region: 3, CH: 16, Node ID: 7, Energy: 733, (X, Y): 6, 85
+[58]  Region: 3, CH: 16, Node ID: 8, Energy: 425, (X, Y): 164, 141
+[59]  Region: 3, CH: 16, Node ID: 9, Energy: 628, (X, Y): 191, 64
+[60]  Region: 3, CH: 16, Node ID: 10, Energy: 214, (X, Y): 105, 143
+[61]  Region: 3, CH: 16, Node ID: 11, Energy: 186, (X, Y): 197, 192
+[62]  Region: 3, CH: 16, Node ID: 12, Energy: 698, (X, Y): 116, 176
+[63]  Region: 3, CH: 16, Node ID: 13, Energy: 705, (X, Y): 89, 138
+[64]  Region: 3, CH: 16, Node ID: 14, Energy: 833, (X, Y): 114, 87
+[65]  Region: 3, CH: 16, Node ID: 15, Energy: 807, (X, Y): 57, 118
+[66]  Region: 3, CH: 16, Node ID: 16, Energy: 483, (X, Y): 161, 14
+[67]  Region: 3, CH: 16, Node ID: 17, Energy: 468, (X, Y): 180, 10
+[68]  Region: 3, CH: 16, Node ID: 18, Energy: 955, (X, Y): 156, 180
+[69]  Region: 3, CH: 16, Node ID: 19, Energy: 846, (X, Y): 89, 165
+[70]  Region: 1, CH: 16, Node ID: 0, Energy: 494, (X, Y): 451, 123
+[71]  Region: 1, CH: 16, Node ID: 1, Energy: 292, (X, Y): 481, 153
+[72]  Region: 1, CH: 16, Node ID: 2, Energy: 721, (X, Y): 549, 200
+[73]  Region: 1, CH: 16, Node ID: 3, Energy: 712, (X, Y): 523, 166
+[74]  Region: 1, CH: 16, Node ID: 4, Energy: 481, (X, Y): 592, 57
+[75]  Region: 1, CH: 16, Node ID: 5, Energy: 317, (X, Y): 542, 148
+[76]  Region: 1, CH: 16, Node ID: 6, Energy: 936, (X, Y): 467, 192
+[77]  Region: 1, CH: 16, Node ID: 7, Energy: 915, (X, Y): 551, 53
+[78]  Region: 1, CH: 16, Node ID: 8, Energy: 591, (X, Y): 384, 153
+[79]  Region: 1, CH: 16, Node ID: 9, Energy: 423, (X, Y): 341, 150
+[80]  Region: 1, CH: 16, Node ID: 10, Energy: 52, (X, Y): 486, 68
+[81]  Region: 1, CH: 16, Node ID: 11, Energy: 558, (X, Y): 233, 139
+[82]  Region: 1, CH: 16, Node ID: 12, Energy: 718, (X, Y): 459, 6
+[83]  Region: 1, CH: 16, Node ID: 13, Energy: 452, (X, Y): 563, 139
+[84]  Region: 1, CH: 16, Node ID: 14, Energy: 764, (X, Y): 251, 127
+[85]  Region: 1, CH: 16, Node ID: 15, Energy: 404, (X, Y): 373, 92
+[86]  Region: 1, CH: 16, Node ID: 16, Energy: 999, (X, Y): 293, 107
+[87]  Region: 1, CH: 16, Node ID: 17, Energy: 288, (X, Y): 480, 187
+[88]  Region: 1, CH: 16, Node ID: 18, Energy: 964, (X, Y): 313, 43
+[89]  Region: 1, CH: 16, Node ID: 19, Energy: 956, (X, Y): 527, 91
+[90]  Region: 1, CH: 16, Node ID: 20, Energy: 100, (X, Y): 316, 15
+[91]  Region: 1, CH: 16, Node ID: 21, Energy: 297, (X, Y): 492, 31
+[92]  Region: 1, CH: 16, Node ID: 22, Energy: 640, (X, Y): 352, 27
+[93]  Region: 1, CH: 16, Node ID: 23, Energy: 921, (X, Y): 440, 56
+[94]  Region: 1, CH: 16, Node ID: 24, Energy: 113, (X, Y): 306, 25
+[95]  Region: 1, CH: 16, Node ID: 25, Energy: 363, (X, Y): 584, 93
+[96]  Region: 1, CH: 16, Node ID: 26, Energy: 116, (X, Y): 353, 72
+[97]  Region: 1, CH: 16, Node ID: 27, Energy: 547, (X, Y): 584, 23
+[98]  Region: 1, CH: 16, Node ID: 28, Energy: 99, (X, Y): 268, 108
+[99]  Region: 1, CH: 16, Node ID: 29, Energy: 606, (X, Y): 339, 191

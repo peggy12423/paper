@@ -6,7 +6,9 @@
 #include <math.h>
 #include <fstream>
 #include <queue>
-#include <list>   
+#include <list>
+#include <iterator>
+
 
 #define roundnumber 20
 #define MAX_energy 6480//1.5(V)*0.6(A)*3600(sec)*2 = 6480µJ¦Õ 2*3¸¹¹q¦À

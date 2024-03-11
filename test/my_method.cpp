@@ -22,10 +22,12 @@ struct Node
 	Package buffer[NODE_BUFFER2];//buffer in sensor node
 };
 
-ofstream fout("NRCA_output.txt");
+ofstream fout("mymethod.txt");
 Node node[S_NUM];
 Sink sink;
 list<Node> R1_cluster, R2_cluster, R3_cluster, R4_cluster;
+int R1_S_num = 0, R2_S_num = 0, R3_S_num = 0, R4_S_num = 0;
+int R2_start_index = 0, R3_start_index = 0, R4_start_index = 0;
 list<Node> WSN;
 
 double distance(int a, int b){   //節點a傳到b的距離
@@ -97,17 +99,8 @@ void special_node_deployed(){
     int R3 = S_NUM * 0.2;
     int R4 = S_NUM * 0.3;
 
-    bool nodeAlreadyInCluster = false;
-    for (const auto& wsn : WSN) {
-        if (wsn.id == n) {
-            nodeAlreadyInCluster = true;
-            break;
-        }
-    }
-    if (nodeAlreadyInCluster) { // 如果節點已經被放入了某個區域中，則跳過本次迴圈
-        continue; 
-    }
-    for( int n = 0 ; n < R1 ; n++){
+	int n = 0;
+    for( n ; n < R1 ; n++){
         node[n].id = n;
         node[n].x = rand() % 200 + 1;  //節點x座標1~400隨機值
         node[n].y = rand() % 400 + 201;  //節點y座標1~400隨機值
@@ -117,9 +110,9 @@ void special_node_deployed(){
         node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
 		node[n].region = 1;
 		R1_cluster.push_back(node[n]);
-		WSN.push_back(node[n]);
+        R1_S_num++;
     }
-    for( int n = 0; n < R2 ; n++){
+    for( n ; n < R1+R2 ; n++){
         node[n].id = n;
         node[n].x = rand() % 400 + 201;  //節點x座標1~400隨機值
         node[n].y = rand() % 200 + 201;  //節點y座標1~400隨機值
@@ -129,9 +122,9 @@ void special_node_deployed(){
         node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
 		node[n].region = 2;
 		R2_cluster.push_back(node[n]);
-		WSN.push_back(node[n]);
+		R2_S_num++;
     }
-    for( int n = 0 ; n < R3 ; n++){
+    for( n ; n < R1+R2+R3 ; n++){
         node[n].id = n;
         node[n].x = rand() % 200 + 1;  //節點x座標1~400隨機值
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
@@ -141,9 +134,9 @@ void special_node_deployed(){
         node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
 		node[n].region = 3;
 		R3_cluster.push_back(node[n]);
-		WSN.push_back(node[n]);
+        R3_S_num++;
     }
-    for( int n = 0; n < R4; n++){
+    for( n ; n < S_NUM; n++){
         node[n].id = n;
         node[n].x = rand() % 400 + 201;  //節點x座標1~400隨機值
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
@@ -153,8 +146,18 @@ void special_node_deployed(){
         node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
 		node[n].region = 1;
 		R4_cluster.push_back(node[n]);
-		WSN.push_back(node[n]);
+        R4_S_num++;
     }
+    /*把所有節點放入list WSN*/
+	WSN.clear();			
+	WSN.insert(WSN.end(), R1_cluster.begin(), R1_cluster.end());
+	WSN.insert(WSN.end(), R2_cluster.begin(), R2_cluster.end());
+	WSN.insert(WSN.end(), R3_cluster.begin(), R3_cluster.end());
+	WSN.insert(WSN.end(), R4_cluster.begin(), R4_cluster.end());
+	
+	R2_start_index = R1_S_num;
+	R3_start_index = R2_start_index + R2_S_num;
+	R4_start_index = R3_start_index + R3_S_num;
 }
 
 void packet_init(list<Node>& cluster){
