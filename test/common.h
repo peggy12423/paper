@@ -9,8 +9,16 @@
 #include <list>
 #include <iterator>
 
+/*變動實驗參數設定*/
+#define S_NUM 100 //感測器總數
+#define compression_rate 0.25 //壓縮率 設1則沒有壓縮
+#define CH_transmit 120 //CH trans frequency
+#define SensingRate_type1f 360
+#define SensingRate_type2f 480
+#define SensingRate_type3f 720
 
-#define roundnumber 20
+/*固定實驗參數*/
+#define roundnumber 5
 #define MAX_energy 6480//1.5(V)*0.6(A)*3600(sec)*2 = 6480焦耳 2*3號電池
 #define SINK_BUFFER_SIZE 10000000
 #define SINKID 2000
@@ -40,6 +48,15 @@ struct Package{
 struct Sink{
 	int id = SINKID;//node information
 	Package buffer[SINK_BUFFER_SIZE];//buffer
+};
+
+struct Node{
+	int id, x, y, CH, region, type;  //
+    double energy = 0.0;//node information
+	double dist_to_sink = 0.0;//dist = distance to sink
+	Package receive;
+	Package sense;
+	Package buffer[NODE_BUFFER2];//buffer in sensor node
 };
 
 double avg_time = 0;

@@ -40,22 +40,24 @@ int R1_S_num = 0, R2_S_num = 0, R3_S_num = 0, R4_S_num = 0;
 int R2_start_index = 0, R3_start_index = 0, R4_start_index = 0;
 list<Node> WSN;
 
-double distance(int a, int b){   //節點a傳到b的距離
-	if (b != SINKID){
-		return sqrt(pow(abs(node[a].x - node[b].x), 2) + pow(abs(node[a].y - node[b].y), 2));
-	}
-	else{ //SINK
-		return sqrt(pow(abs(node[a].x - SINK_X), 2) + pow(abs(node[a].y - SINK_Y), 2));
-	}
+double distance(int node1_x, int node1_y, int node2_x, int node2_y){
+	return sqrt(pow(abs(node1_x - node2_x), 2) + pow(abs(node1_y - node2_y), 2));
 }
 
-void node_deployed(){
+void round_init(){
+	WSN.clear();
 	R1_cluster.clear();
 	R2_cluster.clear();
 	R3_cluster.clear();
 	R4_cluster.clear();
-	WSN.clear();
-    for(int n = 0 ; n < S_NUM ; n++ ){
+	R1_S_num = 0;
+	R2_S_num = 0;
+	R3_S_num = 0;
+	R4_S_num = 0;
+}
+
+void node_deployed(){
+	for(int n = 0 ; n < S_NUM ; n++ ){
 		// 檢查該節點是否已經被放入了某個區域中
         bool nodeAlreadyInCluster = false;
         for (const auto& wsn : WSN) {
@@ -73,28 +75,29 @@ void node_deployed(){
 		node[n].y = rand() % 400 + 1;  //節點y座標1~400隨機值
 		node[n].CH = n;
         node[n].type = rand() % 3 + 1; //sensing rate
-		node[n].energy = MAX_energy;
-		node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
-		if( node[n].x <= 200 && node[n].y <= 200 ){  //(x,y) = (1~200, 1~200)
+		node[n].energy = rand() % 1000 +1 ;
+		node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
+        if( node[n].x <= 200 && node[n].y > 200 ){  //(x,y) = (1~200, 201~400)
+			node[n].region = 1;
+			R1_cluster.push_back(node[n]);
+			R1_S_num++;
+        }
+		else if( node[n].x > 200 && node[n].y > 200){			//(x,y) = (201~400, 201~400)
+			node[n].region = 2;
+			R2_cluster.push_back(node[n]);
+			R2_S_num++;
+        }        
+		else if( node[n].x <= 200 && node[n].y <= 200 ){  //(x,y) = (1~200, 1~200)
 			node[n].region = 3;
 			R3_cluster.push_back(node[n]);
 			R3_S_num++;
         }
-        else if( node[n].x > 200 && node[n].y <= 200 ){  //(x,y) = (201~400, 1~200)
+        else{  //(x,y) = (201~400, 1~200)
 			node[n].region = 4;
 			R4_cluster.push_back(node[n]);
 			R4_S_num++;
         }        
-        else if( node[n].x <= 200 && node[n].y > 200 ){  //(x,y) = (1~200, 201~400)
-			node[n].region = 1;
-			R1_cluster.push_back(node[n]);
-			R1_S_num++;
-        }        
-        else{			//(x,y) = (201~400, 201~400)
-			node[n].region = 2;
-			R2_cluster.push_back(node[n]);
-			R2_S_num++;
-        }
+        
     }
 	/*把所有節點放入list WSN*/
 	WSN.clear();			
@@ -123,23 +126,23 @@ void special_node_deployed(){
     for( n ; n < R1 ; n++){
         node[n].id = n;
         node[n].x = rand() % 200 + 1;  //節點x座標1~400隨機值
-        node[n].y = rand() % 400 + 201;  //節點y座標1~400隨機值
+        node[n].y = rand() % 200 + 201;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = rand() % 2 + 2; //sensing rate 2or3
-        node[n].energy = MAX_energy;
-        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+        node[n].energy = rand() % 1000 +1 ;
+        node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 1;
 		R1_cluster.push_back(node[n]);
         R1_S_num++;
     }
     for( n ; n < R1+R2 ; n++){
         node[n].id = n;
-        node[n].x = rand() % 400 + 201;  //節點x座標1~400隨機值
+        node[n].x = rand() % 200 + 201;  //節點x座標1~400隨機值
         node[n].y = rand() % 200 + 201;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = 1; //sensing rate 1
-        node[n].energy = MAX_energy;
-        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+        node[n].energy = rand() % 1000 +1 ;
+        node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 2;
 		R2_cluster.push_back(node[n]);
 		R2_S_num++;
@@ -150,21 +153,21 @@ void special_node_deployed(){
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = rand() % 2 + 1; //sensing rate 1or2
-        node[n].energy = MAX_energy;
-        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+        node[n].energy = rand() % 1000 +1 ;
+        node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 3;
 		R3_cluster.push_back(node[n]);
         R3_S_num++;
     }
     for( n ; n < S_NUM; n++){
         node[n].id = n;
-        node[n].x = rand() % 400 + 201;  //節點x座標1~400隨機值
+        node[n].x = rand() % 200 + 201;  //節點x座標1~400隨機值
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = 2; //sensing rate
-        node[n].energy = MAX_energy;
-        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
-		node[n].region = 1;
+        node[n].energy = rand() % 1000 +1 ;
+        node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
+		node[n].region = 4;
 		R4_cluster.push_back(node[n]);
         R4_S_num++;
     }
@@ -178,6 +181,16 @@ void special_node_deployed(){
 	R2_start_index = R1_S_num;
 	R3_start_index = R2_start_index + R2_S_num;
 	R4_start_index = R3_start_index + R3_S_num;
+}
+
+void sink_buffer_init(){
+	sink.id = SINKID;
+	for (int i = 0; i < SINK_BUFFER_SIZE; i++){
+		sink.buffer[i].data = -1;
+		sink.buffer[i].dst = -1;
+		sink.buffer[i].src = -1;
+		sink.buffer[i].time = -1;
+	}
 }
 
 void packet_init(list<Node>& wsn){
@@ -196,16 +209,6 @@ void packet_init(list<Node>& wsn){
 			node.buffer[j].src = -1;
 			node.buffer[j].time = -1;
 		}
-	}
-}
-
-void sink_buffer_init(){
-	sink.id = SINKID;
-	for (int i = 0; i < SINK_BUFFER_SIZE; i++){
-		sink.buffer[i].data = -1;
-		sink.buffer[i].dst = -1;
-		sink.buffer[i].src = -1;
-		sink.buffer[i].time = -1;
 	}
 }
 
@@ -243,7 +246,7 @@ Node get_node(list<Node>& WSN, int index) {
     }
 }
 
-Node CH_Selection(list<Node>& WSN, int start_index, int end_index) {
+int CH_Selection(list<Node>& WSN, int start_index, int end_index) {
     double cluster_max_energy = find_max_energy(WSN, start_index, end_index);
     queue<Node> CH_cdd; // cdd candidate
     Node select_CH;
@@ -275,7 +278,7 @@ Node CH_Selection(list<Node>& WSN, int start_index, int end_index) {
     for (auto it = next(WSN.begin(), start_index); it != next(WSN.begin(), end_index + 1); ++it) {
         it->CH = select_CH.id;
     }
-	return select_CH;
+	return select_CH.id;
 }
 
 int Check_Life(list<Node>& WSN){   //有節點死掉返回該節點ID，沒有就返回SinkID
@@ -286,18 +289,6 @@ int Check_Life(list<Node>& WSN){   //有節點死掉返回該節點ID，沒有就返回SinkID
 		}
 	}
 	return SINKID;
-}
-
-int Find_Index(list<Node>& WSN, Node trans_node){
-	int index = 0;
-    for (auto it = WSN.begin(); it != WSN.end(); ++it) {
-        if (it->CH == trans_node.id) {
-            return index;
-        }
-        index++;
-    }
-    // 如果未找到相應的 CH，返回 -1
-    return -1;
 }
 
 void transaction( Node trans_node, int time){
@@ -330,7 +321,7 @@ void Packet_Deliver(Node node, Node CH_node){
 		CH_node.receive.data = -1;
 		CH_node.receive.time = -1;
 	}
-	double d_to_CH = distance(node.id, node.CH);
+	double d_to_CH = distance(node.x, node.y, CH_node.x, CH_node.y);
 	if(node.id != node.CH){
 		node.energy -= TransmitEnergy + d_to_CH * d_to_CH * AmplifierEnergy;
 	}
@@ -361,8 +352,17 @@ void Packet_Receive(Node CH_node){ //buffer滿了要變成priority queue 有能耗
 	CH_node.receive.time = -1;
 }
 
+void clean(Node CH_node, int start, int end){
+	for (start; start < end; start++){
+		CH_node.buffer[start].data = -1;
+		CH_node.buffer[start].dst = -1;
+		CH_node.buffer[start].src = -1;
+		CH_node.buffer[start].time = -1;
+	}
+}
+
 void CH_to_Sink(Node CH_node){ //有能耗
-	int start = 0;/*sink的buffer從哪邊開始是空的*/
+	int start = 0;    //sink的buffer從哪邊開始是空的
 	for (int b = 0; b < SINK_BUFFER_SIZE; b++){
 		if (sink.buffer[b].data == -1){
 			start = b;
@@ -386,9 +386,9 @@ void CH_to_Sink(Node CH_node){ //有能耗
 		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * compression_rate);
 		//fout << rate << endl;
-		CH_node.energy -= (TransmitEnergy + pow(distance(CH_node.id, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
+		CH_node.energy -= (TransmitEnergy + pow(distance(CH_node.x, CH_node.y, SINK_X, SINK_Y), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
 																							   //fout << "幫別人成功,我的能量只剩" << CH_node.energy << endl;
-																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH_node.x, CH_node.y, SINK_X, SINK_Y), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
 		clean(CH_node, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
 	}
 	else{      /*自己傳*/
@@ -408,19 +408,10 @@ void CH_to_Sink(Node CH_node){ //有能耗
 		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * compression_rate);
 		//fout << rate << endl;
-		CH_node.energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+		CH_node.energy -= (TransmitEnergy + pow(distance(CH_node.x, CH_node.y, SINK_X, SINK_Y), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
 																							   //fout << "自己傳,我的能量只剩" << CH_node.energy << endl;
-																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH_node.x, CH_node.y, SINK_X, SINK_Y), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
 		clean(CH_node, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
-	}
-}
-
-void clean(Node CH_node, int start, int end){
-	for (start; start < end; start++){
-		CH_node.buffer[start].data = -1;
-		CH_node.buffer[start].dst = -1;
-		CH_node.buffer[start].src = -1;
-		CH_node.buffer[start].time = -1;
 	}
 }
 
@@ -456,8 +447,8 @@ void CH1_to_CH2(Node CH1, Node CH2, int v){ //除了2區以外的區域都丟到2區裡面能量
 		//fout << "模式二收到" << rate << endl;
 	}
 	rate = ceil(rate * R);
-	CH1.energy -= (TransmitEnergy + pow(distance(CH1.id, CH2.id), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
-																						  //fout << "node : " << CH1 << "能量減少 "<<(TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
+	CH1.energy -= (TransmitEnergy + pow(distance(CH1.x, CH1.y, CH2.x, CH2.y , 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																						  //fout << "node : " << CH1 << "能量減少 "<<(TransmitEnergy + pow(distance(CH1.x, CH1.y, CH2.x, CH2.y), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
 	CH2.energy -= (ReceiveEnergy)*rate;
 	//fout << "node : " << dst << "能量減少 "<< (ReceiveEnergy)*rate<<" ,因為在區域2收到別的資料" << endl;
 	//fout <<"我是節點 "<< dst << " 收到別人的" << endl;
@@ -467,21 +458,35 @@ void CH1_to_CH2(Node CH1, Node CH2, int v){ //除了2區以外的區域都丟到2區裡面能量
 int main(){
 	srand((unsigned)time(NULL)); //random seed
 	for (int round = 0; round < round_number; round++){
+		round_init();
 		node_deployed();
+		// special_node_deployed();
 		
 		/*initialization*/
 		packet_init(WSN);
 		sink_buffer_init();
 
 		/*firts CH selection*/
-		CH_Selection( 0, R1_S_num-1 );
-		CH_Selection( R2_start_index, R3_start_index-1);
-		CH_Selection( R3_start_index, R4_start_index-1);
-		CH_Selection( R4_start_index, S_NUM-1);
-		int R1_CHid = WSN[0].CH;
-		int R2_CHid = WSN[R2_start_index].CH;
-		int R3_CHid = WSN[R3_start_index].CH;
-		int R4_CHid = WSN[R4_start_index].CH;
+		int R1_CH = CH_Selection( WSN, 0, R1_S_num-1 );
+		int R2_CH = CH_Selection( WSN, R2_start_index, R3_start_index-1);
+		int R3_CH = CH_Selection( WSN, R3_start_index, R4_start_index-1);
+		int R4_CH = CH_Selection( WSN, R4_start_index, S_NUM-1);
+
+		/*把四個區域的CH節點在WSN的索引值*/
+		int CH1_index = Find_Index(WSN, R1_CH);
+		int CH2_index = Find_Index(WSN, R2_CH);	
+		int CH3_index = Find_Index(WSN, R3_CH);	
+		int CH4_index = Find_Index(WSN, R4_CH);	
+
+		auto CH1_it = next( WSN.begin(), CH1_index);
+		Node& CH1 = *CH1_it;
+		auto CH2_it = next( WSN.begin(), CH2_index);
+		Node& CH2 = *CH2_it;
+		auto CH3_it = next( WSN.begin(), CH3_index);
+		Node& CH3 = *CH3_it;
+		auto CH4_it = next( WSN.begin(), CH4_index);
+		Node& CH4 = *CH4_it;
+		/*-------------0311 處理完成(思考每個演算法要一樣拓樸)*/
 
 		int countround[4] = {0, 0, 0, 0};
 
@@ -497,12 +502,6 @@ int main(){
 				countround[2] = 10;
 			if(countround[3] == 0)
 				countround[3] = 10;
-
-			/*把四個區域的CH節點在WSN的索引值*/
-			int CH1_index = Find_Index(WSN, R1_CHid);
-			int CH2_index = Find_Index(WSN, R2_CHid);	
-			int CH3_index = Find_Index(WSN, R3_CHid);
-			int CH4_index = Find_Index(WSN, R4_CHid);
 
 			int dead_node = Check_Life(WSN); //有節點死掉返回該節點ID，沒有就返回SinkID
 			if( dead_node < SINKID ){  //有節點死掉
@@ -532,18 +531,11 @@ int main(){
 				}
 			}
 
-				for(auto& node : R3_cluster){
-					transaction(node, R3_CH, time);
-				}
-				for(auto& node : R4_cluster){
-					transaction(node, R4_CH, time);
-				}
-			}
 			if(time % CH_frequency == 0){
-				CH_to_Sink(WSN[]);
-				CH1_to_CH2(R1_CH, R2_CH, 1);
-				CH1_to_CH2(R3_CH, R2_CH, 1);
-				CH1_to_CH2(R4_CH, R2_CH, 1);
+				CH_to_Sink(CH1);
+				CH1_to_CH2(CH2, CH1, 1);
+				CH1_to_CH2(CH3, CH1, 1);
+				CH1_to_CH2(CH4, CH1, 1);
 
 				countround[0]--;
 				if(countround[0] == 0)
@@ -567,4 +559,5 @@ int main(){
 	fout << "avg_drop : " << drop << endl;
 	fout << "avg_PLR : " << (drop + macdrop) / total << endl;
 	return 0;
+	}
 }

@@ -1,52 +1,35 @@
 #include"common.h"
 
-/*變動實驗參數設定*/
-#define S_NUM 900 //感測器總數
-#define compression_rate 0.25 //壓縮率 設1則沒有壓縮
-#define CH_transmit 120 //CH trans frequency
-#define SensingRate_type1f 360
-#define SensingRate_type2f 480
-#define SensingRate_type3f 720
-
-struct C{
-	double x, y;
-};
-
-struct Node
-{
-	int id, x, y, CH, region, type;  //
-    double energy = 0.0;//node information
-	double dist_to_sink = 0.0;//dist = distance to sink
-	Package receive;
-	Package sense;
-	Package buffer[NODE_BUFFER2];//buffer in sensor node
-};
+// struct C{
+// 	double x, y;
+// };
 
 ofstream fout("mymethod.txt");
-Node node[S_NUM];
 Sink sink;
-list<Node> R1_cluster, R2_cluster, R3_cluster, R4_cluster;
+Node node[S_NUM];
+list<Node> WSN, R1_cluster, R2_cluster, R3_cluster, R4_cluster;
 int R1_S_num = 0, R2_S_num = 0, R3_S_num = 0, R4_S_num = 0;
 int R2_start_index = 0, R3_start_index = 0, R4_start_index = 0;
-list<Node> WSN;
 
-double distance(int a, int b){   //節點a傳到b的距離
-	if (b != SINKID){
-		return sqrt(pow(abs(node[a].x - node[b].x), 2) + pow(abs(node[a].y - node[b].y), 2));
-	}
-	else{ //SINK
-		return sqrt(pow(abs(node[a].x - SINK_X), 2) + pow(abs(node[a].y - SINK_Y), 2));
-	}
+double distance(int node1_x, int node1_y, int node2_x, int node2_y){
+	return sqrt(pow(abs(node1_x - node2_x), 2) + pow(abs(node1_y - node2_y), 2));
 }
 
-void node_deployed(){
+void round_init(){
+	WSN.clear();
 	R1_cluster.clear();
 	R2_cluster.clear();
 	R3_cluster.clear();
 	R4_cluster.clear();
-	WSN.clear();
-    for(int n = 0 ; n < S_NUM ; n++ ){
-		/* 檢查該節點是否已經被放入了某個區域中*/
+	R1_S_num = 0;
+	R2_S_num = 0;
+	R3_S_num = 0;
+	R4_S_num = 0;
+}
+
+void node_deployed(){
+	for(int n = 0 ; n < S_NUM ; n++ ){
+		// 檢查該節點是否已經被放入了某個區域中
         bool nodeAlreadyInCluster = false;
         for (const auto& wsn : WSN) {
             if (wsn.id == n) {
@@ -63,29 +46,40 @@ void node_deployed(){
 		node[n].y = rand() % 400 + 1;  //節點y座標1~400隨機值
 		node[n].CH = n;
         node[n].type = rand() % 3 + 1; //sensing rate
-		node[n].energy = MAX_energy;
-		node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
-		if( node[n].x <= 200 && node[n].y <= 200 ){  //(x,y) = (1~200, 1~200)
-			node[n].region = 3;
-			R3_cluster.push_back(node[n]);
-			WSN.push_back(node[n]);
-        }
-        else if( node[n].x > 200 && node[n].y <= 200 ){  //(x,y) = (201~400, 1~200)
-			node[n].region = 4;
-			R4_cluster.push_back(node[n]);
-			WSN.push_back(node[n]);
-        }        
-        else if( node[n].x <= 200 && node[n].y > 200 ){  //(x,y) = (1~200, 201~400)
+		node[n].energy = rand() % 1000 +1 ;
+		node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
+        if( node[n].x <= 200 && node[n].y > 200 ){  //(x,y) = (1~200, 201~400)
 			node[n].region = 1;
 			R1_cluster.push_back(node[n]);
-			WSN.push_back(node[n]);
-        }        
-        else{			//(x,y) = (201~400, 201~400)
+			R1_S_num++;
+        }
+		else if( node[n].x > 200 && node[n].y > 200){			//(x,y) = (201~400, 201~400)
 			node[n].region = 2;
 			R2_cluster.push_back(node[n]);
-			WSN.push_back(node[n]);
+			R2_S_num++;
+        }        
+		else if( node[n].x <= 200 && node[n].y <= 200 ){  //(x,y) = (1~200, 1~200)
+			node[n].region = 3;
+			R3_cluster.push_back(node[n]);
+			R3_S_num++;
         }
+        else{  //(x,y) = (201~400, 1~200)
+			node[n].region = 4;
+			R4_cluster.push_back(node[n]);
+			R4_S_num++;
+        }        
+        
     }
+	/*把所有節點放入list WSN*/
+	WSN.clear();			
+	WSN.insert(WSN.end(), R1_cluster.begin(), R1_cluster.end());
+	WSN.insert(WSN.end(), R2_cluster.begin(), R2_cluster.end());
+	WSN.insert(WSN.end(), R3_cluster.begin(), R3_cluster.end());
+	WSN.insert(WSN.end(), R4_cluster.begin(), R4_cluster.end());
+	
+	R2_start_index = R1_S_num;
+	R3_start_index = R2_start_index + R2_S_num;
+	R4_start_index = R3_start_index + R3_S_num;
 }
 
 void special_node_deployed(){
@@ -103,23 +97,23 @@ void special_node_deployed(){
     for( n ; n < R1 ; n++){
         node[n].id = n;
         node[n].x = rand() % 200 + 1;  //節點x座標1~400隨機值
-        node[n].y = rand() % 400 + 201;  //節點y座標1~400隨機值
+        node[n].y = rand() % 200 + 201;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = rand() % 2 + 2; //sensing rate 2or3
-        node[n].energy = MAX_energy;
-        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+        node[n].energy = rand() % 1000 +1 ;
+        node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 1;
 		R1_cluster.push_back(node[n]);
         R1_S_num++;
     }
     for( n ; n < R1+R2 ; n++){
         node[n].id = n;
-        node[n].x = rand() % 400 + 201;  //節點x座標1~400隨機值
+        node[n].x = rand() % 200 + 201;  //節點x座標1~400隨機值
         node[n].y = rand() % 200 + 201;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = 1; //sensing rate 1
-        node[n].energy = MAX_energy;
-        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+        node[n].energy = rand() % 1000 +1 ;
+        node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 2;
 		R2_cluster.push_back(node[n]);
 		R2_S_num++;
@@ -130,21 +124,21 @@ void special_node_deployed(){
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = rand() % 2 + 1; //sensing rate 1or2
-        node[n].energy = MAX_energy;
-        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
+        node[n].energy = rand() % 1000 +1 ;
+        node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 3;
 		R3_cluster.push_back(node[n]);
         R3_S_num++;
     }
     for( n ; n < S_NUM; n++){
         node[n].id = n;
-        node[n].x = rand() % 400 + 201;  //節點x座標1~400隨機值
+        node[n].x = rand() % 200 + 201;  //節點x座標1~400隨機值
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = 2; //sensing rate
-        node[n].energy = MAX_energy;
-        node[n].dist_to_sink = distance(n, SINKID);  //距離區sink
-		node[n].region = 1;
+        node[n].energy = rand() % 1000 +1 ;
+        node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
+		node[n].region = 4;
 		R4_cluster.push_back(node[n]);
         R4_S_num++;
     }
@@ -160,8 +154,18 @@ void special_node_deployed(){
 	R4_start_index = R3_start_index + R3_S_num;
 }
 
-void packet_init(list<Node>& cluster){
-	for(auto& node : cluster){
+void sink_buffer_init(){
+	sink.id = SINKID;
+	for (int i = 0; i < SINK_BUFFER_SIZE; i++){
+		sink.buffer[i].data = -1;
+		sink.buffer[i].dst = -1;
+		sink.buffer[i].src = -1;
+		sink.buffer[i].time = -1;
+	}
+}
+
+void packet_init(list<Node>& wsn){
+	for(auto& node : wsn){
 		node.receive.data = -1;
 		node.receive.dst = -1;
 		node.receive.src = -1;
@@ -176,15 +180,6 @@ void packet_init(list<Node>& cluster){
 			node.buffer[j].src = -1;
 			node.buffer[j].time = -1;
 		}
-	}
-}
-
-void sink_buffer_init(){
-	for (int i = 0; i < SINK_BUFFER_SIZE; i++){
-		sink.buffer[i].data = -1;
-		sink.buffer[i].dst = -1;
-		sink.buffer[i].src = -1;
-		sink.buffer[i].time = -1;
 	}
 }
 
@@ -209,8 +204,12 @@ double node_density(list<Node>& cluster){
 int main(){
     srand((unsigned)time(NULL));
     for(int round = 0; round < round_number; round++){
+        round_init();
         node_deployed();
         // special_node_deployed();
 
+        /*initialization*/
+		packet_init(WSN);
+		sink_buffer_init();
     }
 }
