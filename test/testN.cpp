@@ -1,10 +1,15 @@
 #include"common.h"
 
-// struct C{
-// 	double x, y;
-// };
 
-ofstream fout("normal_result.txt");
+/*變動實驗參數設定*/
+#define S_NUM 100 //感測器總數
+#define compression_rate 0.25 //壓縮率 設1則沒有壓縮
+#define CH_transmit 120 //CH trans frequency
+#define SensingRate_type1f 360
+#define SensingRate_type2f 480
+#define SensingRate_type3f 720
+
+ofstream fout("special_result.txt");
 Sink sink;
 Node node[S_NUM];
 list<Node> WSN, R1_cluster, R2_cluster, R3_cluster, R4_cluster;
@@ -83,12 +88,7 @@ void node_deployed(){
 }
 
 void special_node_deployed(){
-   	R1_cluster.clear();
-	R2_cluster.clear();
-	R3_cluster.clear();
-	R4_cluster.clear();
-	WSN.clear();
-    int R1 = S_NUM * 0.1;
+   	int R1 = S_NUM * 0.1;
     int R2 = S_NUM * 0.4;
     int R3 = S_NUM * 0.2;
     int R4 = S_NUM * 0.3;
@@ -207,16 +207,6 @@ int Find_Index(list<Node>& WSN, int nodeID){
     return -1;
 }
 
-Node get_node(list<Node>& WSN, int index) {
-    if (index >= 0 && index < WSN.size()) {
-        auto it = next(WSN.begin(), index);
-        return *it;
-    } else {
-        // 處理索引超出範圍的情況，例如拋出異常或返回一個適當的默認值
-        return Node(); // 返回一個適當的默認值
-    }
-}
-
 int CH_Selection(list<Node>& WSN, int start_index, int end_index) {
     double cluster_max_energy = find_max_energy(WSN, start_index, end_index);
     queue<Node> CH_cdd; // cdd candidate
@@ -278,8 +268,8 @@ int main() {
 		fout<<endl<<"--------------ROUND "<< round+1 <<"------------------"<<endl;
 		round_init();
 
-		// special_node_deployed();
-		node_deployed();
+		special_node_deployed();
+		// node_deployed();
 		
 		/*initialization*/
 		packet_init(WSN);

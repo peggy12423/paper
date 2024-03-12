@@ -1,11 +1,9 @@
 #include"common.h"
 
 /*變動實驗參數設定*/
-#define S_NUM 900 //感測器總數
+#define S_NUM 100 //感測器總數
 #define compression_rate 0.25 //壓縮率 設1則沒有壓縮
 #define CH_transmit 120 //CH trans frequency
-
-
 #define SensingRate_type1f 360 //常規sensing frequency
 #define SensingRate_type2f 480
 #define SensingRate_type3f 600
@@ -22,8 +20,7 @@ struct C{
 	double x, y;
 };
 
-struct Node
-{
+struct Node{
 	int id, x, y, CH, region, type;  //
     double energy;//node information
 	double dist_to_sink;//dist = distance to sink
@@ -75,7 +72,7 @@ void node_deployed(){
 		node[n].y = rand() % 400 + 1;  //節點y座標1~400隨機值
 		node[n].CH = n;
         node[n].type = rand() % 3 + 1; //sensing rate
-		node[n].energy = rand() % 1000 +1 ;
+		node[n].energy = MAX_energy ;
 		node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
         if( node[n].x <= 200 && node[n].y > 200 ){  //(x,y) = (1~200, 201~400)
 			node[n].region = 1;
@@ -112,12 +109,7 @@ void node_deployed(){
 }
 
 void special_node_deployed(){
-   	R1_cluster.clear();
-	R2_cluster.clear();
-	R3_cluster.clear();
-	R4_cluster.clear();
-	WSN.clear();
-    int R1 = S_NUM * 0.1;
+   	int R1 = S_NUM * 0.1;
     int R2 = S_NUM * 0.4;
     int R3 = S_NUM * 0.2;
     int R4 = S_NUM * 0.3;
@@ -129,7 +121,7 @@ void special_node_deployed(){
         node[n].y = rand() % 200 + 201;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = rand() % 2 + 2; //sensing rate 2or3
-        node[n].energy = rand() % 1000 +1 ;
+        node[n].energy = MAX_energy ;
         node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 1;
 		R1_cluster.push_back(node[n]);
@@ -141,7 +133,7 @@ void special_node_deployed(){
         node[n].y = rand() % 200 + 201;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = 1; //sensing rate 1
-        node[n].energy = rand() % 1000 +1 ;
+        node[n].energy = MAX_energy ;
         node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 2;
 		R2_cluster.push_back(node[n]);
@@ -153,7 +145,7 @@ void special_node_deployed(){
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = rand() % 2 + 1; //sensing rate 1or2
-        node[n].energy = rand() % 1000 +1 ;
+        node[n].energy = MAX_energy ;
         node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 3;
 		R3_cluster.push_back(node[n]);
@@ -165,7 +157,7 @@ void special_node_deployed(){
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
         node[n].CH = n;
         node[n].type = 2; //sensing rate
-        node[n].energy = rand() % 1000 +1 ;
+        node[n].energy = MAX_energy ;
         node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 4;
 		R4_cluster.push_back(node[n]);
@@ -236,16 +228,6 @@ int Find_Index(list<Node>& WSN, int nodeID){
     return -1;
 }
 
-Node get_node(list<Node>& WSN, int index) {
-    if (index >= 0 && index < WSN.size()) {
-        auto it = next(WSN.begin(), index);
-        return *it;
-    } else {
-        // 處理索引超出範圍的情況，例如拋出異常或返回一個適當的默認值
-        return Node(); // 返回一個適當的默認值
-    }
-}
-
 int CH_Selection(list<Node>& WSN, int start_index, int end_index) {
     double cluster_max_energy = find_max_energy(WSN, start_index, end_index);
     queue<Node> CH_cdd; // cdd candidate
@@ -291,17 +273,11 @@ int Check_Life(list<Node>& WSN){   //有節點死掉返回該節點ID，沒有就返回SinkID
 	return SINKID;
 }
 
-void transaction( Node trans_node, int time){
-	int CH_WSN_index = Find_Index(WSN, trans_node);
-	Packet_Generate(trans_node, time);
-	Packet_Deliver(trans_node, WSN[CH_WSN_index]);
-	Packet_Receive(WSN[CH_WSN_index]);
-}
-
 void Packet_Generate(Node node, int time){ //節點生成封包的能耗
 	total++;
 	node.sense.src = node.id;
 	node.sense.dst = node.CH;
+	node.sense.data = node.type;
 	node.sense.time = time;
 	node.energy -= ProbeEnergy;
 }
@@ -322,13 +298,13 @@ void Packet_Deliver(Node node, Node CH_node){
 		CH_node.receive.time = -1;
 	}
 	double d_to_CH = distance(node.x, node.y, CH_node.x, CH_node.y);
-	if(node.id != node.CH){
+	if( node.id != node.CH ){
 		node.energy -= TransmitEnergy + d_to_CH * d_to_CH * AmplifierEnergy;
 	}
 }
 
 void Packet_Receive(Node CH_node){ //buffer滿了要變成priority queue 有能耗
-	if ( CH_node.receive.src != CH_node.CH){ //不是來自自己的才扣能量
+	if ( CH_node.receive.src != CH_node.id){ //不是來自自己的才扣能量
 		CH_node.energy -= ReceiveEnergy;
 	} //drop還算是有收
 	int full = 1;
@@ -352,6 +328,37 @@ void Packet_Receive(Node CH_node){ //buffer滿了要變成priority queue 有能耗
 	CH_node.receive.time = -1;
 }
 
+void transaction( list<Node>& WSN, Node trans_node, int time, int R1_ch, int R2_ch, int R3_ch, int R4_ch ){
+	if( trans_node.CH == R1_ch ){
+		auto node_CH_it = next( WSN.begin(), Find_Index(WSN, R1_ch));
+		Node& node_CH = *node_CH_it;
+		Packet_Generate( trans_node, time );
+		Packet_Deliver( trans_node, node_CH );
+		Packet_Receive( node_CH );
+	}
+	else if( trans_node.CH == R2_ch ){
+		auto node_CH_it = next( WSN.begin(), Find_Index(WSN, R2_ch));
+		Node& node_CH = *node_CH_it;
+		Packet_Generate( trans_node, time );
+		Packet_Deliver( trans_node, node_CH );
+		Packet_Receive( node_CH );
+	}
+	else if( trans_node.CH == R3_ch ){
+		auto node_CH_it = next( WSN.begin(), Find_Index(WSN, R3_ch));
+		Node& node_CH = *node_CH_it;
+		Packet_Generate( trans_node, time );
+		Packet_Deliver( trans_node, node_CH );
+		Packet_Receive( node_CH );
+	}
+	else{
+		auto node_CH_it = next( WSN.begin(), Find_Index(WSN, R4_ch));
+		Node& node_CH = *node_CH_it;
+		Packet_Generate( trans_node, time );
+		Packet_Deliver( trans_node, node_CH );
+		Packet_Receive( node_CH );
+	}
+}
+
 void clean(Node CH_node, int start, int end){
 	for (start; start < end; start++){
 		CH_node.buffer[start].data = -1;
@@ -361,18 +368,18 @@ void clean(Node CH_node, int start, int end){
 	}
 }
 
-void CH_to_Sink(Node CH_node){ //有能耗
+void CH_to_Sink(Node CH_node){ //R4傳到Sink
 	int start = 0;    //sink的buffer從哪邊開始是空的
-	for (int b = 0; b < SINK_BUFFER_SIZE; b++){
-		if (sink.buffer[b].data == -1){
+	for( int b = 0; b < SINK_BUFFER_SIZE; b++ ){
+		if( sink.buffer[b].data == -1){
 			start = b;
 			break;
 		}
 	}
-	if (CH_node.buffer[NODE_BUFFER1].data != -1){    //幫別的CH傳
+	if( CH_node.buffer[NODE_BUFFER1].data != -1 ){    //幫別的CH傳
 		double rate = 0;/*壓縮率0.25*/
-		for (int b = NODE_BUFFER1; b < NODE_BUFFER2; b++){
-			if (CH_node.buffer[b].data == -1){  //有空的就不用繼續了
+		for(int b = NODE_BUFFER1; b < NODE_BUFFER2; b++){
+			if( CH_node.buffer[b].data == -1 ){  //有空的就不用繼續了
 				break;
 			}
 			rate = b - NODE_BUFFER1 + 1;
@@ -389,7 +396,7 @@ void CH_to_Sink(Node CH_node){ //有能耗
 		CH_node.energy -= (TransmitEnergy + pow(distance(CH_node.x, CH_node.y, SINK_X, SINK_Y), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
 																							   //fout << "幫別人成功,我的能量只剩" << CH_node.energy << endl;
 																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH_node.x, CH_node.y, SINK_X, SINK_Y), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
-		clean(CH_node, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
+		clean( CH_node, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
 	}
 	else{      /*自己傳*/
 		double rate = 0;/*壓縮率0.25*/
@@ -411,7 +418,7 @@ void CH_to_Sink(Node CH_node){ //有能耗
 		CH_node.energy -= (TransmitEnergy + pow(distance(CH_node.x, CH_node.y, SINK_X, SINK_Y), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
 																							   //fout << "自己傳,我的能量只剩" << CH_node.energy << endl;
 																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH_node.x, CH_node.y, SINK_X, SINK_Y), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
-		clean(CH_node, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
+		clean( CH_node, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
 	}
 }
 
@@ -420,7 +427,7 @@ void CH1_to_CH2(Node CH1, Node CH2, int v){ //除了2區以外的區域都丟到2區裡面能量
 	double rate = 0;/*壓縮率0.25*/
 	if (v == 1)	{
 		for (int b = 0; b < NODE_BUFFER1; b++)		{
-			if (CH1.buffer[b].data == -1){ //有空的就不用繼續了
+			if ( CH1.buffer[b].data == -1){ //有空的就不用繼續了
 				break;
 			}
 			rate = b + 1;
@@ -432,8 +439,8 @@ void CH1_to_CH2(Node CH1, Node CH2, int v){ //除了2區以外的區域都丟到2區裡面能量
 		clean(CH1, 0, NODE_BUFFER1);
 		//fout <<"模式一收到" <<rate << endl;
 	}
-	if (v == 2){
-		for (int b = NODE_BUFFER1; b < NODE_BUFFER2; b++){
+	if( v == 2 ){
+		for( int b = NODE_BUFFER1; b < NODE_BUFFER2; b++){
 			if (CH1.buffer[b].data == -1){  //有空的就不用繼續了
 				break;
 			}
@@ -446,18 +453,19 @@ void CH1_to_CH2(Node CH1, Node CH2, int v){ //除了2區以外的區域都丟到2區裡面能量
 		clean(CH1, NODE_BUFFER1, NODE_BUFFER2);
 		//fout << "模式二收到" << rate << endl;
 	}
-	rate = ceil(rate * R);
-	CH1.energy -= (TransmitEnergy + pow(distance(CH1.x, CH1.y, CH2.x, CH2.y , 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+	rate = ceil(rate * compression_rate);
+	CH1.energy -= (TransmitEnergy + pow(distance(CH1.x, CH1.y, CH2.x, CH2.y), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
 																						  //fout << "node : " << CH1 << "能量減少 "<<(TransmitEnergy + pow(distance(CH1.x, CH1.y, CH2.x, CH2.y), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
 	CH2.energy -= (ReceiveEnergy)*rate;
 	//fout << "node : " << dst << "能量減少 "<< (ReceiveEnergy)*rate<<" ,因為在區域2收到別的資料" << endl;
 	//fout <<"我是節點 "<< dst << " 收到別人的" << endl;
-	CH2Sink(CH2);
+	CH_to_Sink(CH2);
 }
 
 int main(){
 	srand((unsigned)time(NULL)); //random seed
 	for (int round = 0; round < round_number; round++){
+		cout << "----------------ROUND " << round +1 << "-----------------" <<endl;
 		round_init();
 		node_deployed();
 		// special_node_deployed();
@@ -465,6 +473,7 @@ int main(){
 		/*initialization*/
 		packet_init(WSN);
 		sink_buffer_init();
+		cout << "initialization END" <<endl;
 
 		/*firts CH selection*/
 		int R1_CH = CH_Selection( WSN, 0, R1_S_num-1 );
@@ -486,6 +495,7 @@ int main(){
 		Node& CH3 = *CH3_it;
 		auto CH4_it = next( WSN.begin(), CH4_index);
 		Node& CH4 = *CH4_it;
+		cout << "CH_selection END" << endl;
 		/*-------------0311 處理完成(思考每個演算法要一樣拓樸)*/
 
 		int countround[4] = {0, 0, 0, 0};
@@ -510,45 +520,50 @@ int main(){
 				break;
 			}
 			if( time % SensingRate_type1f == 0){
+				// cout << "Sensing Rate 1 "<<endl;
 				for(auto& node : WSN){
 					if( node.type == 1 ){
-						transaction(node, time);
+						transaction( WSN, node, time, R1_CH, R2_CH, R3_CH, R4_CH );
 					}
 				}
 			}
 			if( time % SensingRate_type2f == 0){
+				// cout << "Sensing Rate 2 "<<endl;
 				for(auto& node : WSN){
 					if( node.type == 2){
-						transaction(node, time);
+						transaction( WSN, node, time, R1_CH, R2_CH, R3_CH, R4_CH );
 					}
 				}
 			}
 			if( time % SensingRate_type3f == 0){
+				// cout << "Sensing Rate 3 "<<endl;
 				for(auto& node : WSN){
 					if( node.type == 3){
-						transaction(node, time);
+						transaction( WSN, node, time, R1_CH, R2_CH, R3_CH, R4_CH );
 					}
 				}
 			}
 
-			if(time % CH_frequency == 0){
-				CH_to_Sink(CH1);
-				CH1_to_CH2(CH2, CH1, 1);
-				CH1_to_CH2(CH3, CH1, 1);
-				CH1_to_CH2(CH4, CH1, 1);
+			if( time % CH_frequency == 0){
+				// cout << "send to another region START" <<endl;
+				CH_to_Sink(CH4);
+				CH1_to_CH2(CH3, CH4, 1);
+				CH1_to_CH2(CH1, CH4, 1);
+				CH1_to_CH2(CH2, CH4, 1);
 
 				countround[0]--;
 				if(countround[0] == 0)
-					CH_Selection(0, R1_S_num-1 );
+					CH_Selection( WSN, 0, R1_S_num-1 );
 				if(countround[1] == 0)
-					CH_Selection(R2_start_index, R3_start_index-1);
+					CH_Selection( WSN, R2_start_index, R3_start_index-1);
 				if(countround[2] == 0)
-					CH_Selection(R3_start_index, R4_start_index-1 );
+					CH_Selection( WSN, R3_start_index, R4_start_index-1 );
 				if(countround[3] == 0)
-					CH_Selection(R4_start_index, S_NUM-1);
+					CH_Selection( WSN, R4_start_index, S_NUM-1);
 			}
 			time++;
 		}
+	}
 	total /= round_number;
 	macdrop /= round_number;
 	drop /= round_number;
@@ -559,5 +574,4 @@ int main(){
 	fout << "avg_drop : " << drop << endl;
 	fout << "avg_PLR : " << (drop + macdrop) / total << endl;
 	return 0;
-	}
 }
