@@ -45,10 +45,4 @@ struct Sink{
 	Package buffer[SINK_BUFFER_SIZE];//buffer
 };
 
-double avg_time = 0;
-double drop = 0;
-double macdrop = 0;
-double total = 0;
-
-
 #endif

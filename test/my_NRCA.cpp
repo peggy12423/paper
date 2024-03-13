@@ -2,7 +2,7 @@
 #include <iostream>
 
 /*變動實驗參數設定*/
-#define S_NUM 100 //感測器總數
+#define S_NUM 500 //感測器總數
 #define compression_rate 0.25 //壓縮率 設1則沒有壓縮
 #define CH_transmit 120 //CH trans frequency
 #define SensingRate_type1f 360 //常規sensing frequency
@@ -19,12 +19,18 @@ struct Node{
 	Package buffer[NODE_BUFFER2];//buffer in sensor node
 };
 
+double avg_time = 0;
+double drop = 0;
+double macdrop = 0;
+double total = 0;
+
 Node node[S_NUM];
 Sink sink;
 list<Node> R1_cluster, R2_cluster, R3_cluster, R4_cluster;
 int R1_S_num = 0, R2_S_num = 0, R3_S_num = 0, R4_S_num = 0;
 int R2_start_index = 0, R3_start_index = 0, R4_start_index = 0;
 list<Node> WSN;
+int p_count = 0;
 
 void print_WSN(const list<Node>& wsn) {
 	int i = 0;
@@ -287,12 +293,13 @@ void Packet_Generate(Node& node, int time){ //節點生成封包的能耗
 
 void Packet_Deliver(Node& node, Node& CH_node){
 	int drop_rate = rand() % 100 + 1;
-	if( drop_rate > 10 || node.id == CH_node.id ){  //10% drop rate或是CH自己生成的封包放自己的buffer
-		CH_node.receive.dst = node.sense.dst;
-		CH_node.receive.src = node.sense.src;
-		CH_node.receive.data = node.sense.data;
-		CH_node.receive.time = node.sense.time;
-		// cout << "CH " << CH_node.id << "收到Node " << node.id << "封包" << " 資料為 " << node.sense.data << endl;
+	if( drop_rate > 10 || node.id == CH_node.id ){
+		node.receive.dst = node.sense.dst;
+		node.receive.src = node.sense.src;
+		node.receive.data = node.sense.data;
+		node.receive.time = node.sense.time;
+		// p_count++;
+		// cout << p_count <<endl;
 	}
 	else{    //封包丟失
 		macdrop++;
@@ -300,7 +307,7 @@ void Packet_Deliver(Node& node, Node& CH_node){
 		CH_node.receive.src = -1;
 		CH_node.receive.data = -1;
 		CH_node.receive.time = -1;
-		// cout << "失敗QQ" << endl;
+		// cout << "mac失敗累積: " << macdrop << endl;
 	}
 	double d = distance(node.x, node.y, CH_node.x, CH_node.y);
 	if( node.id != CH_node.id ){
@@ -322,7 +329,7 @@ void Packet_Receive(Node& CH_node){ //buffer滿了要變成priority queue 有能耗
 			CH_node.buffer[a].src = CH_node.receive.src;
 			CH_node.buffer[a].data = CH_node.receive.data;
 			CH_node.buffer[a].time = CH_node.receive.time;
-			cout << "CH " << CH_node.id << "收到Node " << CH_node.receive.src <<  "的封包後存入緩存，資料為 " << CH_node.buffer[a].data <<endl;
+			// cout << "CH " << CH_node.id << "收到Node " << CH_node.receive.src <<  "的封包後存入緩存，資料為 " << CH_node.buffer[a].data <<endl;
 			full = 0;
 			break;
 		}
@@ -338,44 +345,44 @@ void Packet_Receive(Node& CH_node){ //buffer滿了要變成priority queue 有能耗
 
 void transaction( Node& trans_node, int time, int R1_ch, int R2_ch, int R3_ch, int R4_ch ){
 	if( trans_node.CH == R1_ch ){
-		auto node_CH_it = next( WSN.begin(), Find_Index(WSN, R1_ch));
-		Node& node_CH = *node_CH_it;
-		cout << endl << trans_node.id << "--->" << node_CH.id << endl;
+		auto node_CH_it1 = next( WSN.begin(), Find_Index(WSN, R1_ch));
+		Node& node_CH1 = *node_CH_it1;
+		// cout << endl << trans_node.id << "--->" << node_CH1.id << endl;
 		Packet_Generate( trans_node, time );
-		cout << " 資料內容為" << trans_node.sense.data <<endl;
-		Packet_Deliver( trans_node, node_CH );
+		// cout << " 資料內容為" << trans_node.sense.data <<endl;
+		Packet_Deliver( trans_node, node_CH1 );
 		// cout << "NODE " << trans_node.id << "---->" << "CH2 傳送完成" <<endl;
-		Packet_Receive( node_CH );
+		Packet_Receive( node_CH1 );
 	}
 	else if( trans_node.CH == R2_ch ){
-		auto node_CH_it = next( WSN.begin(), Find_Index(WSN, R2_ch));
-		Node& node_CH = *node_CH_it;
-		cout << endl << trans_node.id << "--->" << node_CH.id << endl;
+		auto node_CH_it2 = next( WSN.begin(), Find_Index(WSN, R2_ch));
+		Node& node_CH2 = *node_CH_it2;
+		// cout << endl << trans_node.id << "--->" << node_CH2.id << endl;
 		Packet_Generate( trans_node, time );
-		cout << " 資料內容為" << trans_node.sense.data <<endl;
-		Packet_Deliver( trans_node, node_CH );
+		// cout << " 資料內容為" << trans_node.sense.data <<endl;
+		Packet_Deliver( trans_node, node_CH2 );
 		// cout << "NODE " << trans_node.id << "---->" << "CH2 傳送完成" <<endl;
-		Packet_Receive( node_CH );
+		Packet_Receive( node_CH2 );
 	}
 	else if( trans_node.CH == R3_ch ){
-		auto node_CH_it = next( WSN.begin(), Find_Index(WSN, R3_ch));
-		Node& node_CH = *node_CH_it;
-		cout << endl << trans_node.id << "--->" << node_CH.id << endl;
+		auto node_CH_it3 = next( WSN.begin(), Find_Index(WSN, R3_ch));
+		Node& node_CH3 = *node_CH_it3;
+		// cout << endl << trans_node.id << "--->" << node_CH3.id << endl;
 		Packet_Generate( trans_node, time );
-		cout << " 資料內容為" << trans_node.sense.data <<endl;		
-		Packet_Deliver( trans_node, node_CH );
+		// cout << " 資料內容為" << trans_node.sense.data <<endl;		
+		Packet_Deliver( trans_node, node_CH3 );
 		// cout << "NODE " << trans_node.id << "---->" << "CH3 傳送完成" <<endl;
-		Packet_Receive( node_CH );
+		Packet_Receive( node_CH3 );
 	}
 	else{
-		auto node_CH_it = next( WSN.begin(), Find_Index(WSN, R4_ch));
-		Node& node_CH = *node_CH_it;
-		cout << endl << trans_node.id << "--->" << node_CH.id << endl;
+		auto node_CH_it4 = next( WSN.begin(), Find_Index(WSN, R4_ch));
+		Node& node_CH4 = *node_CH_it4;
+		cout << endl << trans_node.id << "--->" << node_CH4.id << endl;
 		Packet_Generate( trans_node, time );
-		cout << " 資料內容為" << trans_node.sense.data <<endl;		
-		Packet_Deliver( trans_node, node_CH );
+		// cout << " 資料內容為" << trans_node.sense.data <<endl;		
+		Packet_Deliver( trans_node, node_CH4 );
 		// cout << "NODE " << trans_node.id << "---->" << "CH4 傳送完成" <<endl;
-		Packet_Receive( node_CH );
+		Packet_Receive( node_CH4 );
 	}
 }
 
@@ -446,44 +453,44 @@ void CH_to_Sink(Node& CH_node){ //R4傳到Sink
 	}
 }
 
-void CH1_to_CH2(Node& CH1, Node& CH2, int v){ //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
+void CH_to_CH4(Node& CH, Node& CH4, int v){ //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 	/*取CH到2區+2區到sink的距離相加與其剩餘能量值做加權*/
 	double rate = 0;/*壓縮率0.25*/
 	if (v == 1)	{
 		for (int b = 0; b < NODE_BUFFER1; b++)		{
-			if ( CH1.buffer[b].data == -1){ //有空的就不用繼續了
+			if ( CH.buffer[b].data == -1){ //有空的就不用繼續了
 				break;
 			}
 			rate = b + 1;
-			CH2.buffer[NODE_BUFFER1 + b].data = CH1.buffer[b].data;
-			CH2.buffer[NODE_BUFFER1 + b].dst = CH1.buffer[b].dst;
-			CH2.buffer[NODE_BUFFER1 + b].src = CH1.buffer[b].src;
-			CH2.buffer[NODE_BUFFER1 + b].time = CH1.buffer[b].time;
+			CH4.buffer[NODE_BUFFER1 + b].data = CH.buffer[b].data;
+			CH4.buffer[NODE_BUFFER1 + b].dst = CH.buffer[b].dst;
+			CH4.buffer[NODE_BUFFER1 + b].src = CH.buffer[b].src;
+			CH4.buffer[NODE_BUFFER1 + b].time = CH.buffer[b].time;
 		}
-		clean(CH1, 0, NODE_BUFFER1);
+		clean(CH, 0, NODE_BUFFER1);
 		//cout <<"模式一收到" <<rate << endl;
 	}
 	if( v == 2 ){
 		for( int b = NODE_BUFFER1; b < NODE_BUFFER2; b++){
-			if (CH1.buffer[b].data == -1){  //有空的就不用繼續了
+			if (CH.buffer[b].data == -1){  //有空的就不用繼續了
 				break;
 			}
 			rate = b + 1 - NODE_BUFFER1;
-			CH2.buffer[b].data = CH1.buffer[b].data;
-			CH2.buffer[b].dst = CH1.buffer[b].dst;
-			CH2.buffer[b].src = CH1.buffer[b].src;
-			CH2.buffer[b].time = CH1.buffer[b].time;
+			CH4.buffer[b].data = CH.buffer[b].data;
+			CH4.buffer[b].dst = CH.buffer[b].dst;
+			CH4.buffer[b].src = CH.buffer[b].src;
+			CH4.buffer[b].time = CH.buffer[b].time;
 		}
-		clean(CH1, NODE_BUFFER1, NODE_BUFFER2);
+		clean(CH, NODE_BUFFER1, NODE_BUFFER2);
 		//cout << "模式二收到" << rate << endl;
 	}
 	rate = ceil(rate * compression_rate);
-	CH1.energy -= (TransmitEnergy + pow(distance(CH1.x, CH1.y, CH2.x, CH2.y), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
-																						  //cout << "node : " << CH1 << "能量減少 "<<(TransmitEnergy + pow(distance(CH1.x, CH1.y, CH2.x, CH2.y), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
-	CH2.energy -= (ReceiveEnergy)*rate;
+	CH.energy -= (TransmitEnergy + pow(distance(CH.x, CH.y, CH4.x, CH4.y), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																						  //cout << "node : " << CH << "能量減少 "<<(TransmitEnergy + pow(distance(CH.x, CH1.y, CH4.x, CH4.y), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
+	CH4.energy -= (ReceiveEnergy)*rate;
 	//cout << "node : " << dst << "能量減少 "<< (ReceiveEnergy)*rate<<" ,因為在區域2收到別的資料" << endl;
 	//cout <<"我是節點 "<< dst << " 收到別人的" << endl;
-	CH_to_Sink(CH2);
+	CH_to_Sink(CH4);
 }
 
 int main(){
@@ -494,8 +501,8 @@ int main(){
 	for (int round = 0; round < round_number; round++){
 		cout << "----------------ROUND " << round +1 << "-----------------" <<endl;
 		round_init();
-		// node_deployed();
-		special_node_deployed();
+		node_deployed();
+		// special_node_deployed();
 		
 		/*initialization*/
 		packet_init(WSN);
@@ -575,27 +582,27 @@ int main(){
 			if( time % CH_frequency == 0){
 				// cout << "send to another region START" <<endl;
 				CH_to_Sink(CH4);
-				CH1_to_CH2(CH3, CH4, 1);
-				CH1_to_CH2(CH1, CH4, 1);
-				CH1_to_CH2(CH2, CH4, 1);
+				CH_to_CH4(CH3, CH4, 1);
+				CH_to_CH4(CH1, CH4, 1);
+				CH_to_CH4(CH2, CH4, 1);
 
 				countround[0]--;
 				if(countround[0] == 0)
-					int R1_CH = CH_Selection( WSN, 0, R2_start_index-1 );
+					R1_CH = CH_Selection( WSN, 0, R2_start_index-1 );
 				countround[1]--;
 				if(countround[1] == 0)
-					int R2_CH = CH_Selection( WSN, R2_start_index, R3_start_index-1);
+					R2_CH = CH_Selection( WSN, R2_start_index, R3_start_index-1);
 				countround[2]--;
 				if(countround[2] == 0)
-					int R3_CH = CH_Selection( WSN, R3_start_index, R4_start_index-1 );
+					R3_CH = CH_Selection( WSN, R3_start_index, R4_start_index-1 );
 				countround[3]--;
 				if(countround[3] == 0)
-					int R4_CH = CH_Selection( WSN, R4_start_index, S_NUM-1);
+					R4_CH = CH_Selection( WSN, R4_start_index, S_NUM-1);
 				/*把四個區域的CH節點在WSN的索引值*/
-				int CH1_index = Find_Index(WSN, R1_CH);
-				int CH2_index = Find_Index(WSN, R2_CH);	
-				int CH3_index = Find_Index(WSN, R3_CH);	
-				int CH4_index = Find_Index(WSN, R4_CH);	
+				CH1_index = Find_Index(WSN, R1_CH);
+				CH2_index = Find_Index(WSN, R2_CH);	
+				CH3_index = Find_Index(WSN, R3_CH);	
+				CH4_index = Find_Index(WSN, R4_CH);	
 				auto CH1_it = next( WSN.begin(), CH1_index);
 				Node& CH1 = *CH1_it;
 				auto CH2_it = next( WSN.begin(), CH2_index);
@@ -609,9 +616,9 @@ int main(){
 			}
 			time++;
 		}
-		cout <<"ROUND " << round+1 << "DIE"<< endl;
+		// print_WSN(WSN);
+		cout <<"ROUND " << round+1 << "   OVER"<< endl;
 	}
-	print_WSN(WSN);
 	total /= round_number;
 	macdrop /= round_number;
 	drop /= round_number;
