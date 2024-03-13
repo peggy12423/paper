@@ -1,15 +1,20 @@
 #include"common.h"
 
-// struct C{
-// 	double x, y;
-// };
+struct Node{
+	int id, x, y, CH, region, type;  //
+    double energy;//node information
+	double dist_to_sink;//dist = distance to sink
+	Package receive;
+	Package sense;
+	Package buffer[NODE_BUFFER2];//buffer in sensor node
+};
 
-ofstream fout("mymethod.txt");
-Sink sink;
 Node node[S_NUM];
-list<Node> WSN, R1_cluster, R2_cluster, R3_cluster, R4_cluster;
+Sink sink;
+list<Node> R1_cluster, R2_cluster, R3_cluster, R4_cluster;
 int R1_S_num = 0, R2_S_num = 0, R3_S_num = 0, R4_S_num = 0;
 int R2_start_index = 0, R3_start_index = 0, R4_start_index = 0;
+list<Node> WSN;
 
 double distance(int node1_x, int node1_y, int node2_x, int node2_y){
 	return sqrt(pow(abs(node1_x - node2_x), 2) + pow(abs(node1_y - node2_y), 2));
@@ -202,14 +207,20 @@ double node_density(list<Node>& cluster){
 }
 
 int main(){
-    srand((unsigned)time(NULL));
-    for(int round = 0; round < round_number; round++){
-        round_init();
-        node_deployed();
-        // special_node_deployed();
-
-        /*initialization*/
+	ofstream fout("myNRCA_output.txt");
+	streambuf *coutbuf = cout.rdbuf();
+	cout.rdbuf(fout.rdbuf());
+	srand((unsigned)time(NULL)); //random seed
+	for (int round = 0; round < round_number; round++){
+		cout << "----------------ROUND " << round +1 << "-----------------" <<endl;
+		round_init();
+		// node_deployed();
+		special_node_deployed();
+		
+		/*initialization*/
 		packet_init(WSN);
 		sink_buffer_init();
+		cout << "initialization END" <<endl;
+
     }
 }

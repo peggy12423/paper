@@ -9,6 +9,8 @@
 #include <list>
 #include <iterator>
 
+using namespace std;
+
 /*固定實驗參數*/
 #define roundnumber 5
 #define MAX_energy 6480//1.5(V)*0.6(A)*3600(sec)*2 = 6480焦耳 2*3號電池
@@ -22,14 +24,15 @@
 #define ProbeEnergy 0.03 //8*200*1.5(V)*0.025(A)*0.0005(sec) = 0.00375*8 = 0.03焦耳 
 // Etrans= 200*8*(50*0.000000001 + 100*d^2*0.000000000001)
 #define TransmitEnergy 0.00008 //200*8*(50*0.000000001)焦耳 (不含放大器所需的能量)
-#define AmplifierEnergy 0.00000016 //200*8*100*0.000000000001 焦耳/公尺^2
+#define AmplifierEnergy 0.00016 //200*8*100*0.000000000001 焦耳/公尺^2
 #define ReceiveEnergy 0.00008 //200*8*50*0.000000001焦耳 
 #define Package_size 200 //bytes 
 #define node_buffer 20 //Kbytes (100格)
 #define trans_dis 60 //公尺 80幾乎可以確定他傳的到sink
 #define round_number 5
 
-using namespace std;
+// using namespace std;
+
 struct Package{
 	int src;
 	int dst;

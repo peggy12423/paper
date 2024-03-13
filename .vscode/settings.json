@@ -1,0 +1,11 @@
+{
+  "C_Cpp_Runner.msvcBatchPath": "",
+  "files.associations": {
+    "*.embeddedhtml": "html",
+    "iostream": "cpp",
+    "cmath": "cpp",
+    "ostream": "cpp",
+    "fstream": "cpp",
+    "iosfwd": "cpp"
+  }
+}

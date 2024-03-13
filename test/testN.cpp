@@ -9,6 +9,15 @@
 #define SensingRate_type2f 480
 #define SensingRate_type3f 720
 
+struct Node{
+	int id, x, y, CH, region, type;  //
+    double energy;//node information
+	double dist_to_sink;//dist = distance to sink
+	Package receive;
+	Package sense;
+	Package buffer[NODE_BUFFER2];//buffer in sensor node
+};
+
 ofstream fout("special_result.txt");
 Sink sink;
 Node node[S_NUM];
