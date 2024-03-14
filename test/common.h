@@ -14,7 +14,7 @@ using namespace std;
 /*固定實驗參數*/
 #define roundnumber 5
 #define MAX_energy 6480//1.5(V)*0.6(A)*3600(sec)*2 = 6480焦耳 2*3號電池
-#define SINK_BUFFER_SIZE 10000000
+#define SINK_BUFFER_SIZE 5000000
 #define SINKID 2000
 #define SINK_X 400
 #define SINK_Y 0
