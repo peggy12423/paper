@@ -18,8 +18,8 @@ using namespace std;
 #define SINKID 2000
 #define SINK_X 400
 #define SINK_Y 0
-#define NODE_BUFFER1 100 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 200 //50~100 特別的傳輸用
+#define NODE_BUFFER1 400 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 800 //50~100 特別的傳輸用
 
 #define ProbeEnergy 0.03 //8*200*1.5(V)*0.025(A)*0.0005(sec) = 0.00375*8 = 0.03焦耳 
 // Etrans= 200*8*(50*0.000000001 + 100*d^2*0.000000000001)

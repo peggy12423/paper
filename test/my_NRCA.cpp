@@ -2,7 +2,7 @@
 #include <iostream>
 
 /*變動實驗參數設定*/
-#define S_NUM 500 //感測器總數
+#define S_NUM 900 //感測器總數
 #define compression_rate 0.25 //壓縮率 設1則沒有壓縮
 #define CH_transmit 120 //CH trans frequency
 #define SensingRate_type1f 360 //常規sensing frequency
@@ -24,6 +24,7 @@ double macdrop = 0;
 double drop = 0;
 double total = 0;
 double received = 0;
+double cccount = 0;
 
 Node node[S_NUM];
 Sink sink;
@@ -116,10 +117,10 @@ void node_deployed(){
 }
 
 void special_node_deployed(){
-   	int R1 = S_NUM * 0.1;
-    int R2 = S_NUM * 0.4;
-    int R3 = S_NUM * 0.2;
-    int R4 = S_NUM * 0.3;
+   	int R1 = S_NUM * 0.25;
+    int R2 = S_NUM * 0.25;
+    int R3 = S_NUM * 0.25;
+    int R4 = S_NUM * 0.25;
 
 	int n = 0;
     for( n ; n < R1 ; n++){
@@ -171,7 +172,6 @@ void special_node_deployed(){
         R4_S_num++;
     }
     /*把所有節點放入list WSN*/
-	WSN.clear();			
 	WSN.insert(WSN.end(), R1_cluster.begin(), R1_cluster.end());
 	WSN.insert(WSN.end(), R2_cluster.begin(), R2_cluster.end());
 	WSN.insert(WSN.end(), R3_cluster.begin(), R3_cluster.end());
@@ -248,19 +248,14 @@ int CH_Selection(list<Node>& WSN, int start_index, int end_index) {
     }
     
     select_CH = CH_cdd.front();
-    int cdd_index = Find_Index(WSN, select_CH.id);
     CH_cdd.pop();
 
     // 比較現有 CH 和 cdd 中第一位到 sink 的距離，選擇最適合的 CH
     while (!CH_cdd.empty()) {
-        int CH_index = Find_Index(WSN, select_CH.id);
-        auto it_cdd = next(WSN.begin(), cdd_index);
-		auto it_ch = next(WSN.begin(), CH_index);
-
-		if (it_cdd->dist_to_sink < it_ch->dist_to_sink) {
-			select_CH = *it_cdd;
-		}
-        CH_cdd.pop();
+        if (CH_cdd.front().dist_to_sink < select_CH.dist_to_sink) {
+        	select_CH = CH_cdd.front();
+    	}
+    	CH_cdd.pop();
     }
     
     // 改變 cluster 內的所有節點的 CH 為選擇的 CH
@@ -293,96 +288,79 @@ void Packet_Generate(Node& node, int time){ //節點生成封包的能耗
 
 void Packet_Deliver(Node& node, Node& CH_node){
 	int drop_rate = rand() % 100 + 1;
-	if( drop_rate > 10 || node.id == CH_node.id ){
-		CH_node.receive.dst = node.sense.dst;
-		CH_node.receive.src = node.sense.src;
-		CH_node.receive.data = node.sense.data;
-		CH_node.receive.time = node.sense.time;
-		// cout << p_count <<endl;
-	}
-	else{    //封包丟失
-		macdrop++;
-		CH_node.receive.dst = -1;
-		CH_node.receive.src = -1;
-		CH_node.receive.data = -1;
-		CH_node.receive.time = -1;
-		// cout << "mac失敗累積: " << macdrop << endl;
-	}
 	double d = distance(node.x, node.y, CH_node.x, CH_node.y);
-	if( node.id != CH_node.id ){
+	CH_node.receive.dst = node.sense.dst;
+	CH_node.receive.src = node.sense.src;
+	CH_node.receive.data = node.sense.data;
+	CH_node.receive.time = node.sense.time;
+	if( drop_rate <= 10 && node.id != CH_node.id ){  //丟失封包且傳送封包節點不是CH自己
+		macdrop++;
+		node.energy -= TransmitEnergy + d*d*AmplifierEnergy;  // //macdrop後重送即算送達
+	}
+	else if( drop_rate > 10 && node.id != CH_node.id ){    //收到封包且傳送封包節點不是CH自己
 		node.energy -= TransmitEnergy + d*d*AmplifierEnergy;
 		// cout << "node " << node.id << " 因傳送給CH，能量減少 " << TransmitEnergy +d*d*AmplifierEnergy << endl;
 		// cout << "node " << node.id << " 傳輸封包因此能量減少為" << node.energy << endl;
 	}
 }
 
-void Packet_Receive(Node& CH_node){ //buffer滿了要變成priority queue 有能耗
-	if ( CH_node.receive.src != CH_node.id){ //不是來自自己的才扣能量
-		CH_node.energy -= ReceiveEnergy;
-		// cout << "CH " << CH_node.id << "接收封包因此能量減少為" << CH_node.energy <<endl;
-	} //drop還算是有收
-	int full = 1;
-	for (int a = 0; a < NODE_BUFFER1; a++){ //CH收到封包後放入buffer[0~99]
-		if (CH_node.buffer[a].data == -1){   //buffer[a]還是空的
-			CH_node.buffer[a].dst = CH_node.receive.dst;
-			CH_node.buffer[a].src = CH_node.receive.src;
-			CH_node.buffer[a].data = CH_node.receive.data;
-			CH_node.buffer[a].time = CH_node.receive.time;
-			// cout << "CH " << CH_node.id << "收到Node " << CH_node.receive.src <<  "的封包後存入緩存，資料為 " << CH_node.buffer[a].data <<endl;
-			full = 0;  //放入buffer後離開迴圈
-			received++;
-			break;
-		}
-	}
-	// if (full == 1){  //CH_buffer[0~99]都滿了，就丟掉封包
-	// 	drop++;
-	// }
-	CH_node.receive.dst = -1;
-	CH_node.receive.src = -1;
-	CH_node.receive.data = -1;
-	CH_node.receive.time = -1;
+void Packet_Receive(Node& CH_node) { //buffer滿了要變成priority queue 有能耗
+    if (CH_node.receive.src != CH_node.id) { //不是來自自己的才扣能量
+        CH_node.energy -= ReceiveEnergy;
+    }
+    cccount++;
+    int full_index = -1; // 初始化 full_index
+
+    for (int a = 0; a < NODE_BUFFER1; a++) { // CH收到封包後放入buffer[0~99]
+        if (CH_node.buffer[a].data == -1) {   // 如果 buffer[a] 還是空的就把 receive 封包放進去
+            CH_node.buffer[a].dst = CH_node.receive.dst;
+            CH_node.buffer[a].src = CH_node.receive.src;
+            CH_node.buffer[a].data = CH_node.receive.data;
+            CH_node.buffer[a].time = CH_node.receive.time;
+            received++;
+            full_index = a;
+            cout << CH_node.receive.src << " -->" << CH_node.receive.dst << "   cccount: " << cccount << endl;
+            cout << "CH " << CH_node.id << "   BFull index : " << full_index << "    Received: " << received << endl;
+            break;
+        }
+    }
+	// cout << "buffer[99]: " << CH_node.buffer[99].data << endl;
+    if (full_index == -1) { // 如果所有的 buffer[a] 都不是空的，full_index 仍然為初始值 -1
+        cout << CH_node.receive.src << "--->" << CH_node.id<<endl;
+		drop++;
+        cout << "-----buffer[99]: "<< CH_node.buffer[99].data << endl;
+        cout << "cccount: " << cccount <<  "      ##############DROP###########   Drop: " << drop <<endl;
+    } else {
+        // 如果成功放入封包，則結束函數的執行，因為我們已經完成了封包的處理
+        return;
+    }
+
+    CH_node.receive.dst = -1;
+    CH_node.receive.src = -1;
+    CH_node.receive.data = -1;
+    CH_node.receive.time = -1;
 }
 
-void transaction( Node& trans_node, int time, int R1_ch, int R2_ch, int R3_ch, int R4_ch ){
-	if( trans_node.CH == R1_ch ){
-		auto node_CH_it1 = next( WSN.begin(), Find_Index(WSN, R1_ch));
-		Node& node_CH1 = *node_CH_it1;
-		// cout << endl << trans_node.id << "--->" << node_CH1.id << endl;
+void transaction( Node& trans_node, int time, Node& R1_ch, Node& R2_ch, Node& R3_ch, Node& R4_ch ){
+	if( trans_node.CH == R1_ch.id ){
 		Packet_Generate( trans_node, time );
-		// cout << " 資料內容為" << trans_node.sense.data <<endl;
-		Packet_Deliver( trans_node, node_CH1 );
-		// cout << "NODE " << trans_node.id << "---->" << "CH2 傳送完成" <<endl;
-		Packet_Receive( node_CH1 );
+		Packet_Deliver( trans_node, R1_ch );
+		Packet_Receive( R1_ch );
 	}
-	else if( trans_node.CH == R2_ch ){
-		auto node_CH_it2 = next( WSN.begin(), Find_Index(WSN, R2_ch));
-		Node& node_CH2 = *node_CH_it2;
-		// cout << endl << trans_node.id << "--->" << node_CH2.id << endl;
+	else if( trans_node.CH == R2_ch.id ){
 		Packet_Generate( trans_node, time );
-		// cout << " 資料內容為" << trans_node.sense.data <<endl;
-		Packet_Deliver( trans_node, node_CH2 );
-		// cout << "NODE " << trans_node.id << "---->" << "CH2 傳送完成" <<endl;
-		Packet_Receive( node_CH2 );
+		Packet_Deliver( trans_node, R2_ch );
+		Packet_Receive( R2_ch );
 	}
-	else if( trans_node.CH == R3_ch ){
-		auto node_CH_it3 = next( WSN.begin(), Find_Index(WSN, R3_ch));
-		Node& node_CH3 = *node_CH_it3;
-		// cout << endl << trans_node.id << "--->" << node_CH3.id << endl;
+	else if( trans_node.CH == R3_ch.id ){
 		Packet_Generate( trans_node, time );
-		// cout << " 資料內容為" << trans_node.sense.data <<endl;		
-		Packet_Deliver( trans_node, node_CH3 );
-		// cout << "NODE " << trans_node.id << "---->" << "CH3 傳送完成" <<endl;
-		Packet_Receive( node_CH3 );
+		Packet_Deliver( trans_node, R3_ch );
+		Packet_Receive( R3_ch );
 	}
 	else{
-		auto node_CH_it4 = next( WSN.begin(), Find_Index(WSN, R4_ch));
-		Node& node_CH4 = *node_CH_it4;
-		// cout << endl << trans_node.id << "--->" << node_CH4.id << endl;
 		Packet_Generate( trans_node, time );
-		// cout << " 資料內容為" << trans_node.sense.data <<endl;		
-		Packet_Deliver( trans_node, node_CH4 );
-		// cout << "NODE " << trans_node.id << "---->" << "CH4 傳送完成" <<endl;
-		Packet_Receive( node_CH4 );
+		Packet_Deliver( trans_node, R4_ch );
+		Packet_Receive( R4_ch );
 	}
 }
 
@@ -406,26 +384,20 @@ void CH_to_Sink(Node& CH_node){ //R4傳到Sink
 	if( CH_node.buffer[NODE_BUFFER1].data != -1 ){    //幫別的CH傳
 		double rate = 0;/*壓縮率0.25*/
 		for(int b = NODE_BUFFER1; b < NODE_BUFFER2; b++){
-			// cout << "b= " <<b<<endl;
 			if( CH_node.buffer[b].data == -1 ){  //有空的就不用繼續了
 				break;
 			}
-			// cout << "buffer[" << start << "] not empty" <<endl;
 			rate = b - NODE_BUFFER1 + 1;
 			sink.buffer[start].data = CH_node.buffer[b].data;
 			sink.buffer[start].dst = CH_node.buffer[b].dst;
 			sink.buffer[start].src = CH_node.buffer[b].src;
 			sink.buffer[start].time = CH_node.buffer[b].time;
-			// cout << sink.buffer[start].src << " ---> " << sink.buffer[start].dst << "     data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
+			cout << "CH ID:" << CH_node.id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 			start++;
 		}
-		// cout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * compression_rate);
-		//cout << rate << endl;
 		double CH_to_S = distance(CH_node.x, CH_node.y, SINK_X, SINK_Y);
 		CH_node.energy -= (TransmitEnergy + CH_to_S*CH_to_S*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
-		// cout << "CH " << CH_node.id <<"幫其他CH傳送封包能量耗損 " << (TransmitEnergy + CH_to_S*CH_to_S*AmplifierEnergy) << " rate: " << rate << endl;
-		// cout << "CH" << CH_node.id <<"傳到SINK 因此能量減少為" << CH_node.energy <<endl;																					   
 		clean( CH_node, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
 	}
 	else{      //自己區域的壓縮封包傳到Sink
@@ -439,43 +411,34 @@ void CH_to_Sink(Node& CH_node){ //R4傳到Sink
 			sink.buffer[start].dst = CH_node.buffer[b].dst;
 			sink.buffer[start].src = CH_node.buffer[b].src;
 			sink.buffer[start].time = CH_node.buffer[b].time;
-			// cout << sink.buffer[start].src << " ---> " << sink.buffer[start].dst << "     data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
+			cout << "CH ID:" << CH_node.id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 			start++;
 		}
-		// cout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * compression_rate);
-		//cout << rate << endl;
 		double CH_to_S = distance(CH_node.x, CH_node.y, SINK_X, SINK_Y);
 		CH_node.energy -= (TransmitEnergy + CH_to_S*CH_to_S*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
-		// cout << "CH " << CH_node.id <<"傳送自己的壓縮封包到Sink  能量耗損 " << (TransmitEnergy + CH_to_S*CH_to_S*AmplifierEnergy) << "    rate: " << rate << endl;
-		// cout << "剩餘能量" << CH_node.energy <<endl;
 		clean( CH_node, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
 	}
 }
 
-void CH_to_CH4(Node& CH, Node& CH4, int v){ //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
+void CH_to_CH4(Node& CH, Node& CH4){ //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 	/*取CH到2區+2區到sink的距離相加與其剩餘能量值做加權*/
 	double rate = 0;/*壓縮率0.25*/
-	if (v == 1)	{
-		for (int b = 0; b < NODE_BUFFER1; b++)		{
-			if ( CH.buffer[b].data == -1){ //有空的就不用繼續了
-				break;
-			}
-			rate = b + 1;
-			CH4.buffer[NODE_BUFFER1 + b].data = CH.buffer[b].data;
-			CH4.buffer[NODE_BUFFER1 + b].dst = CH.buffer[b].dst;
-			CH4.buffer[NODE_BUFFER1 + b].src = CH.buffer[b].src;
-			CH4.buffer[NODE_BUFFER1 + b].time = CH.buffer[b].time;
+	for (int b = 0; b < NODE_BUFFER1; b++){  //CH傳到CH4
+		if ( CH.buffer[b].data == -1){ //有空的就不用繼續了
+			break;
 		}
-		clean(CH, 0, NODE_BUFFER1);
-		//cout <<"模式一收到" <<rate << endl;
+		rate = b + 1;
+		CH4.buffer[NODE_BUFFER1 + b].data = CH.buffer[b].data;
+		CH4.buffer[NODE_BUFFER1 + b].dst = CH.buffer[b].dst;
+		CH4.buffer[NODE_BUFFER1 + b].src = CH.buffer[b].src;
+		CH4.buffer[NODE_BUFFER1 + b].time = CH.buffer[b].time;
 	}
+	clean(CH, 0, NODE_BUFFER1);
 	rate = ceil(rate * compression_rate);
 	CH.energy -= (TransmitEnergy + pow(distance(CH.x, CH.y, CH4.x, CH4.y), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
 																						  //cout << "node : " << CH << "能量減少 "<<(TransmitEnergy + pow(distance(CH.x, CH1.y, CH4.x, CH4.y), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
 	CH4.energy -= (ReceiveEnergy)*rate;
-	//cout << "node : " << dst << "能量減少 "<< (ReceiveEnergy)*rate<<" ,因為在區域2收到別的資料" << endl;
-	//cout <<"我是節點 "<< dst << " 收到別人的" << endl;
 	CH_to_Sink(CH4);
 }
 
@@ -487,19 +450,19 @@ int main(){
 	for (int round = 0; round < round_number; round++){
 		cout << "----------------ROUND " << round +1 << "-----------------" <<endl;
 		round_init();
-		node_deployed();
-		// special_node_deployed();
+		// node_deployed();
+		special_node_deployed();
 		
 		/*initialization*/
 		packet_init(WSN);
 		sink_buffer_init();
-		// cout << "initialization END" <<endl;
 
 		/*firts CH selection*/
 		int R1_CH = CH_Selection( WSN, 0, R2_start_index-1 );
 		int R2_CH = CH_Selection( WSN, R2_start_index, R3_start_index-1);
 		int R3_CH = CH_Selection( WSN, R3_start_index, R4_start_index-1);
 		int R4_CH = CH_Selection( WSN, R4_start_index, S_NUM-1);
+		cout << "CH: " << R1_CH << "  " << R2_CH << "  " << R3_CH << "  " << R4_CH <<endl;
 
 		/*把四個區域的CH節點在WSN的索引值*/
 		int CH1_index = Find_Index(WSN, R1_CH);
@@ -515,9 +478,7 @@ int main(){
 		Node& CH3 = *CH3_it;
 		auto CH4_it = next( WSN.begin(), CH4_index);
 		Node& CH4 = *CH4_it;
-		// cout << "CH1: " << CH1.id << ",  CH2: " << CH2.id << ",  CH3: " << CH3.id << ",  CH4: " << CH4.id <<endl;
-		// cout << "CH_selection END" << endl;
-		/*-------------0311 處理完成(思考每個演算法要一樣拓樸)*/
+		cout << "CH confirm: " << CH1.id << "  " << CH2.id << "  " << CH3.id << "  " << CH4.id <<endl;
 
 		int countround[4] = {0, 0, 0, 0};
 
@@ -541,36 +502,32 @@ int main(){
 				break;
 			}
 			if( time % SensingRate_type1f == 0){
-				// cout << "Sensing Rate 1 "<<endl;
 				for(auto& node : WSN){
 					if( node.type == 1 ){
-						transaction( node, time, R1_CH, R2_CH, R3_CH, R4_CH );
+						transaction( node, time, CH1, CH2, CH3, CH4 );
 					}
 				}
 			}
 			if( time % SensingRate_type2f == 0){
-				// cout << "Sensing Rate 2 "<<endl;
 				for(auto& node : WSN){
 					if( node.type == 2){
-						transaction( node, time, R1_CH, R2_CH, R3_CH, R4_CH );
+						transaction( node, time, CH1, CH2, CH3, CH4 );
 					}
 				}
 			}
 			if( time % SensingRate_type3f == 0){
-				// cout << "Sensing Rate 3 "<<endl;
 				for(auto& node : WSN){
 					if( node.type == 3){
-						transaction( node, time, R1_CH, R2_CH, R3_CH, R4_CH );
+						transaction( node, time, CH1, CH2, CH3, CH4 );
 					}
 				}
 			}
 
 			if( time % CH_frequency == 0){
-				// cout << "send to another region START" <<endl;
 				CH_to_Sink(CH4);
-				CH_to_CH4(CH3, CH4, 1);
-				CH_to_CH4(CH1, CH4, 1);
-				CH_to_CH4(CH2, CH4, 1);
+				CH_to_CH4(CH3, CH4);
+				CH_to_CH4(CH1, CH4);
+				CH_to_CH4(CH2, CH4);
 
 				countround[0]--;
 				if(countround[0] == 0)
@@ -589,6 +546,7 @@ int main(){
 				CH2_index = Find_Index(WSN, R2_CH);	
 				CH3_index = Find_Index(WSN, R3_CH);	
 				CH4_index = Find_Index(WSN, R4_CH);	
+
 				auto CH1_it = next( WSN.begin(), CH1_index);
 				Node& CH1 = *CH1_it;
 				auto CH2_it = next( WSN.begin(), CH2_index);
@@ -597,26 +555,24 @@ int main(){
 				Node& CH3 = *CH3_it;
 				auto CH4_it = next( WSN.begin(), CH4_index);
 				Node& CH4 = *CH4_it;
-				// cout << "CH1: " << CH1.id << ",  CH2: " << CH2.id << ",  CH3: " << CH3.id << ",  CH4: " << CH4.id <<endl;
-				// cout << " CH_REselection END" << endl;
 			}
 			time++;
 		}
-		// print_WSN(WSN);
 		cout <<"ROUND " << round+1 << "   OVER"<< endl;
 	}
-	drop = total - received;
 	drop /= round_number;
 	total /= round_number;
 	received /= round_number;
 	macdrop /= round_number;
 	avg_time /= round_number;
+	cccount /= round_number;
 	cout << "avg_time: " << avg_time << endl;
 	cout << "package total : " << total << endl;
+	cout << "cccount: " << cccount << endl;
 	cout << "mac_drop : " << macdrop << endl;
 	cout << "overflow_drop :" << drop << endl;
 	cout << "received : " << received <<endl;
-	cout << "packet loss ratee : " << (macdrop+drop) / total << endl;
+	cout << "packet loss rate : " << (macdrop+drop) / total << endl;
 	cout.rdbuf(coutbuf);
 	fout.close();
 	return 0;
