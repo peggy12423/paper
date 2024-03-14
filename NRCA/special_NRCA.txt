@@ -1,0 +1,73 @@
+NRCA
+------------ Sensors 200 ------------
+avg_time: 80905
+package total : 39189
+mac_drop : 3894.2
+overflow_drop :0
+received : 39189
+packet loss rate : 0.0993697
+
+------------ Sensors 300 ------------
+avg_time: 93654
+package total : 64422.8
+mac_drop : 6433.24
+overflow_drop :0
+received : 64422.8
+packet loss rate : 0.0998597
+
+------------ Sensors 400 ------------
+avg_time: 93707.8
+package total : 85959
+mac_drop : 8558.85
+overflow_drop :0
+received : 85959
+packet loss rate : 0.099569
+
+------------ Sensors 500 ------------
+avg_time: 86998.6
+package total : 99997.8
+mac_drop : 10035
+overflow_drop :1789.4
+received : 98208.4
+packet loss rate : 0.118246
+
+------------ Sensors 600 ------------
+avg_time: 88440.7
+package total : 123832
+mac_drop : 12513.4
+overflow_drop :8121.48
+received : 115711
+packet loss rate : 0.166636
+
+------------ Sensors 700 ------------
+avg_time: 87001.1
+package total : 142983
+mac_drop : 14281.9
+overflow_drop :17923.9
+received : 125059
+packet loss rate : 0.225242
+
+------------ Sensors 800 ------------
+avg_time: 87097.2
+package total : 164394
+mac_drop : 16457.8
+overflow_drop :33319.2
+received : 131075
+packet loss rate : 0.30279
+
+------------ Sensors 900 ------------
+avg_time: 87692.4
+package total : 186762
+mac_drop : 18567.4
+overflow_drop :49742.8
+received : 137019
+packet loss rate : 0.365761
+
+------------ Sensors 1000 ------------
+avg_time: 87427.5
+package total : 207492
+mac_drop : 20745.3
+overflow_drop :65982.4
+received : 141509
+packet loss rate : 0.417981
+
