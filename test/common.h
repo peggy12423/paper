@@ -12,7 +12,6 @@
 using namespace std;
 
 /*固定實驗參數*/
-#define roundnumber 5
 #define MAX_energy 6480//1.5(V)*0.6(A)*3600(sec)*2 = 6480焦耳 2*3號電池
 #define SINK_BUFFER_SIZE 5000000
 #define SINKID 2000
@@ -30,6 +29,7 @@ using namespace std;
 #define node_buffer 20 //Kbytes (100格)
 #define trans_dis 60 //公尺 80幾乎可以確定他傳的到sink
 #define round_number 5
+#define end_S_NUM 1000
 
 // using namespace std;
 

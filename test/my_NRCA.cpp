@@ -1,8 +1,6 @@
 #include"common.h"
 #include <iostream>
 
-/*變動實驗參數設定*/
-#define S_NUM 900 //感測器總數
 #define compression_rate 0.25 //壓縮率 設1則沒有壓縮
 #define CH_transmit 120 //CH trans frequency
 #define SensingRate_type1f 360 //常規sensing frequency
@@ -18,6 +16,8 @@ struct Node{
 	Package sense;
 	Package buffer[NODE_BUFFER2];//buffer in sensor node
 };
+/*變動實驗參數設定*/
+int S_NUM = 200; //感測器總數
 
 double avg_time = 0;
 double macdrop = 0;
@@ -26,7 +26,7 @@ double total = 0;
 double received = 0;
 double cccount = 0;
 
-Node node[S_NUM];
+Node node[1000];
 Sink sink;
 list<Node> R1_cluster, R2_cluster, R3_cluster, R4_cluster;
 int R1_S_num = 0, R2_S_num = 0, R3_S_num = 0, R4_S_num = 0;
@@ -117,10 +117,10 @@ void node_deployed(){
 }
 
 void special_node_deployed(){
-   	int R1 = S_NUM * 0.25;
-    int R2 = S_NUM * 0.25;
-    int R3 = S_NUM * 0.25;
-    int R4 = S_NUM * 0.25;
+   	int R1 = S_NUM * 0.1;
+    int R2 = S_NUM * 0.4;
+    int R3 = S_NUM * 0.2;
+    int R4 = S_NUM * 0.3;
 
 	int n = 0;
     for( n ; n < R1 ; n++){
@@ -164,7 +164,7 @@ void special_node_deployed(){
         node[n].x = rand() % 200 + 201;  //節點x座標1~400隨機值
         node[n].y = rand() % 200 + 1;  //節點y座標1~400隨機值
         node[n].CH = n;
-        node[n].type = 2; //sensing rate
+        node[n].type = rand() % 3 + 1; //sensing rate
         node[n].energy = MAX_energy ;
         node[n].dist_to_sink = distance(node[n].x, node[n].y, SINK_X, SINK_Y );  //距離區sink
 		node[n].region = 4;
@@ -319,17 +319,17 @@ void Packet_Receive(Node& CH_node) { //buffer滿了要變成priority queue 有能耗
             CH_node.buffer[a].time = CH_node.receive.time;
             received++;
             full_index = a;
-            cout << CH_node.receive.src << " -->" << CH_node.receive.dst << "   cccount: " << cccount << endl;
-            cout << "CH " << CH_node.id << "   BFull index : " << full_index << "    Received: " << received << endl;
+            // cout << CH_node.receive.src << " -->" << CH_node.receive.dst << "   cccount: " << cccount << endl;
+            // cout << "CH " << CH_node.id << "   BFull index : " << full_index << "    Received: " << received << endl;
             break;
         }
     }
 	// cout << "buffer[99]: " << CH_node.buffer[99].data << endl;
     if (full_index == -1) { // 如果所有的 buffer[a] 都不是空的，full_index 仍然為初始值 -1
-        cout << CH_node.receive.src << "--->" << CH_node.id<<endl;
+        // cout << CH_node.receive.src << "--->" << CH_node.id<<endl;
 		drop++;
-        cout << "-----buffer[99]: "<< CH_node.buffer[99].data << endl;
-        cout << "cccount: " << cccount <<  "      ##############DROP###########   Drop: " << drop <<endl;
+        // cout << "-----buffer[99]: "<< CH_node.buffer[99].data << endl;
+        // cout << "cccount: " << cccount <<  "      ##############DROP###########   Drop: " << drop <<endl;
     } else {
         // 如果成功放入封包，則結束函數的執行，因為我們已經完成了封包的處理
         return;
@@ -392,7 +392,7 @@ void CH_to_Sink(Node& CH_node){ //R4傳到Sink
 			sink.buffer[start].dst = CH_node.buffer[b].dst;
 			sink.buffer[start].src = CH_node.buffer[b].src;
 			sink.buffer[start].time = CH_node.buffer[b].time;
-			cout << "CH ID:" << CH_node.id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
+			// cout << "CH ID:" << CH_node.id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 			start++;
 		}
 		rate = ceil(rate * compression_rate);
@@ -411,7 +411,7 @@ void CH_to_Sink(Node& CH_node){ //R4傳到Sink
 			sink.buffer[start].dst = CH_node.buffer[b].dst;
 			sink.buffer[start].src = CH_node.buffer[b].src;
 			sink.buffer[start].time = CH_node.buffer[b].time;
-			cout << "CH ID:" << CH_node.id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
+			// cout << "CH ID:" << CH_node.id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 			start++;
 		}
 		rate = ceil(rate * compression_rate);
@@ -443,136 +443,142 @@ void CH_to_CH4(Node& CH, Node& CH4){ //除了2區以外的區域都丟到2區裡面能量最高的 
 }
 
 int main(){
-	ofstream fout("myNRCA_output.txt");
+	ofstream fout("normal_NRCA.txt");
 	streambuf *coutbuf = cout.rdbuf();
 	cout.rdbuf(fout.rdbuf());
-	srand((unsigned)time(NULL)); //random seed
-	for (int round = 0; round < round_number; round++){
-		cout << "----------------ROUND " << round +1 << "-----------------" <<endl;
-		round_init();
-		// node_deployed();
-		special_node_deployed();
-		
-		/*initialization*/
-		packet_init(WSN);
-		sink_buffer_init();
+	cout << "NRCA" << endl;
 
-		/*firts CH selection*/
-		int R1_CH = CH_Selection( WSN, 0, R2_start_index-1 );
-		int R2_CH = CH_Selection( WSN, R2_start_index, R3_start_index-1);
-		int R3_CH = CH_Selection( WSN, R3_start_index, R4_start_index-1);
-		int R4_CH = CH_Selection( WSN, R4_start_index, S_NUM-1);
-		cout << "CH: " << R1_CH << "  " << R2_CH << "  " << R3_CH << "  " << R4_CH <<endl;
+	for( S_NUM ; S_NUM <= end_S_NUM ; S_NUM+=100 ){
+		srand((unsigned)time(NULL)); //random seed
+		for (int round = 0; round < round_number; round++){
+			// cout << "----------------ROUND " << round +1 << "-----------------" <<endl;
+			round_init();
+			node_deployed();
+			// special_node_deployed();
+			
+			/*initialization*/
+			packet_init(WSN);
+			sink_buffer_init();
 
-		/*把四個區域的CH節點在WSN的索引值*/
-		int CH1_index = Find_Index(WSN, R1_CH);
-		int CH2_index = Find_Index(WSN, R2_CH);	
-		int CH3_index = Find_Index(WSN, R3_CH);	
-		int CH4_index = Find_Index(WSN, R4_CH);	
+			/*firts CH selection*/
+			int R1_CH = CH_Selection( WSN, 0, R2_start_index-1 );
+			int R2_CH = CH_Selection( WSN, R2_start_index, R3_start_index-1);
+			int R3_CH = CH_Selection( WSN, R3_start_index, R4_start_index-1);
+			int R4_CH = CH_Selection( WSN, R4_start_index, S_NUM-1);
+			// cout << "CH: " << R1_CH << "  " << R2_CH << "  " << R3_CH << "  " << R4_CH <<endl;
 
-		auto CH1_it = next( WSN.begin(), CH1_index);
-		Node& CH1 = *CH1_it;
-		auto CH2_it = next( WSN.begin(), CH2_index);
-		Node& CH2 = *CH2_it;
-		auto CH3_it = next( WSN.begin(), CH3_index);
-		Node& CH3 = *CH3_it;
-		auto CH4_it = next( WSN.begin(), CH4_index);
-		Node& CH4 = *CH4_it;
-		cout << "CH confirm: " << CH1.id << "  " << CH2.id << "  " << CH3.id << "  " << CH4.id <<endl;
+			/*把四個區域的CH節點在WSN的索引值*/
+			int CH1_index = Find_Index(WSN, R1_CH);
+			int CH2_index = Find_Index(WSN, R2_CH);	
+			int CH3_index = Find_Index(WSN, R3_CH);	
+			int CH4_index = Find_Index(WSN, R4_CH);	
 
-		int countround[4] = {0, 0, 0, 0};
+			auto CH1_it = next( WSN.begin(), CH1_index);
+			Node& CH1 = *CH1_it;
+			auto CH2_it = next( WSN.begin(), CH2_index);
+			Node& CH2 = *CH2_it;
+			auto CH3_it = next( WSN.begin(), CH3_index);
+			Node& CH3 = *CH3_it;
+			auto CH4_it = next( WSN.begin(), CH4_index);
+			Node& CH4 = *CH4_it;
+			// cout << "CH confirm: " << CH1.id << "  " << CH2.id << "  " << CH3.id << "  " << CH4.id <<endl;
 
-		int time = 1;
-		bool network_die = false;  //1代表有節點死亡，0代表沒有
+			int countround[4] = {0, 0, 0, 0};
 
-		while( !network_die ){
-			if(countround[0] == 0)
-				countround[0] = 10;
-			if(countround[1] == 0)
-				countround[1] = 10;
-			if(countround[2] == 0)
-				countround[2] = 10;
-			if(countround[3] == 0)
-				countround[3] = 3;
+			int time = 1;
+			bool network_die = false;  //1代表有節點死亡，0代表沒有
 
-			int dead_node = Check_Life(WSN); //有節點死掉返回該節點ID，沒有就返回SinkID
-			if( dead_node < SINKID ){  //有節點死掉
-				avg_time += time;
-				network_die = true;
-				break;
-			}
-			if( time % SensingRate_type1f == 0){
-				for(auto& node : WSN){
-					if( node.type == 1 ){
-						transaction( node, time, CH1, CH2, CH3, CH4 );
-					}
-				}
-			}
-			if( time % SensingRate_type2f == 0){
-				for(auto& node : WSN){
-					if( node.type == 2){
-						transaction( node, time, CH1, CH2, CH3, CH4 );
-					}
-				}
-			}
-			if( time % SensingRate_type3f == 0){
-				for(auto& node : WSN){
-					if( node.type == 3){
-						transaction( node, time, CH1, CH2, CH3, CH4 );
-					}
-				}
-			}
-
-			if( time % CH_frequency == 0){
-				CH_to_Sink(CH4);
-				CH_to_CH4(CH3, CH4);
-				CH_to_CH4(CH1, CH4);
-				CH_to_CH4(CH2, CH4);
-
-				countround[0]--;
+			while( !network_die ){
 				if(countround[0] == 0)
-					R1_CH = CH_Selection( WSN, 0, R2_start_index-1 );
-				countround[1]--;
+					countround[0] = 10;
 				if(countround[1] == 0)
-					R2_CH = CH_Selection( WSN, R2_start_index, R3_start_index-1);
-				countround[2]--;
+					countround[1] = 10;
 				if(countround[2] == 0)
-					R3_CH = CH_Selection( WSN, R3_start_index, R4_start_index-1 );
-				countround[3]--;
+					countround[2] = 10;
 				if(countround[3] == 0)
-					R4_CH = CH_Selection( WSN, R4_start_index, S_NUM-1);
-				/*把四個區域的CH節點在WSN的索引值*/
-				CH1_index = Find_Index(WSN, R1_CH);
-				CH2_index = Find_Index(WSN, R2_CH);	
-				CH3_index = Find_Index(WSN, R3_CH);	
-				CH4_index = Find_Index(WSN, R4_CH);	
+					countround[3] = 3;
 
-				auto CH1_it = next( WSN.begin(), CH1_index);
-				Node& CH1 = *CH1_it;
-				auto CH2_it = next( WSN.begin(), CH2_index);
-				Node& CH2 = *CH2_it;
-				auto CH3_it = next( WSN.begin(), CH3_index);
-				Node& CH3 = *CH3_it;
-				auto CH4_it = next( WSN.begin(), CH4_index);
-				Node& CH4 = *CH4_it;
+				int dead_node = Check_Life(WSN); //有節點死掉返回該節點ID，沒有就返回SinkID
+				if( dead_node < SINKID ){  //有節點死掉
+					avg_time += time;
+					network_die = true;
+					break;
+				}
+				if( time % SensingRate_type1f == 0){
+					for(auto& node : WSN){
+						if( node.type == 1 ){
+							transaction( node, time, CH1, CH2, CH3, CH4 );
+						}
+					}
+				}
+				if( time % SensingRate_type2f == 0){
+					for(auto& node : WSN){
+						if( node.type == 2){
+							transaction( node, time, CH1, CH2, CH3, CH4 );
+						}
+					}
+				}
+				if( time % SensingRate_type3f == 0){
+					for(auto& node : WSN){
+						if( node.type == 3){
+							transaction( node, time, CH1, CH2, CH3, CH4 );
+						}
+					}
+				}
+
+				if( time % CH_frequency == 0){
+					CH_to_Sink(CH4);
+					CH_to_CH4(CH3, CH4);
+					CH_to_CH4(CH1, CH4);
+					CH_to_CH4(CH2, CH4);
+
+					countround[0]--;
+					if(countround[0] == 0)
+						R1_CH = CH_Selection( WSN, 0, R2_start_index-1 );
+					countround[1]--;
+					if(countround[1] == 0)
+						R2_CH = CH_Selection( WSN, R2_start_index, R3_start_index-1);
+					countround[2]--;
+					if(countround[2] == 0)
+						R3_CH = CH_Selection( WSN, R3_start_index, R4_start_index-1 );
+					countround[3]--;
+					if(countround[3] == 0)
+						R4_CH = CH_Selection( WSN, R4_start_index, S_NUM-1);
+					/*把四個區域的CH節點在WSN的索引值*/
+					CH1_index = Find_Index(WSN, R1_CH);
+					CH2_index = Find_Index(WSN, R2_CH);	
+					CH3_index = Find_Index(WSN, R3_CH);	
+					CH4_index = Find_Index(WSN, R4_CH);	
+
+					auto CH1_it = next( WSN.begin(), CH1_index);
+					Node& CH1 = *CH1_it;
+					auto CH2_it = next( WSN.begin(), CH2_index);
+					Node& CH2 = *CH2_it;
+					auto CH3_it = next( WSN.begin(), CH3_index);
+					Node& CH3 = *CH3_it;
+					auto CH4_it = next( WSN.begin(), CH4_index);
+					Node& CH4 = *CH4_it;
+				}
+				time++;
 			}
-			time++;
+			// cout <<"ROUND " << round+1 << "   OVER"<< endl;
 		}
-		cout <<"ROUND " << round+1 << "   OVER"<< endl;
+		drop /= round_number;
+		total /= round_number;
+		received /= round_number;
+		macdrop /= round_number;
+		avg_time /= round_number;
+		cccount /= round_number;
+		cout << "------------ Sensors " << S_NUM << " ------------" << endl;
+		cout << "avg_time: " << avg_time << endl;
+		cout << "package total : " << total << endl;
+		// cout << "cccount: " << cccount << endl;
+		cout << "mac_drop : " << macdrop << endl;
+		cout << "overflow_drop :" << drop << endl;
+		cout << "received : " << received <<endl;
+		cout << "packet loss rate : " << (macdrop+drop) / total << endl << endl;
 	}
-	drop /= round_number;
-	total /= round_number;
-	received /= round_number;
-	macdrop /= round_number;
-	avg_time /= round_number;
-	cccount /= round_number;
-	cout << "avg_time: " << avg_time << endl;
-	cout << "package total : " << total << endl;
-	cout << "cccount: " << cccount << endl;
-	cout << "mac_drop : " << macdrop << endl;
-	cout << "overflow_drop :" << drop << endl;
-	cout << "received : " << received <<endl;
-	cout << "packet loss rate : " << (macdrop+drop) / total << endl;
+	
 	cout.rdbuf(coutbuf);
 	fout.close();
 	return 0;
