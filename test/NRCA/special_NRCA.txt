@@ -1,64 +1,64 @@
 NRCA
 
 ------------ Sensors 200 ------------
-avg_lifetime : 329833
-avg_total : 145157
-avg_macdrop : 14257
-avg_drop : 0
-avg_PLR : 0.0982175
+avg_lifetime : 309289
+avg_total : 133024
+avg_macdrop : 15471.2
+avg_drop : 160.2
+avg_PLR : 0.117508
 
 ------------ Sensors 300 ------------
-avg_lifetime : 328064
-avg_total : 206900
-avg_macdrop : 20407.2
-avg_drop : 399.1
-avg_PLR : 0.100562
+avg_lifetime : 301326
+avg_total : 189043
+avg_macdrop : 21361.4
+avg_drop : 733.32
+avg_PLR : 0.116877
 
 ------------ Sensors 400 ------------
-avg_lifetime : 363179
-avg_total : 305945
-avg_macdrop : 30311
-avg_drop : 3167.41
-avg_PLR : 0.109426
+avg_lifetime : 327314
+avg_total : 276218
+avg_macdrop : 30387.1
+avg_drop : 4306.13
+avg_PLR : 0.125601
 
 ------------ Sensors 500 ------------
-avg_lifetime : 333619
-avg_total : 352457
-avg_macdrop : 35067.1
-avg_drop : 14158.7
-avg_PLR : 0.139665
+avg_lifetime : 334016
+avg_total : 354469
+avg_macdrop : 37757.9
+avg_drop : 17398.9
+avg_PLR : 0.155604
 
 ------------ Sensors 600 ------------
-avg_lifetime : 341775
-avg_total : 438718
-avg_macdrop : 43623.3
-avg_drop : 33355.2
-avg_PLR : 0.175462
+avg_lifetime : 290419
+avg_total : 369769
+avg_macdrop : 38304.1
+avg_drop : 32227
+avg_PLR : 0.190744
 
 ------------ Sensors 700 ------------
-avg_lifetime : 314582
-avg_total : 469432
-avg_macdrop : 46785.3
-avg_drop : 51596.3
-avg_PLR : 0.209576
+avg_lifetime : 305991
+avg_total : 460225
+avg_macdrop : 46355.7
+avg_drop : 56235.8
+avg_PLR : 0.222916
 
 ------------ Sensors 800 ------------
-avg_lifetime : 316519
-avg_total : 543164
-avg_macdrop : 54093
-avg_drop : 77582.9
-avg_PLR : 0.242424
+avg_lifetime : 317304
+avg_total : 543798
+avg_macdrop : 53521.7
+avg_drop : 86749
+avg_PLR : 0.257946
 
 ------------ Sensors 900 ------------
-avg_lifetime : 313677
-avg_total : 606505
-avg_macdrop : 60328.5
-avg_drop : 109435
-avg_PLR : 0.279905
+avg_lifetime : 299463
+avg_total : 577943
+avg_macdrop : 55009.5
+avg_drop : 117506
+avg_PLR : 0.298499
 
 ------------ Sensors 1000 ------------
-avg_lifetime : 316201
-avg_total : 680278
-avg_macdrop : 67769.3
-avg_drop : 152153
-avg_PLR : 0.323282
+avg_lifetime : 286687
+avg_total : 616154
+avg_macdrop : 57052.1
+avg_drop : 151275
+avg_PLR : 0.33811

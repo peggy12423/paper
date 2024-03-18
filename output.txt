@@ -1,0 +1,5 @@
+avg_time : 372658
+avg_total : 302300
+avg_macdrop : 41210.6
+avg_drop : 2172.9
+avg_PLR : 0.143511

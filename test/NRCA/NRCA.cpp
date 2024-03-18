@@ -31,6 +31,7 @@
 #define ReceiveEnergy 0.00008 //0.000000001*50*200j*8 (50nj/bit by冠中)
 #define Package_size 200 //bytes 
 #define node_buffer 20 //Kbytes (100格)
+#define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
 #define round_number 10
@@ -64,7 +65,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("normal_NRCA.txt");
+ofstream fout("special_NRCA.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -196,6 +197,16 @@ void special_node_deployed(){
 	}
 }
 
+void sink_init(){
+	sink.id = SINKID;
+	for (int b = 0; b < SINK_BUFFER_SIZE; b++){
+		sink.buffer[b].data = -1;
+		sink.buffer[b].dst = -1;
+		sink.buffer[b].src = -1;
+		sink.buffer[b].time = -1;
+	}
+}
+
 void packet_init()
 {
 	for (int a = 0; a < S_NUM; a++)
@@ -274,7 +285,7 @@ void Packet_Generate(int now, int t) //generate packet 有能耗
 void Packet_Dliver(int sender, int CH) // 有能耗
 {
 	int rate = rand() % 100 + 1;
-	if (rate > 10 || sender == CH)  /*10% drop rate or CH自己將sense的封包放自己的buffer*/
+	if (rate > successful_rate || sender == CH)  /*10% drop rate or CH自己將sense的封包放自己的buffer*/
 	{
 		ns[CH].receive.dst = ns[sender].sense.dst;
 		ns[CH].receive.src = ns[sender].sense.src;
@@ -359,13 +370,19 @@ void CH2Sink(int CH) //有能耗
 			{
 				break;
 			}
-			rate = b - NODE_BUFFER1 + 1;
-			sink.buffer[start].data = ns[CH].buffer[b].data;
-			sink.buffer[start].dst = ns[CH].buffer[b].dst;
-			sink.buffer[start].src = ns[CH].buffer[b].src;
-			sink.buffer[start].time = ns[CH].buffer[b].time;
-			//fout << "CH ID:" << ns[CH].id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
-			start++;
+			int d = rand() % 100 + 1;
+			if (d > successful_rate)
+			{
+				rate = b - NODE_BUFFER1 + 1;
+				sink.buffer[start].data = ns[CH].buffer[b].data;
+				sink.buffer[start].dst = ns[CH].buffer[b].dst;
+				sink.buffer[start].src = ns[CH].buffer[b].src;
+				sink.buffer[start].time = ns[CH].buffer[b].time;
+				start++;
+			}
+			else{
+				macdrop++;
+			}
 		}
 		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
@@ -384,13 +401,20 @@ void CH2Sink(int CH) //有能耗
 			{
 				break;
 			}
-			rate = b + 1;
-			sink.buffer[start].data = ns[CH].buffer[b].data;
-			sink.buffer[start].dst = ns[CH].buffer[b].dst;
-			sink.buffer[start].src = ns[CH].buffer[b].src;
-			sink.buffer[start].time = ns[CH].buffer[b].time;
-			//fout << "CH ID:" << ns[CH].id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
-			start++;
+			int d = rand() % 100 + 1; /*?????????????????????*/
+			if (d > successful_rate)
+			{
+				rate = b + 1;
+				sink.buffer[start].data = ns[CH].buffer[b].data;
+				sink.buffer[start].dst = ns[CH].buffer[b].dst;
+				sink.buffer[start].src = ns[CH].buffer[b].src;
+				sink.buffer[start].time = ns[CH].buffer[b].time;
+				start++;
+			}
+			else
+			{
+				macdrop++;
+			}
 		}
 		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
@@ -414,11 +438,19 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 			{
 				break;
 			}
-			rate = b + 1;
-			ns[dst].buffer[NODE_BUFFER1 + b].data = ns[CH1].buffer[b].data;
-			ns[dst].buffer[NODE_BUFFER1 + b].dst = ns[CH1].buffer[b].dst;
-			ns[dst].buffer[NODE_BUFFER1 + b].src = ns[CH1].buffer[b].src;
-			ns[dst].buffer[NODE_BUFFER1 + b].time = ns[CH1].buffer[b].time;
+			int d = rand() % 100 + 1; /*?????????????????????*/
+			if (d > successful_rate)
+			{
+				rate = b + 1;
+				ns[dst].buffer[NODE_BUFFER1 + b].data = ns[CH1].buffer[b].data;
+				ns[dst].buffer[NODE_BUFFER1 + b].dst = ns[CH1].buffer[b].dst;
+				ns[dst].buffer[NODE_BUFFER1 + b].src = ns[CH1].buffer[b].src;
+				ns[dst].buffer[NODE_BUFFER1 + b].time = ns[CH1].buffer[b].time;
+			}
+			else
+			{
+				macdrop++;
+			}
 		}
 		clean(CH1, 0, NODE_BUFFER1);
 		//fout <<"模式一收到" <<rate << endl;
@@ -431,11 +463,19 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 			{
 				break;
 			}
-			rate = b + 1 - NODE_BUFFER1;
-			ns[dst].buffer[b].data = ns[CH1].buffer[b].data;
-			ns[dst].buffer[b].dst = ns[CH1].buffer[b].dst;
-			ns[dst].buffer[b].src = ns[CH1].buffer[b].src;
-			ns[dst].buffer[b].time = ns[CH1].buffer[b].time;
+			int d = rand() % 100 + 1; /*?????????????????????*/
+			if (d > successful_rate)
+			{
+				rate = b + 1 - NODE_BUFFER1;
+				ns[dst].buffer[b].data = ns[CH1].buffer[b].data;
+				ns[dst].buffer[b].dst = ns[CH1].buffer[b].dst;
+				ns[dst].buffer[b].src = ns[CH1].buffer[b].src;
+				ns[dst].buffer[b].time = ns[CH1].buffer[b].time;
+			}
+			else
+			{
+				macdrop++;
+			}
 		}
 		clean(CH1, NODE_BUFFER1, NODE_BUFFER2);
 		//fout << "模式二收到" << rate << endl;
@@ -481,18 +521,11 @@ int main(){
 		{
 			cout << round+1 << endl;
 			node_deployed();
-			// special_node_deployed();
-			packet_init();
+			special_node_deployed();
+			// packet_init();
 
 			/*sink initialization*/
-			sink.id = SINKID;
-			for (int b = 0; b < SINK_BUFFER_SIZE; b++)
-			{
-				sink.buffer[b].data = -1;
-				sink.buffer[b].dst = -1;
-				sink.buffer[b].src = -1;
-				sink.buffer[b].time = -1;
-			}
+			sink_init();
 
 			/*firts CH selection*/
 			CH_Selection(0, R2 - 1);
