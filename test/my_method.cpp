@@ -267,7 +267,26 @@ double standard(double j_dtc, double j_RE, double energy_standard, double distan
 	return standard;
 }
 
-void CH_selection(int sIndex, int eIndex, int CH_num){
+double node_density(int sIndex, int eIndex, int area){
+    int region_S_NUM = eIndex - sIndex + 1;
+    double node_density = region_S_NUM / area;
+    return node_density;
+}
+
+int region_CH_num(int sIndex, int eIndex){
+	double region_density = node_density(sIndex, eIndex, 40000);
+	int CH_num = 1;
+	if( region_density >= high_density_th2 ){
+		CH_num = 3;
+	}
+	else if( region_density >= high_density_th1 ){
+		CH_num = 2;
+	}
+	return CH_num;
+}
+
+void CH_selection(int sIndex, int eIndex){
+	int CH_num = region_CH_num(sIndex, eIndex);
 	double Energy = Max_energy(sIndex, eIndex);
 	double Distance = Max_distance(sIndex, eIndex);
 	int start = sIndex;
@@ -354,24 +373,6 @@ void CH_selection(int sIndex, int eIndex, int CH_num){
 	}
 }
 
-double node_density(int sIndex, int eIndex, int area){
-    int region_S_NUM = eIndex - sIndex + 1;
-    double node_density = region_S_NUM / area;
-    return node_density;
-}
-
-int region_CH_num(int sIndex, int eIndex){
-	double region_density = node_density(sIndex, eIndex, 40000);
-	int CH_num = 1;
-	if( region_density >= high_density_th2 ){
-		CH_num = 3;
-	}
-	else if( region_density >= high_density_th1 ){
-		CH_num = 2;
-	}
-	return CH_num;
-}
-
 double avg_energy(int sIndex, int eIndex){
     double total_energy = 0;
 	int region_S_NUM = 0;
@@ -414,15 +415,10 @@ int main(){
 		sink_init();
 
    		/*firts CH selection*/
-		int R1_CH_num = region_CH_num(0, R2-1);
-		int R2_CH_num = region_CH_num(R2, R3-1);
-		int R3_CH_num = region_CH_num(R3, R4-1);
-		int R4_CH_num = region_CH_num(R4, S_NUM-1);
-
-		CH_Selection(0, R2-1, R1_CH_num);
-		CH_Selection(R2, R3-1, R2_CH_num);
-		CH_Selection(R3, R4-1, R3_CH_num);
-		CH_Selection(R4, S_NUM-1, R4_CH_num);
+		CH_selection(0, R2-1);
+		CH_selection(R2, R3-1);
+		CH_selection(R3, R4-1);
+		CH_selection(R4, S_NUM-1);
 
 		/*traffic start*/
 		int die = 0;
@@ -435,7 +431,7 @@ int main(){
 				break;
 			}
 			else{   //¨S¦³node¦º±¼
-				
+
 			}
 		}
 
