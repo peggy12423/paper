@@ -115,8 +115,7 @@ void set_distance_to_center( Center region_center, int sIndex, int eIndex){
 }
 
 void set_data_rate(){
-	int i = 0;
-	for( i; i < S_NUM; i++){
+	for( int i = 0; i < S_NUM; i++){
 		if(ns[i].type == 1){
 			ns[i].rate = type3f;
 			continue;
@@ -144,9 +143,6 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 1;
 		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
-		ns[i].CH3 = -1;
-		ns[i].CH4 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].dtc = distance(i, SINKID);/*¶ZÂ÷°ÏSINK*/
@@ -162,9 +158,6 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 201;
 		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
-		ns[i].CH3 = -1;
-		ns[i].CH4 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 2;
@@ -179,9 +172,6 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 1;
 		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
-		ns[i].CH3 = -1;
-		ns[i].CH4 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 3;
@@ -196,9 +186,6 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 201;
 		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
-		ns[i].CH3 = -1;
-		ns[i].CH4 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 4;
@@ -373,16 +360,16 @@ void CH_selection(int sIndex, int eIndex){
 	}
 }
 
-double avg_energy(int sIndex, int eIndex){
-    double total_energy = 0;
-	int region_S_NUM = 0;
-    for( int i = sIndex; i <= eIndex; i++){
-		total_energy += ns[i].energy;
-		region_S_NUM++;
-    }
-    double avg_energy = total / region_S_NUM;
-    return avg_energy;
-}
+// double avg_energy(int sIndex, int eIndex){
+//     double total_energy = 0;
+// 	int region_S_NUM = 0;
+//     for( int i = sIndex; i <= eIndex; i++){
+// 		total_energy += ns[i].energy;
+// 		region_S_NUM++;
+//     }
+//     double avg_energy = total / region_S_NUM;
+//     return avg_energy;
+// }
 
 int CheckEnergy()
 {
@@ -434,7 +421,6 @@ int main(){
 
 			}
 		}
-
     }
 	total /= round_number;
 	macdrop /= round_number;
