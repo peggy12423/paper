@@ -13,7 +13,7 @@
 #define R 0.25 //壓縮率 設1則沒有壓縮
 #define type3f 360 //常規sensing frequency
 #define type4f 480
-#define type5f 600
+#define type5f 720
 #define CHf 120 //CH trans frequency
 #define freq_change_switch 1 //0關 1開 是否要使資料量突然暴增的開關
 #define b_t 10800 //大T 每多少秒開一次 小T 每一次開多少秒

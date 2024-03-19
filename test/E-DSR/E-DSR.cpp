@@ -66,7 +66,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("tt.txt");
+ofstream fout("special_E-DSR.txt");
 N ns[2000];
 S sink;
 double p_in_sink(0);
