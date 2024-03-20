@@ -26,6 +26,7 @@
 #define ReceiveEnergy 0.00008 //0.000000001*50*200j*8 (50nj/bit by冠中)
 #define Package_size 200 //bytes 
 #define node_buffer 20 //Kbytes (100格)
+#define successful_rate 5 //設x 成功率就是100-x%
 
 /*學長做出最好的權重*/
 #define Alpha 0.2
@@ -57,10 +58,11 @@ struct Package{
 
 struct Node{
 	int id, x, y, CH, type, rate, region1, region2;
+	int isCH_switch;
     double energy;//ns information
 	double dtc;    //節點到中心的距離
-	Package receive;
 	Package sense;
+	Package receive;
 	Package buffer[NODE_BUFFER2];//buffer in sensor ns
 };
 
@@ -79,6 +81,7 @@ Sink sink;
 int R2, R3, R4;
 double high_density_th1 = (S_NUM / 160000) * density_th1;
 double high_density_th2 = (S_NUM / 160000) * density_th2;
+int CH_record[4][3] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} };  //紀錄每個region的CH狀況
 
 double distance(int a, int b)
 {
@@ -143,6 +146,7 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 1;
 		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
+		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].dtc = distance(i, SINKID);/*距離區SINK*/
@@ -158,6 +162,7 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 201;
 		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
+		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 2;
@@ -172,6 +177,7 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 1;
 		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
+		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 3;
@@ -186,6 +192,7 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 201;
 		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
+		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 4;
@@ -272,60 +279,98 @@ int region_CH_num(int sIndex, int eIndex){
 	return CH_num;
 }
 
-void CH_selection(int sIndex, int eIndex){
+void CH_selection(int sIndex, int eIndex, int region){
 	int CH_num = region_CH_num(sIndex, eIndex);
 	double Energy = Max_energy(sIndex, eIndex);
 	double Distance = Max_distance(sIndex, eIndex);
 	int start = sIndex;
 	int end = eIndex;
 	int CH = sIndex;
+	ns[CH].isCH_switch = 1;   //開關-1代表索引CH為CH
 	int sCH = -1, tCH = -1;
 	double d = distance(sIndex, ns[sIndex].CH);
-	double MAX_re_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d*d*AmplifierEnergy)));
-	double MAX_standard = standard(ns[sIndex].dtc, MAX_re_energy, Energy, Distance);
+	double reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d*d*AmplifierEnergy)));
+	double MAX_standard = standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
 	sIndex += 1;
 	double standard2, standard3;
 	if( CH_num == 2 ){
-		sCH = sIndex+1;
-		double d2 = distance(sIndex+1, ns[sIndex+1].CH);
-		double reserve_energy2 = ns[sIndex+1].energy - (floor(reservation_energy_time / ns[sIndex+1].rate )*(ProbeEnergy + (TransmitEnergy + d2*d2*AmplifierEnergy)));
-		standard2 = standard(ns[sIndex+1].dtc, reserve_energy2, Energy, Distance);
+		sCH = sIndex;
+		ns[sCH].isCH_switch = 1;
+		double d2 = distance(sIndex, ns[sIndex].CH);
+		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d2*d2*AmplifierEnergy)));
+		standard2 = standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
 		sIndex += 1;
 	}
 	else if( CH_num == 3 ){
-		double d2 = distance(sIndex+1, ns[sIndex+1].CH);
-		double reserve_energy2 = ns[sIndex+1].energy - (floor(reservation_energy_time / ns[sIndex+1].rate )*(ProbeEnergy + (TransmitEnergy + d2*d2*AmplifierEnergy)));
-		standard2 = standard(ns[sIndex+1].dtc, reserve_energy2, Energy, Distance);
+		sCH = sIndex;
+		ns[sCH].isCH_switch = 1;
+		double d2 = distance(sIndex, ns[sIndex].CH);
+		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d2*d2*AmplifierEnergy)));
+		standard2 = standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
+		sIndex += 1;
 		
-		double d3 = distance(sIndex+2, ns[sIndex+2].CH);
-		double reserve_energy3 = ns[sIndex+2].energy - (floor(reservation_energy_time / ns[sIndex+2].rate )*(ProbeEnergy + (TransmitEnergy + d3*d3*AmplifierEnergy)));
-		standard3 = standard(ns[sIndex+2].dtc, reserve_energy3, Energy, Distance);
-		sIndex += 2;
+		tCH = sIndex;
+		ns[tCH].isCH_switch = 1;
+		double d3 = distance(sIndex, ns[sIndex].CH);
+		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d3*d3*AmplifierEnergy)));
+		standard3 = standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
+		sIndex += 1;
 	}
 
 	for( int i = sIndex; i <= eIndex; i++){
 		d = distance(i, ns[i].CH);
-		double current_re_energy = ns[i].energy - (floor(reservation_energy_time / ns[i].rate )*(ProbeEnergy + (TransmitEnergy + d*d*AmplifierEnergy)));
-		double current_standard = standard(ns[i].dtc, current_re_energy, Energy, Distance);
+		reserve_energy = ns[i].energy - (floor(reservation_energy_time / ns[i].rate )*(ProbeEnergy + (TransmitEnergy + d*d*AmplifierEnergy)));
+		double current_standard = standard(ns[i].dtc, reserve_energy, Energy, Distance);
 		if( MAX_standard < current_standard ){
+			ns[i].isCH_switch = 1;
+			if( sCH != -1 && tCH != -1){    // CH_num = 3
+				ns[tCH].isCH_switch = 0;    //原本的tCH變成非CH
+				standard3 = standard2;
+				standard2 = MAX_standard;
+				tCH = sCH;
+				sCH = CH;
+			}
+			else if( sCH != -1 && tCH == -1){    // CH_num = 2
+				ns[sCH].isCH_switch = 0;
+				standard2 = MAX_standard;
+				sCH = CH;
+			}
+			else{         //CH_num = 1
+				ns[CH].isCH_switch = 0;
+			}
 			MAX_standard = current_standard;
 			CH = ns[i].id;
 			continue;
 		}
 		else if( CH_num > 1 && standard2 < current_standard){  //有兩個或三個CH時，且當前標準介於最大與第二標準之間
+			ns[i].isCH_switch = 1;
+			if( sCH != -1 && tCH != -1 ){   // CH_num =3
+				ns[tCH].isCH_switch = 0;
+				standard3 = standard2;
+				tCH = sCH;
+			}
+			else if( sCH != -1 && tCH == -1){   //CH_num = 2
+				ns[sCH].isCH_switch = 0;
+			}
 			standard2 = current_standard;
 			sCH = ns[i].id;
 			continue;
 		}
 		else if( CH_num > 2 && standard3 < current_standard){   //有三個CH時，且當前標準介於第二與第三標準之間
+			ns[tCH].isCH_switch = 0;
+			ns[i].isCH_switch = 1;
 			standard3 = current_standard;
 			tCH = ns[i].id;
 			continue;
 		}
 	}
 
-	for( int j = start; j <= end; j++){   //更改區域內所有節點的CH為選出的CH
-		if( sCH != -1 && CH_num == 2){
+	CH_record[region-1][0] = CH;
+	CH_record[region-1][1] = sCH;
+	CH_record[region-1][2] = tCH;
+
+	for( int j = start; j <= end; j++){   //依照到CH的距離，更改區域內所有節點的CH為選出的CH
+		if( sCH != -1 && CH_num == 2){  //CH_num = 2
 			double dist1 = distance(j, CH);
 			double dist2 = distance(j, sCH);
 			if( dist1 <= dist2){
@@ -337,7 +382,7 @@ void CH_selection(int sIndex, int eIndex){
 				continue;
 			}
 		}
-		else if( sCH != -1 && tCH != -1 && CH_num == 3){
+		else if( sCH != -1 && tCH != -1 && CH_num == 3){   //CH_num = 3
 			double dist1 = distance(j, CH);
 			double dist2 = distance(j, sCH);
 			double dist3 = distance(j, tCH);
@@ -358,6 +403,7 @@ void CH_selection(int sIndex, int eIndex){
 			ns[j].CH = CH;
 		}
 	}
+	return CH;
 }
 
 // double avg_energy(int sIndex, int eIndex){
@@ -385,6 +431,208 @@ int CheckEnergy()
 	return SINKID;
 }
 
+void Packet_Generate(int now, int t) //generate packet 有能耗
+{
+	total++;
+	ns[now].sense.src = ns[now].id;
+	ns[now].sense.dst = ns[now].CH;
+	ns[now].sense.data = ns[now].type;
+	ns[now].sense.time = t;
+	ns[now].energy -= ProbeEnergy;
+	//fout << "node : " << now << "能量減少 "<< ProbeEnergy <<" ,因為產生感測封包 "<< endl;
+}
+
+void Packet_Dliver(int sender, int CH) // 有能耗
+{
+	int rate = rand() % 100 + 1;
+	if (rate > successful_rate || sender == CH)  //送到CH因此更改CH內receive內容
+	{
+		ns[CH].receive.dst = ns[sender].sense.dst;
+		ns[CH].receive.src = ns[sender].sense.src;
+		ns[CH].receive.data = ns[sender].sense.data;
+		ns[CH].receive.time = ns[sender].sense.time;
+	}
+	else   //CH沒收到因此改為-1
+	{
+		macdrop++;
+		ns[CH].receive.dst = -1;
+		ns[CH].receive.src = -1;
+		ns[CH].receive.data = -1;
+		ns[CH].receive.time = -1;
+	}
+	double d = distance(sender, CH);
+	if (sender != CH) //CH自己給自己不用扣能量
+	{
+		ns[sender].energy -= TransmitEnergy + d*d*AmplifierEnergy;
+		// cons[ns[sender].region1 - 1] += TransmitEnergy + d*d*AmplifierEnergy;
+		// trans_time[ns[sender].region1 - 1] += 1;
+		//fout << "node : " << sender << "能量減少 "<< TransmitEnergy + d*d*AmplifierEnergy <<" ,因為傳送給節點 " << CH << " 感測封包" << endl;
+	} //1個封包
+}
+
+void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
+{
+	if (ns[CH].receive.src != CH) //不是來自自己的才要扣能量
+	{
+		ns[CH].energy -= ReceiveEnergy;
+	} //drop還算是有收
+	int full(1);
+	for (int a = 0; a < NODE_BUFFER1; a++) //buffer is not full 50 for self-area-sense 50 for other CH 
+	{
+		if (ns[CH].buffer[a].data == -1)     //CH的receive封包放入buffer
+		{
+			ns[CH].buffer[a].dst = ns[CH].receive.dst;
+			ns[CH].buffer[a].src = ns[CH].receive.src;
+			ns[CH].buffer[a].data = ns[CH].receive.data;
+			ns[CH].buffer[a].time = ns[CH].receive.time;
+			full = 0;
+			break;
+		}
+	}
+	if (full == 1 && ns[CH].receive.data != -1)    //buffer滿了且receive的封包不是-1
+	{
+		drop++;
+	}
+	ns[CH].receive.dst = -1;
+	ns[CH].receive.src = -1;
+	ns[CH].receive.data = -1;
+	ns[CH].receive.time = -1;
+}
+
+void transaction(int trans_node, int t){
+	Packet_Generate(trans_node, t);
+	Packet_Dliver(trans_node, ns[trans_node].CH);
+	Packet_Receive(ns[trans_node].CH);
+}
+
+void clean(int CH, int start, int end)
+{
+	for (start; start < end; start++)
+	{
+		ns[CH].buffer[start].data = -1;
+		ns[CH].buffer[start].dst = -1;
+		ns[CH].buffer[start].src = -1;
+		ns[CH].buffer[start].time = -1;
+	}
+}
+
+void CH_to_Sink(int CH){    //R2的CH到Sink
+	int start = 0;    
+	for (int b = 0; b < SINK_BUFFER_SIZE; b++)	{
+		if (sink.buffer[b].data == -1){   //sink的buffer從哪邊開始是空的
+			start = b;
+			break;
+		}
+	}
+	if (ns[CH].buffer[NODE_BUFFER1].data != -1){   //幫別的CH傳
+		double rate = 0;
+		for (int b = NODE_BUFFER1; b < NODE_BUFFER2; b++){    //別區送來的封包存在100~199
+			if (ns[CH].buffer[b].data == -1){    //有空的就不用繼續了
+				break;
+			}
+			int d = rand() % 100 + 1;
+			if (d > successful_rate){    //CH2送到Sink
+				rate = b - NODE_BUFFER1 + 1;
+				sink.buffer[start].data = ns[CH].buffer[b].data;
+				sink.buffer[start].dst = ns[CH].buffer[b].dst;
+				sink.buffer[start].src = ns[CH].buffer[b].src;
+				sink.buffer[start].time = ns[CH].buffer[b].time;
+				start++;
+			}
+			else{
+				macdrop++;
+			}
+		}
+		//fout << "sink收到" << rate << "個" << endl;
+		rate = ceil(rate * R);
+		//fout << rate << endl;
+		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
+																							   //fout << "幫別人成功,我的能量只剩" << ns[CH].energy << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
+		clean(CH, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
+	}
+	else      //傳自己區的感測資料
+	{
+		double rate(0);/*壓縮率0.25*/
+		for (int b = 0; b < NODE_BUFFER1; b++)
+		{
+			if (ns[CH].buffer[b].data == -1) //有空的就不用繼續了
+			{
+				break;
+			}
+			int d = rand() % 100 + 1; /*?????????????????????*/
+			if (d > successful_rate)
+			{
+				rate = b + 1;
+				sink.buffer[start].data = ns[CH].buffer[b].data;
+				sink.buffer[start].dst = ns[CH].buffer[b].dst;
+				sink.buffer[start].src = ns[CH].buffer[b].src;
+				sink.buffer[start].time = ns[CH].buffer[b].time;
+				start++;
+			}
+			else
+			{
+				macdrop++;
+			}
+		}
+		//fout << "sink收到" << rate << "個" << endl;
+		rate = ceil(rate * R);
+		//fout << rate << endl;
+		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																							   //fout << "自己傳,我的能量只剩" << ns[CH].energy << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
+		clean(CH, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
+	}
+}
+
+void CH_to_Region2(int CH) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
+{
+	/*取CH到2區+2區到sink的距離相加與其剩餘能量值做加權*/
+	int dst = CH_record[1][0];
+	double rate = 0;/*壓縮率0.25*/
+	for (int b = 0; b < NODE_BUFFER1; b++){
+		if (ns[CH].buffer[b].data == -1){   //有空的就不用繼續了
+			break;
+		}
+		int d = rand() % 100 + 1; 
+		if (d > successful_rate){   //其他區域送來的存在buffer 100~199
+			rate = b + 1;
+			ns[dst].buffer[NODE_BUFFER1 + b].data = ns[CH].buffer[b].data;
+			ns[dst].buffer[NODE_BUFFER1 + b].dst = ns[CH].buffer[b].dst;
+			ns[dst].buffer[NODE_BUFFER1 + b].src = ns[CH].buffer[b].src;
+			ns[dst].buffer[NODE_BUFFER1 + b].time = ns[CH].buffer[b].time;
+		}
+		else
+		{
+			macdrop++;
+		}
+	}
+	clean(CH, 0, NODE_BUFFER1);
+	rate = ceil(rate * R);
+	ns[CH].energy -= (TransmitEnergy + pow(distance(CH, dst), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																						  //fout << "node : " << CH << "能量減少 "<<(TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
+	ns[dst].energy -= (ReceiveEnergy)*rate;
+	CH_to_Sink(dst);
+}
+
+void Reselection_judge(int sIndex, int eIndex, int rnum)
+{
+	double avg_energy = find_avg_energy(sIndex, eIndex, rnum);
+	if (((avg_energy - ns[ns[sIndex].CH].energy) / avg_energy) >= 0.15) //這個值不一定大於0 , CH的花費不一定比周圍高 ! 因為資料壓縮的關係
+	{
+		CH_Selection(sIndex, eIndex);
+	}
+}
+
+void CH_Reselection()
+{
+	int R_NUM = S_NUM * 0.25;
+	Reselection_judge(0, R2 - 1, R_NUM);
+	Reselection_judge(R2, R3 - 1, R_NUM);
+	Reselection_judge(R3, R4 - 1, R_NUM);
+	Reselection_judge(R4, S_NUM - 1, R_NUM);
+}
+
 int main(){
 	ofstream fout("my_normal.txt");
 	streambuf *coutbuf = cout.rdbuf();
@@ -402,10 +650,10 @@ int main(){
 		sink_init();
 
    		/*firts CH selection*/
-		CH_selection(0, R2-1);
-		CH_selection(R2, R3-1);
-		CH_selection(R3, R4-1);
-		CH_selection(R4, S_NUM-1);
+		CH_selection(0, R2-1, 1);
+		CH_selection(R2, R3-1, 2);
+		CH_selection(R3, R4-1, 3);
+		CH_selection(R4, S_NUM-1, 4);
 
 		/*traffic start*/
 		int die = 0;
@@ -418,7 +666,62 @@ int main(){
 				break;
 			}
 			else{   //沒有node死掉
+				if( t % type3f == 0){
+					for(int j = 0; j < S_NUM; j++){
+						if( ns[j].type == 1 ){
+							transaction( j, t);
+						}
+					}
+				}
+				if( t % type4f == 0){
+					for(int j = 0; j < S_NUM; j++){
+						if( ns[j].type == 2 ){
+							transaction( j, t);
+						}
+					}
+				}
+				if( t % type5f == 0){
+					for(int j = 0; j < S_NUM; j++){
+						if( ns[j].type == 3 ){
+							transaction( j, t);
+						}
+					}
+				}
 
+				if( t % CHf == 0){
+					/* 判斷CH要怎麼送到R2，再送到Sink*/
+					CH_to_Sink(CH_record[1][0]);
+					CH_to_Region2(CH_record[0][0]);
+					CH_to_Region2(CH_record[2][0]);
+					CH_to_Region2(CH_record[3][0]);
+
+					if( CH_record[1][1] != -1 ){   //R2有sCH
+						CH_to_Sink(CH_record[1][1]);
+					}
+					if( CH_record[1][2] != -1 ){
+						CH_to_Sink(CH_record[1][2]);
+					}
+					if( CH_record[0][1] != -1 ){
+						CH_to_Region2(CH_record[0][1]);
+					}
+					if( CH_record[0][2] != -1 ){
+						CH_to_Region2(CH_record[0][2]);
+					}
+					if( CH_record[2][1] != -1 ){
+						CH_to_Region2(CH_record[2][1]);
+					}
+					if( CH_record[2][2] != -1 ){
+						CH_to_Region2(CH_record[2][2]);
+					}
+					if( CH_record[3][1] != -1 ){
+						CH_to_Region2(CH_record[3][1]);
+					}
+					if( CH_record[3][2] != -1 ){
+						CH_to_Region2(CH_record[3][2]);
+					}
+					/*判斷CH是否小於threshold*/
+				}
+				t++;
 			}
 		}
     }
