@@ -95,13 +95,24 @@ double distance(int a, int b)
 	}
 }
 
+double find_avg_energy(int s, int e, int rnum)
+{
+	double avg_energy(0.0);
+	for (int i = s; i <= e; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= rnum;
+	return avg_energy;
+}
+
 Center find_center(int sIndex, int eIndex){
 	Center region_center;
 	region_center.x = 0.0;
 	region_center.y = 0.0;
 	for( int i = sIndex ; i <= eIndex ; i++){
-		region_center.x += node[i].x;
-		region_center.y += node[i].y;
+		region_center.x += ns[i].x;
+		region_center.y += ns[i].y;
 	}
 	int cluster_S_NUM = eIndex - sIndex + 1;
 	region_center.x /= cluster_S_NUM;
@@ -110,10 +121,11 @@ Center find_center(int sIndex, int eIndex){
 }
 
 void set_distance_to_center( Center region_center, int sIndex, int eIndex){
-	int dis_x = abs(node[i].x - region_center.x);
-	int dis_y = abs(node[i].y - region_center.y);
+	int dis_x, dis_y;
 	for( int i = sIndex; i <= eIndex; i++){
-		node[i].dtc = sqrt( pow(dis_x, 2) + pow(dis_y, 2) );
+		dis_x = abs(ns[i].x - region_center.x);
+		dis_y = abs(ns[i].y - region_center.y);
+		ns[i].dtc = sqrt( pow(dis_x, 2) + pow(dis_y, 2) );
 	}
 }
 
@@ -149,7 +161,6 @@ void node_deployed(){
 		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
-		ns[i].dtc = distance(i, SINKID);/*距離區SINK*/
 		ns[i].region1 = 1;
 		if( i == R2-1 ){
 			Center center1 = find_center(0, R2-1);
@@ -403,7 +414,6 @@ void CH_selection(int sIndex, int eIndex, int region){
 			ns[j].CH = CH;
 		}
 	}
-	return CH;
 }
 
 // double avg_energy(int sIndex, int eIndex){
@@ -421,7 +431,7 @@ int CheckEnergy()
 {
 	for (int b = 0; b < S_NUM; b++)
 	{
-		//fout << "node " << b << "'s energy = " << ns[b].energy << endl;
+		//fout << "ns " << b << "'s energy = " << ns[b].energy << endl;
 		if (ns[b].energy <= 0)
 		{
 			return b;
@@ -439,7 +449,7 @@ void Packet_Generate(int now, int t) //generate packet 有能耗
 	ns[now].sense.data = ns[now].type;
 	ns[now].sense.time = t;
 	ns[now].energy -= ProbeEnergy;
-	//fout << "node : " << now << "能量減少 "<< ProbeEnergy <<" ,因為產生感測封包 "<< endl;
+	//fout << "ns : " << now << "能量減少 "<< ProbeEnergy <<" ,因為產生感測封包 "<< endl;
 }
 
 void Packet_Dliver(int sender, int CH) // 有能耗
@@ -615,22 +625,22 @@ void CH_to_Region2(int CH) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 	CH_to_Sink(dst);
 }
 
-void Reselection_judge(int sIndex, int eIndex, int rnum)
+void Reselection_judge(int sIndex, int eIndex, int rnum, int region)
 {
 	double avg_energy = find_avg_energy(sIndex, eIndex, rnum);
 	if (((avg_energy - ns[ns[sIndex].CH].energy) / avg_energy) >= 0.15) //這個值不一定大於0 , CH的花費不一定比周圍高 ! 因為資料壓縮的關係
 	{
-		CH_Selection(sIndex, eIndex);
+		CH_selection(sIndex, eIndex, region);
 	}
 }
 
 void CH_Reselection()
 {
 	int R_NUM = S_NUM * 0.25;
-	Reselection_judge(0, R2 - 1, R_NUM);
-	Reselection_judge(R2, R3 - 1, R_NUM);
-	Reselection_judge(R3, R4 - 1, R_NUM);
-	Reselection_judge(R4, S_NUM - 1, R_NUM);
+	Reselection_judge(0, R2 - 1, R_NUM, 1);
+	Reselection_judge(R2, R3 - 1, R_NUM, 2);
+	Reselection_judge(R3, R4 - 1, R_NUM, 3);
+	Reselection_judge(R4, S_NUM - 1, R_NUM, 4);
 }
 
 int main(){
