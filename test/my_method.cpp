@@ -730,6 +730,14 @@ int main(){
 						CH_to_Region2(CH_record[3][2]);
 					}
 					/*判斷CH是否小於threshold*/
+					for(int i = 0; i < 4 ; i++ ){   //依序查看各CH是否energy小於閥值
+						for(int j = 0; j < 3; j++){
+							int ch = CH_record[i][j];
+							if( ch != -1 && ns[ch].energy <  ){
+								
+							}
+						}
+					}
 				}
 				t++;
 			}
