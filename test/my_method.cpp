@@ -40,6 +40,9 @@
 #define density_th1 1.75
 #define density_th2 2.5
 
+//實驗二可更改
+#define ch_energy_th 5
+
 
 using namespace std;
 
@@ -82,6 +85,7 @@ int R2, R3, R4;
 double high_density_th1 = (S_NUM / 160000) * density_th1;
 double high_density_th2 = (S_NUM / 160000) * density_th2;
 int CH_record[4][3] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} };  //紀錄每個region的CH狀況
+int CHtoSink_count[4][3] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} };  //紀錄當前CH的剩餘能量
 
 double distance(int a, int b)
 {
@@ -152,11 +156,11 @@ void node_deployed(){
 	R4 = S_NUM * 0.75;
 	
 	int i = 0;
-	for (i; i < R2; i++)
+	for (i; i < R2; i++)   //Region 1
 	{
 		ns[i].id = i;
 		ns[i].x = rand() % 200 + 1;
-		ns[i].y = rand() % 200 + 1;
+		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
 		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
@@ -167,11 +171,11 @@ void node_deployed(){
 			set_distance_to_center(center1, 0, R2-1);
 		}
 	}
-	for (i; i < R3; i++)
+	for (i; i < R3; i++)   //Region 2
 	{
 		ns[i].id = i;
 		ns[i].x = rand() % 200 + 201;
-		ns[i].y = rand() % 200 + 1;
+		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
 		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
@@ -182,11 +186,11 @@ void node_deployed(){
 			set_distance_to_center(center2, R2, R3-1);
 		}
 	}
-	for (i; i < R4; i++)
+	for (i; i < R4; i++)   //Region 3
 	{
 		ns[i].id = i;
 		ns[i].x = rand() % 200 + 1;
-		ns[i].y = rand() % 200 + 201;
+		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
 		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
@@ -197,11 +201,11 @@ void node_deployed(){
 			set_distance_to_center(center3, R3, R4-1);
 		}
 	}
-	for (i; i < S_NUM; i++)
+	for (i; i < S_NUM; i++)   //Region 4
 	{
 		ns[i].id = i;
 		ns[i].x = rand() % 200 + 201;
-		ns[i].y = rand() % 200 + 201;
+		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
 		ns[i].isCH_switch = 0;
 		ns[i].type = rand() % 3 + 3;
@@ -267,11 +271,6 @@ double Max_distance(int sIndex, int eIndex){
 	return max_D;
 }
 
-double standard(double j_dtc, double j_RE, double energy_standard, double distance_standard){    //考慮i->j->Sink的距離/i->鄰近區域CH->Sink的距離 和 j的剩餘能量/鄰近區域節點最大剩餘能量
-	double standard = Alpha*(1 - j_dtc / distance_standard) + Beta*(j_RE / energy_standard); //larger is better
-	return standard;
-}
-
 double node_density(int sIndex, int eIndex, int area){
     int region_S_NUM = eIndex - sIndex + 1;
     double node_density = region_S_NUM / area;
@@ -301,7 +300,7 @@ void CH_selection(int sIndex, int eIndex, int region){
 	int sCH = -1, tCH = -1;
 	double d = distance(sIndex, ns[sIndex].CH);
 	double reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d*d*AmplifierEnergy)));
-	double MAX_standard = standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
+	double Max_standard = Alpha*(1 - ns[sIndex].dtc / Distance) + Beta*(reserve_energy / Energy);
 	sIndex += 1;
 	double standard2, standard3;
 	if( CH_num == 2 ){
@@ -309,7 +308,7 @@ void CH_selection(int sIndex, int eIndex, int region){
 		ns[sCH].isCH_switch = 1;
 		double d2 = distance(sIndex, ns[sIndex].CH);
 		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d2*d2*AmplifierEnergy)));
-		standard2 = standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
+		standard2 = Alpha*(1 - ns[sIndex].dtc / Distance) + Beta*(reserve_energy / Energy);
 		sIndex += 1;
 	}
 	else if( CH_num == 3 ){
@@ -317,14 +316,14 @@ void CH_selection(int sIndex, int eIndex, int region){
 		ns[sCH].isCH_switch = 1;
 		double d2 = distance(sIndex, ns[sIndex].CH);
 		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d2*d2*AmplifierEnergy)));
-		standard2 = standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
+		standard2 = Alpha*(1 - ns[sIndex].dtc / Distance) + Beta*(reserve_energy / Energy);
 		sIndex += 1;
 		
 		tCH = sIndex;
 		ns[tCH].isCH_switch = 1;
 		double d3 = distance(sIndex, ns[sIndex].CH);
 		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / ns[sIndex].rate )*(ProbeEnergy + (TransmitEnergy + d3*d3*AmplifierEnergy)));
-		standard3 = standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
+		standard3 = Alpha*(1 - ns[sIndex].dtc / Distance) + Beta*(reserve_energy / Energy);
 		sIndex += 1;
 	}
 
@@ -332,24 +331,24 @@ void CH_selection(int sIndex, int eIndex, int region){
 		d = distance(i, ns[i].CH);
 		reserve_energy = ns[i].energy - (floor(reservation_energy_time / ns[i].rate )*(ProbeEnergy + (TransmitEnergy + d*d*AmplifierEnergy)));
 		double current_standard = standard(ns[i].dtc, reserve_energy, Energy, Distance);
-		if( MAX_standard < current_standard ){
+		if( Max_standard < current_standard ){
 			ns[i].isCH_switch = 1;
 			if( sCH != -1 && tCH != -1){    // CH_num = 3
 				ns[tCH].isCH_switch = 0;    //原本的tCH變成非CH
 				standard3 = standard2;
-				standard2 = MAX_standard;
+				standard2 = Max_standard;
 				tCH = sCH;
 				sCH = CH;
 			}
 			else if( sCH != -1 && tCH == -1){    // CH_num = 2
 				ns[sCH].isCH_switch = 0;
-				standard2 = MAX_standard;
+				standard2 = Max_standard;
 				sCH = CH;
 			}
 			else{         //CH_num = 1
 				ns[CH].isCH_switch = 0;
 			}
-			MAX_standard = current_standard;
+			Max_standard = current_standard;
 			CH = ns[i].id;
 			continue;
 		}
@@ -379,6 +378,9 @@ void CH_selection(int sIndex, int eIndex, int region){
 	CH_record[region-1][0] = CH;
 	CH_record[region-1][1] = sCH;
 	CH_record[region-1][2] = tCH;
+	CH_energy[region-1][0] = ns[CH].energy;
+	CH_energy[region-1][1] = ns[sCH].energy;
+	CH_energy[region-1][2] = ns[tCH].energy;
 
 	for( int j = start; j <= end; j++){   //依照到CH的距離，更改區域內所有節點的CH為選出的CH
 		if( sCH != -1 && CH_num == 2){  //CH_num = 2
@@ -526,7 +528,7 @@ void clean(int CH, int start, int end)
 	}
 }
 
-void CH_to_Sink(int CH){    //R2的CH到Sink
+void CH_to_Sink(int CH){    //CH4到Sink
 	int start = 0;    
 	for (int b = 0; b < SINK_BUFFER_SIZE; b++)	{
 		if (sink.buffer[b].data == -1){   //sink的buffer從哪邊開始是空的
@@ -595,10 +597,10 @@ void CH_to_Sink(int CH){    //R2的CH到Sink
 	}
 }
 
-void CH_to_Region2(int CH) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
+void CH_to_CH4(int CH) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 {
 	/*取CH到2區+2區到sink的距離相加與其剩餘能量值做加權*/
-	int dst = CH_record[1][0];
+	int dst = CH_record[3][0];
 	double rate = 0;/*壓縮率0.25*/
 	for (int b = 0; b < NODE_BUFFER1; b++){
 		if (ns[CH].buffer[b].data == -1){   //有空的就不用繼續了
@@ -643,6 +645,31 @@ void CH_Reselection()
 	Reselection_judge(R4, S_NUM - 1, R_NUM, 4);
 }
 
+int borrow_ch(int ch, double d){
+	double reserve_energy = ns[ch].energy - (floor(reservation_energy_time / ns[ch].rate)*(ProbeEnergy + TransmitEnergy + d*d*AmplifierEnergy));
+	double ch_standard = standard(ns[ch].dtc, reserve_energy, )
+}
+
+void toSink_count(){
+	/*計算各CH還可直接傳到Sink的次數*/
+	for(int i = 0; i < 4 ; i++ ){   //依序查看各CH是否energy小於閥值
+		for(int j = 0; j < 3; j++){
+			int ch = CH_record[i][j];
+			double d = distance(ch, SINKID); 
+			double CHtoSink_energy = ProbeEnergy + TransmitEnergy + d*d*AmplifierEnergy;
+			CHtoSink_count[i][j] = static_cast<int>( ns[ch].energy / CHtoSink_energy );   //計算目前CH還能傳送的次數 
+		}
+	}
+}
+
+int ch4_reselection(){
+	double Energy = Max_energy(R4, S_NUM-1);
+	double Distance = Max_distance(R4, S_NUM-1);
+	int start = R4;
+	int end = S_NUM-1;
+	int CH = R4;
+}
+
 int main(){
 	ofstream fout("my_normal.txt");
 	streambuf *coutbuf = cout.rdbuf();
@@ -679,70 +706,73 @@ int main(){
 				if( t % type3f == 0){
 					for(int j = 0; j < S_NUM; j++){
 						if( ns[j].type == 1 ){
-							transaction( j, t);
+							transaction(j, t);
 						}
 					}
 				}
 				if( t % type4f == 0){
 					for(int j = 0; j < S_NUM; j++){
 						if( ns[j].type == 2 ){
-							transaction( j, t);
+							transaction(j, t);
 						}
 					}
 				}
 				if( t % type5f == 0){
 					for(int j = 0; j < S_NUM; j++){
 						if( ns[j].type == 3 ){
-							transaction( j, t);
+							transaction(j, t);
 						}
 					}
 				}
 
 				if( t % CHf == 0){
-					/* 判斷CH要怎麼送到R2，再送到Sink*/
-					CH_to_Sink(CH_record[1][0]);
-					CH_to_Region2(CH_record[0][0]);
-					CH_to_Region2(CH_record[2][0]);
-					CH_to_Region2(CH_record[3][0]);
-
-					if( CH_record[1][1] != -1 ){   //R2有sCH
-						CH_to_Sink(CH_record[1][1]);
-					}
-					if( CH_record[1][2] != -1 ){
-						CH_to_Sink(CH_record[1][2]);
-					}
-					if( CH_record[0][1] != -1 ){
-						CH_to_Region2(CH_record[0][1]);
-					}
-					if( CH_record[0][2] != -1 ){
-						CH_to_Region2(CH_record[0][2]);
-					}
-					if( CH_record[2][1] != -1 ){
-						CH_to_Region2(CH_record[2][1]);
-					}
-					if( CH_record[2][2] != -1 ){
-						CH_to_Region2(CH_record[2][2]);
-					}
-					if( CH_record[3][1] != -1 ){
-						CH_to_Region2(CH_record[3][1]);
-					}
-					if( CH_record[3][2] != -1 ){
-						CH_to_Region2(CH_record[3][2]);
-					}
-					/*判斷CH是否小於threshold*/
-					for(int i = 0; i < 4 ; i++ ){   //依序查看各CH是否energy小於閥值
-						for(int j = 0; j < 3; j++){
-							int ch = CH_record[i][j];
-							if( ch != -1 && ns[ch].energy <  ){
-								
+					/*各區的CH送到下一跳*/
+					for( int m = 0; m < 4; m++ ){
+						for( int k = 0; k < 3; k++ ){
+							if( m == 3 && CH_record[m][k] != -1 ){  //R4有sCH或tCH
+								CH_to_Sink(CH_record[m][k]);     //R4到Sink
+							}
+							else if( m != 3 && CH_record[m][k] != -1 ){   //除了R4以外的sCH或tCH
+								CH_to_CH4(CH_record[m][k]);    //其他CH到CH4
 							}
 						}
 					}
-				}
+					toSink_count();
+					/*判斷CH4是否小於threshold*/
+					for( int i = 0; i < 3; i++ ){
+						int ch4 = CH_record[3][i];
+						double d = distance(ch4, SINKID);
+						double toSink_energy = ProbeEnergy + TransmitEnergy + d*d*AmplifierEnergy;
+						if( ch4 != -1 && ns[ch4].energy < toSink_energy*ch_energy_th ){
+						/*寫到ch4_reselection函數*/	
+						}
+					}
+
+					// for(int i = 0; i < 4 ; i++ ){   //依序查看各CH是否energy小於閥值
+					// 	for(int j = 0; j < 3; j++){
+					// 		int ch = CH_record[i][j];
+					// 		int ch_NextHop;
+					// 		if( i == 3 ){    //CH4的下一跳是Sink
+					// 			ch_NextHop = SINKID;
+					// 		}
+					// 		else{
+					// 			ch_NextHop = CH_record[3][0];   //其他區域CH的下一跳是CH2
+					// 		}
+					// 		double d = distance(ch, ch_NextHop);
+					// 		if( ns[ch].region1 == 4 && ch != -1 && ns[ch].energy < toNextHop_energy*ch_energy_th ){  //實驗二設定CH能量閥值，決定是否進借用程序
+					// 			/*進入借用程序的條件：CH能傳送的次數 < 鄰近CH能傳送的次數*/
+					// 			/*除了Region2以外的其他CH若沒電，則在區域內更換其他節點即可*/
+								
+					// 		}
+
+					// 	}
+					// }
+
+						}
+					}
 				t++;
-			}
 		}
-    }
+	}
 	total /= round_number;
 	macdrop /= round_number;
 	drop /= round_number;
