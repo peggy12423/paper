@@ -662,6 +662,29 @@ void toSink_count(){
 	}
 }
 
+double find_avg_energy(int sIndex, int eIndex){
+	double avg_energy = 0;
+	for (int i = sIndex; i <= eIndex; i++){
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM*0.25;
+	return avg_energy;
+}
+
+void Reselection_judge(int sIndex, int eIndex){    //決定是否重選CH
+	double avg_energy = find_avg_energy(sIndex, eIndex);
+	if((( avg_energy - ns[ns[sIndex].CH].energy )/ avg_energy ) >= 0.15 ){
+		CH_selection(sIndex, eIndex);
+	}
+}
+
+void CH_Reselection(){
+	Reselection_judge( 0, R2 - 1 );
+	Reselection_judge( R2, R3 -1 );
+	Reselection_judge( R3, R4 - 1 );
+	Reselection_judge( R4, S_NUM - 1 );
+}
+
 int ch4_reselection(){
 	double Energy = Max_energy(R4, S_NUM-1);
 	double Distance = Max_distance(R4, S_NUM-1);
