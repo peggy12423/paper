@@ -1,0 +1,10 @@
+E-DSR
+
+------------ Sensors 200 ------------
+avg_time : 460981
+avg_total : 192246
+avg_macdrop : 25140.2
+avg_drop : 0
+avg_PLR : 0.130771
+
+------------ Sensors 300 ------------
