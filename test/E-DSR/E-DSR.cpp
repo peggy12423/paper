@@ -34,7 +34,7 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 5
+#define round_number 10
 #define E_NUM 800
 
 using namespace std;
@@ -570,7 +570,7 @@ void bomb_cancel(int region1)
 
 double standard(double a, double b, double ENERGY_STANDARD, double DIST_STANDARD) //used to select CH !這個選擇方式目前是造成整個實驗能量消耗不平衡的原因(是否要考慮消耗能量的大小) !放入節點種類參考?
 {
-	double s = 0.3*(1 - a / DIST_STANDARD) + 0.7*(b / ENERGY_STANDARD); //larger is better
+	double s = 0.2*(1 - a / DIST_STANDARD) + 0.8*(b / ENERGY_STANDARD); //larger is better
 	return s;
 }
 double find_max_energy(int s, int e) //!energy的預扣

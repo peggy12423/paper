@@ -1,0 +1,22 @@
+mm
+
+------------ Sensors 600 ------------
+avg_lifetime : 405721
+avg_total : 500319
+avg_macdrop : 61455.4
+avg_drop : 48240.8
+avg_PLR : 0.219253
+
+------------ Sensors 700 ------------
+avg_lifetime : 474769
+avg_total : 674585
+avg_macdrop : 80504.5
+avg_drop : 93471
+avg_PLR : 0.2579
+
+------------ Sensors 800 ------------
+avg_lifetime : 487499
+avg_total : 786769
+avg_macdrop : 90722.7
+avg_drop : 145786
+avg_PLR : 0.300608

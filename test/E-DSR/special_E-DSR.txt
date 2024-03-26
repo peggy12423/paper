@@ -1,22 +1,22 @@
 E-DSR
 
 ------------ Sensors 600 ------------
-avg_time : 441217
-avg_total : 555473
-avg_macdrop : 60889.4
-avg_drop : 111959
-avg_PLR : 0.311173
+avg_time : 392341
+avg_total : 491081
+avg_macdrop : 53835.4
+avg_drop : 98356.8
+avg_PLR : 0.309912
 
 ------------ Sensors 700 ------------
-avg_time : 547436
-avg_total : 777368
-avg_macdrop : 83531.7
-avg_drop : 178023
-avg_PLR : 0.336461
+avg_time : 461791
+avg_total : 666232
+avg_macdrop : 71370.4
+avg_drop : 154949
+avg_PLR : 0.339701
 
 ------------ Sensors 800 ------------
-avg_time : 559368
-avg_total : 905796
-avg_macdrop : 95330.5
-avg_drop : 236100
-avg_PLR : 0.3659
+avg_time : 459676
+avg_total : 756053
+avg_macdrop : 79162.3
+avg_drop : 201580
+avg_PLR : 0.371326

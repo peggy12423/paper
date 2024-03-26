@@ -63,7 +63,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("special_test.txt");
+ofstream fout("normal_my.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -73,7 +73,6 @@ double total(0);
 int toSink(0);
 int R2, R3, R4;
 int R_NUM = S_NUM * 0.25;
-int CH_record[4][3] = { {-1,-1,-1}, {-1,-1,-1}, {-1,-1,-1}, {-1,-1,-1} };
 
 double type_a = 33, type_b = 33, type_c = 34; //調整QUERE裡面感測資料的比例
 
@@ -501,7 +500,7 @@ int region_CH_num(int sIndex, int eIndex){
 	return CH_num;
 }
 
-void CH_selection(int sIndex, int eIndex, int region){
+void CH_selection(int sIndex, int eIndex, int region, int (&CH_record)[4][3] ){
 	int CH_num = region_CH_num(sIndex, eIndex);
 	double Energy = find_max_energy(sIndex, eIndex);
 	double Distance = find_max_distance(sIndex, eIndex);
@@ -567,9 +566,9 @@ void CH_selection(int sIndex, int eIndex, int region){
 		}
 	}
 
-	CH_record[region-1][0] = CH;
-	CH_record[region-1][1] = sCH;
-	CH_record[region-1][2] = tCH;
+	CH_record[region][0] = CH;
+	CH_record[region][1] = sCH;
+	CH_record[region][2] = tCH;
 
 	for( int j = start; j <= end; j++){   //依照到CH的距離，更改區域內所有節點的CH為選出的CH
 		if( sCH != -1 && CH_num == 2){  //CH_num = 2
@@ -602,7 +601,7 @@ void CH_selection(int sIndex, int eIndex, int region){
 	}
 }
 
-void CH_Selection(int s, int e) //s=start e=end !energy的預扣
+void CH_Selection(int s, int e, int region, int (&CH_record)[4][3] ) //s=start e=end !energy的預扣
 {
 	double E = find_max_energy(s, e);
 	double D = find_max_distance(s, e);
@@ -626,6 +625,7 @@ void CH_Selection(int s, int e) //s=start e=end !energy的預扣
 	{
 		ns[start].CH = CH;
 	}
+    CH_record[region][0] = CH;
 	//fout << "CH change to " << CH << endl;
 }
 
@@ -849,20 +849,20 @@ int CheckEnergy()
 	}
 	return SINKID;
 }
-void Reselection_judge(int s, int e, int region)
+void Reselection_judge(int s, int e, int region, int (&CH_record)[4][3])
 {
 	double avg_energy = find_avg_energy(s, e);
 	if (((avg_energy - ns[ns[s].CH].energy) / avg_energy) >= 0.15) //這個值不一定大於0 , CH的花費不一定比周圍高 ! 因為資料壓縮的關係
 	{
-		CH_selection(s, e, region);
+		CH_selection(s, e, region, CH_record);
 	}
 }
-void CH_Reselection()
+void CH_Reselection(int (&CH_record)[4][3])
 {
-	Reselection_judge(0, R2 - 1, 1);
-	Reselection_judge(R2, R3 - 1, 2);
-	Reselection_judge(R3, R4 - 1, 3);
-	Reselection_judge(R4, S_NUM - 1, 4);
+	Reselection_judge(0, R2 - 1, 0, CH_record);
+	Reselection_judge(R2, R3 - 1, 1, CH_record);
+	Reselection_judge(R3, R4 - 1, 2, CH_record);
+	Reselection_judge(R4, S_NUM - 1, 3, CH_record);
 }
 void transaction(int j, int t, int v)
 {
@@ -899,19 +899,24 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
 			sink_init();
 
-			/*firts CH selection*/
-			CH_selection(0, R2 - 1, 1);
-			CH_selection(R2, R3 - 1, 2);
-			CH_selection(R3, R4 - 1, 3);
-			CH_selection(R4, S_NUM - 1, 4);
-
+            int CH_record[4][3] = { {-1,-1,-1}, {-1,-1,-1}, {-1,-1,-1}, {-1,-1,-1} };
+            int start[4] = { 0, R2, R3, R4 };
+            int end[4] = { R2-1, R3-1, R4-1, S_NUM-1 };
+            int CH_num[4];
+            for(int i = 0; i <= 3; i++){
+                CH_num[i] = region_CH_num( start[i], end[i] );
+                CH_selection( start[i], end[i], i, CH_record );
+            }
+            // cout << "CH_num = " << CH_num[0] << ", " << CH_num[1] << ", "<< CH_num[2] <<", "<< CH_num[3] << endl;
+            // cout << "CH_record = { " << CH_record[0][0] << ", " << CH_record[0][1] << ", " << CH_record[0][2] << "} {" << CH_record[1][0] << ", " << CH_record[1][1] << ", " << CH_record[1][2] << "} {"
+            //                         << CH_record[2][0] << ", " << CH_record[2][1] << ", " << CH_record[2][2] << "} {"<< CH_record[3][0] << ", " << CH_record[3][1] << ", " << CH_record[3][2] << "}" <<endl;
 			/*traffic start*/
 			int die(0);
 			int t(1);
@@ -989,16 +994,10 @@ int main()
                             CHtoRegion2(CH_record[3][j]);
                         }
                     }
-					CH_Reselection();
+            		CH_Reselection(CH_record);
 				}
 				t++;
 			}
-            // fout << "-------ROUND " << round+1 << " ----------" <<endl;
-            // fout << "avg_time : " << avg_t << endl;
-            // fout << "avg_total : " << total << endl;
-            // fout << "avg_macdrop : " << macdrop << endl;
-            // fout << "avg_drop : " << drop << endl;
-            // fout << "avg_PLR : " << (drop + macdrop) / total << endl;
 		}
 		total /= round_number;
 		macdrop /= round_number;

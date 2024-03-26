@@ -1,8 +1,0 @@
-mm
-
------------- Sensors 600 ------------
-avg_time : 442225
-avg_total : 555505
-avg_macdrop : 68248.2
-avg_drop : 52689.6
-avg_PLR : 0.217708
