@@ -1,4 +1,4 @@
-normal E-DSR
+mm
 
 ------------ Sensors 600 ------------
 avg_time : 445753

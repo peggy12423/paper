@@ -34,12 +34,12 @@
 #define successful_rate 5 //砞x Θ瞯碞琌100-x%
 
 /*跑笆龟喷把计砞﹚*/
-#define round_number 10
-#define E_NUM 1000
+#define round_number 5
+#define E_NUM 800
 
 using namespace std;
 
-int S_NUM = 200; //稰代竟羆计
+int S_NUM = 600; //稰代竟羆计
 struct C
 {
 	double x, y;
@@ -66,7 +66,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("testing_E-DSR.txt");
+ofstream fout("special_E-DSR.txt");
 N ns[2000];
 S sink;
 double p_in_sink(0);
@@ -276,7 +276,7 @@ void node_deployed(){
 }
 
 void special_node_deployed(){
-	R2 = S_NUM * 0.2;
+	R2 = S_NUM * 0.1;
 	R3 = S_NUM * 0.5;
 	R4 = S_NUM * 0.6;
 	int i = 0;
@@ -1005,8 +1005,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
-			// special_node_deployed();
+			// node_deployed();
+			special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
