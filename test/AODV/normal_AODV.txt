@@ -1,64 +1,64 @@
 AODV
 
 ------------ Sensors 200 ------------
-avg_lifetime : 29197
-avg_total : 16843.8
-avg_drop : 0
-avg_macdrop : 5064.6
-avg_PLR : 0.30068
+avg_lifetime : 37666
+avg_total : 20783.2
+avg_drop : 11
+avg_macdrop : 6512.3
+avg_PLR : 0.313874
 
 ------------ Sensors 300 ------------
-avg_lifetime : 30222.2
-avg_total : 25377.6
-avg_drop : 0
-avg_macdrop : 7071.06
-avg_PLR : 0.278634
+avg_lifetime : 31157.6
+avg_total : 25067.8
+avg_drop : 1.1
+avg_macdrop : 7088.43
+avg_PLR : 0.282814
 
 ------------ Sensors 400 ------------
-avg_lifetime : 23781.7
-avg_total : 26917.9
-avg_drop : 0
-avg_macdrop : 7800.01
-avg_PLR : 0.289771
+avg_lifetime : 23861.8
+avg_total : 25671.2
+avg_drop : 0.11
+avg_macdrop : 7346.44
+avg_PLR : 0.286179
 
 ------------ Sensors 500 ------------
-avg_lifetime : 20229.2
-avg_total : 28487.8
-avg_drop : 0
-avg_macdrop : 7763.4
-avg_PLR : 0.272517
+avg_lifetime : 19025.2
+avg_total : 25991.4
+avg_drop : 0.011
+avg_macdrop : 7166.44
+avg_PLR : 0.275724
 
 ------------ Sensors 600 ------------
-avg_lifetime : 13969.9
-avg_total : 24734.2
-avg_drop : 0
-avg_macdrop : 6692.84
-avg_PLR : 0.270591
+avg_lifetime : 15391.5
+avg_total : 25759.5
+avg_drop : 0.0011
+avg_macdrop : 6865.54
+avg_PLR : 0.266524
 
 ------------ Sensors 700 ------------
-avg_lifetime : 12657
-avg_total : 25857.7
-avg_drop : 0
-avg_macdrop : 6979.18
-avg_PLR : 0.269907
+avg_lifetime : 13196.7
+avg_total : 26054.6
+avg_drop : 0.00011
+avg_macdrop : 6843.95
+avg_PLR : 0.262678
 
 ------------ Sensors 800 ------------
-avg_lifetime : 12285.7
-avg_total : 28631.3
-avg_drop : 0
-avg_macdrop : 7506.42
-avg_PLR : 0.262176
+avg_lifetime : 12378.7
+avg_total : 28582
+avg_drop : 1.1e-005
+avg_macdrop : 7579.9
+avg_PLR : 0.265199
 
 ------------ Sensors 900 ------------
-avg_lifetime : 11105.6
-avg_total : 29206.3
-avg_drop : 0
-avg_macdrop : 7484.04
-avg_PLR : 0.256247
+avg_lifetime : 11369.9
+avg_total : 28354.6
+avg_drop : 1.1e-006
+avg_macdrop : 7431.39
+avg_PLR : 0.262088
 
 ------------ Sensors 1000 ------------
-avg_lifetime : 8239.56
-avg_total : 24876.3
-avg_drop : 0
-avg_macdrop : 6236
-avg_PLR : 0.25068
+avg_lifetime : 9242.49
+avg_total : 26959.1
+avg_drop : 1.1e-007
+avg_macdrop : 7162.74
+avg_PLR : 0.265689

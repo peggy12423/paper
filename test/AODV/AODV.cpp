@@ -35,7 +35,7 @@
 #define E_NUM 1000
 
 using namespace std;
-int S_NUM = 600;
+int S_NUM = 200;
 struct P
 {
 	int src;

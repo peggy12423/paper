@@ -65,7 +65,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("special_NRCA.txt");
+ofstream fout("normal_NRCA.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -521,8 +521,8 @@ int main(){
 		{
 			cout << round+1 << endl;
 			node_deployed();
-			special_node_deployed();
-			// packet_init();
+			// special_node_deployed();
+			packet_init();
 
 			/*sink initialization*/
 			sink_init();

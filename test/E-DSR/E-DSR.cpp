@@ -35,11 +35,11 @@
 
 /*變動實驗參數設定*/
 #define round_number 10
-#define E_NUM 800
+#define E_NUM 1000
 
 using namespace std;
 
-int S_NUM = 600; //感測器總數
+int S_NUM = 200; //感測器總數
 struct C
 {
 	double x, y;
@@ -66,14 +66,10 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("special_E-DSR.txt");
+ofstream fout("normal_E-DSR.txt");
 N ns[2000];
 S sink;
-double p_in_sink(0);
-double avg_t(0);
-double drop(0);
-double macdrop(0);
-double total(0);
+double avg_t, drop, macdrop, total;
 double cons[4] = { 0,0,0,0 };
 int trans_time[4] = { 0,0,0,0 };
 double consToR2[4] = { 0,0,0,0 };
@@ -276,7 +272,7 @@ void node_deployed(){
 }
 
 void special_node_deployed(){
-	R2 = S_NUM * 0.1;
+	R2 = S_NUM * 0.2;
 	R3 = S_NUM * 0.5;
 	R4 = S_NUM * 0.6;
 	int i = 0;
@@ -595,7 +591,6 @@ double find_avg_energy(int s, int e, int rnum)
 	avg_energy /= rnum;
 	return avg_energy;
 }
-
 double find_max_distance(int s, int e)
 {
 	double d(0.0);
@@ -620,7 +615,6 @@ double find_max_dts(int s, int e, int CH) //只有CH會用到這個function
 	}
 	return d;
 }
-
 
 void CH_Selection(int s, int e) //s=start e=end !energy的預扣
 {
@@ -971,20 +965,6 @@ void transaction(int j, int t, int v)
 	}
 }
 
-double standard_deviation()
-{
-	double a(0);
-	double b(0);
-	double sd(0);
-	for (int i = 0; i < S_NUM; i++)
-	{
-		b += ns[i].energy;
-	}
-
-	b /= S_NUM;
-	return b;
-}
-
 
 /*如果使用資料壓縮  , 是否要以資料量大小做策略 , 感測的耗能相比於CH竟然比較大很多(反映在CH剩餘能量竟然還比平均能量高) due to dtc,比例等等,為何CH選區中心會比選靠近區2還要長壽*/
 /*code中實際上沒有壓縮*/
@@ -999,14 +979,18 @@ int main()
 	srand((unsigned)time(NULL)); //random seed
 	fout << "E-DSR" << endl;
 	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
+		avg_t = 0;
+		drop = 0;
+		macdrop = 0;
+		total = 0;
 		cout << "sensors: " << S_NUM << endl;
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
 		/*sensor initialization*/
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -1034,44 +1018,13 @@ int main()
 				int c = CheckEnergy();/*有一個節點沒電則等於死亡*/
 				if (c < SINKID)
 				{
-					cout << "dead node: " << c << endl;
-					cout << "energy: " << ns[c].energy << endl;
-					cout << "CH: " << ns[c].CH << endl;
-					cout << "region: " << ns[c].region1 << endl;
-					cout << "------------------------" << endl;
-					//fout << t << endl;
+					// cout << "dead node: " << c << endl;
+					// cout << "energy: " << ns[c].energy << endl;
+					// cout << "CH: " << ns[c].CH << endl;
+					// cout << "region: " << ns[c].region1 << endl;
+					// cout << "------------------------" << endl;
 					avg_t += t;
-					/*double avg_re = standard_deviation();
-					fout << t << "  " << avg_re << endl;*/
-					//fout << "node " << c << " dead !" << endl;
 					die = 1;
-					//print_energy();
-					/*
-					for (int i = 0; i < 4; i++)
-					{
-					//fout << "區域" << i + 1 << "的區域內平均傳輸耗能 = " << cons[i] / trans_time[i] << endl;
-					}
-					for (int i = 0; i < 4; i++)
-					{
-					//fout << "區域" << i + 1 << "的平均傳輸區2耗能 = " << consToR2[i] / ToR2_time[i] << endl;
-					}
-					*/
-					/*int e(0);
-					while (sink.buffer[e].data != -1)
-					{
-					p_in_sink++;
-					e++;
-					}*/
-					//fout << "total = " << total << endl;
-					//fout << "drop = " << drop << endl;
-					//fout << "macdrop = " << macdrop << endl;
-					/*浮點數運算如果運算元是int 則有可能會產生出只有整數的結果 所以要這樣寫*/
-					//double PLR = 0;
-					//PLR = (macdrop + drop);
-					//PLR /= total;
-					/**/
-					//fout << "packet loss rate = " << PLR << endl;
-					//fout << "sink 有" << e << endl; //total封包數*/
 					break;
 				}
 
@@ -1346,7 +1299,6 @@ int main()
 				t++;
 			}
 		}
-		p_in_sink /= round_number;
 		total /= round_number;
 		macdrop /= round_number;
 		drop /= round_number;

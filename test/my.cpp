@@ -27,16 +27,16 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 5
-#define E_NUM 800
+#define round_number 10
+#define E_NUM 1000
 #define Alpha 0.2
 #define Beta 0.8
-#define high_density_th1 1.15
-#define high_density_th2 1.3
+#define high_density_th1 1.2
+#define high_density_th2 1.4
 
 using namespace std;
 
-int S_NUM = 600; //感測器總數
+int S_NUM = 200; //感測器總數
 struct C
 {
 	double x, y;
@@ -51,7 +51,6 @@ struct P
 struct N
 {
 	int id, x, y, CH, type, region1, region2;//region1 for 第一層grid , region2 for 第二層grid
-	int CH2;
 	double energy;//node information
 	P receive;
 	P sense;
@@ -63,14 +62,14 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("normal_my.txt");
+ofstream fout("special_my.txt");
 N ns[2000];
 S sink;
-double avg_t(0);
-double drop(0);
-double macdrop(0);
-double total(0);
-int toSink(0);
+// double avg_t(0);
+// double buffer_drop(0);
+// double mac_drop(0);
+// double total(0);
+double avg_t, buffer_drop, mac_drop, total;
 int R2, R3, R4;
 int R_NUM = S_NUM * 0.25;
 
@@ -122,7 +121,6 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 1;
 		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
 		ns[i].type = rand() % 3 + 3;//3 4 5
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 1;
@@ -157,7 +155,6 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 201;
 		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 2;
@@ -192,7 +189,6 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 1;
 		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 3;
@@ -227,7 +223,6 @@ void node_deployed(){
 		ns[i].x = rand() % 200 + 201;
 		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 4;
@@ -259,7 +254,7 @@ void node_deployed(){
 }
 
 void special_node_deployed(){
-	R2 = S_NUM * 0.1;
+	R2 = S_NUM * 0.2;
 	R3 = S_NUM * 0.5;
 	R4 = S_NUM * 0.6;
 	int i = 0;
@@ -269,7 +264,6 @@ void special_node_deployed(){
 		ns[i].x = rand() % 200 + 1;
 		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
 		ns[i].type = rand() % 3 + 3;//3 4 5
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 1;
@@ -302,7 +296,6 @@ void special_node_deployed(){
 		ns[i].x = rand() % 200 + 201;
 		ns[i].y = rand() % 200 + 1;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 2;
@@ -335,7 +328,6 @@ void special_node_deployed(){
 		ns[i].x = rand() % 200 + 1;
 		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 3;
@@ -368,7 +360,6 @@ void special_node_deployed(){
 		ns[i].x = rand() % 200 + 201;
 		ns[i].y = rand() % 200 + 201;
 		ns[i].CH = i;
-		ns[i].CH2 = -1;
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 4;
@@ -652,7 +643,7 @@ void Packet_Dliver(int sender, int CH) // 有能耗
 	}
 	else
 	{
-		macdrop++;
+		mac_drop++;
 		ns[CH].receive.dst = -1;
 		ns[CH].receive.src = -1;
 		ns[CH].receive.data = -1;
@@ -686,7 +677,7 @@ void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
 	}
 	if (full == 1 && ns[CH].receive.data != -1)//priority queue buffer , 如果封包被drop掉就不用了(-1)
 	{
-		drop++;
+		buffer_drop++;
 	}
 	ns[CH].receive.dst = -1;
 	ns[CH].receive.src = -1;
@@ -736,16 +727,11 @@ void CH2Sink(int CH) //有能耗
 			}
 			else
 			{
-				macdrop++;
+				mac_drop++;
 			}
-			//fout << "CH ID:" << ns[CH].id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 		}
-		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
-		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
-																							   //fout << "幫別人成功,我的能量只剩" << ns[CH].energy << endl;
-																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
 		clean(CH, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
 	}
 	else      /*自己傳*/
@@ -770,15 +756,11 @@ void CH2Sink(int CH) //有能耗
 			}
 			else
 			{
-				macdrop++;
+				mac_drop++;
 			}
 		}
-		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
-		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
-																							   //fout << "自己傳,我的能量只剩" << ns[CH].energy << endl;
-																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
 		clean(CH, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
 	}
 }
@@ -822,12 +804,10 @@ void CHtoRegion2(int CH1) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
         }
         else
         {
-            macdrop++;
+            mac_drop++;
         }
     }
     clean(CH1, 0, NODE_BUFFER1);
-		//fout <<"模式一收到" <<rate << endl;
-	
 	rate = ceil(rate * R);
 	//fout << rate << endl;
 	ns[CH1].energy -= (TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
@@ -864,20 +844,11 @@ void CH_Reselection(int (&CH_record)[4][3])
 	Reselection_judge(R3, R4 - 1, 2, CH_record);
 	Reselection_judge(R4, S_NUM - 1, 3, CH_record);
 }
-void transaction(int j, int t, int v)
+void transaction(int j, int t)
 {
-	if (v == 1)
-	{
-		Packet_Generate(j, t);
-		Packet_Dliver(j, ns[j].CH);
-		Packet_Receive(ns[j].CH);
-	}
-	else
-	{
-		Packet_Generate(j, t);
-		Packet_Dliver(j, ns[j].CH2);
-		Packet_Receive(ns[j].CH2);
-	}
+    Packet_Generate(j, t);
+    Packet_Dliver(j, ns[j].CH);
+    Packet_Receive(ns[j].CH);
 }
 
 /*如果使用資料壓縮  , 是否要以資料量大小做策略 , 感測的耗能相比於CH竟然比較大很多(反映在CH剩餘能量竟然還比平均能量高) due to dtc,比例等等,為何CH選區中心會比選靠近區2還要長壽*/
@@ -891,16 +862,20 @@ int main()
 {
 	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
-	fout << "mm" << endl;
+	fout << "my" << endl;
 	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
+		avg_t = 0;
+		buffer_drop = 0;
+		mac_drop = 0;
+		total = 0;
 		cout << "sensors: " << S_NUM << endl;
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
 		/*sensor initialization*/
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
-			// special_node_deployed();
+			// node_deployed();
+			special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -937,36 +912,21 @@ int main()
                 if (t % type3f == 0){
                     for (int j = 0; j < S_NUM; j++){
                         if (ns[j].type == 3){ //CH need to sense
-                            if (ns[j].CH2 == -1 || ns[j].CH == ns[j].id){
-                                transaction(j, t, 1);
-                            }
-                            else{
-                                transaction(j, t, 2);
-                            }
+                            transaction(j, t);                          
                         }
                     }
                 }
                 if (t % type4f == 0){
                     for (int j = 0; j < S_NUM; j++){
                         if (ns[j].type == 4){//CH need to sense
-                            if (ns[j].CH2 == -1 || ns[j].CH == ns[j].id){
-                                transaction(j, t, 1);
-                            }
-                            else{
-                                transaction(j, t, 2);
-                            }
+                            transaction(j, t);                          
                         }
                     }
                 }
                 if (t % type5f == 0){
                     for (int j = 0; j < S_NUM; j++){
                         if (ns[j].type == 5){ //CH need to sense
-                            if (ns[j].CH2 == -1 || ns[j].CH == ns[j].id)                            {
-                                transaction(j, t, 1);
-                            }
-                            else{
-                                transaction(j, t, 2);
-                            }
+                            transaction(j, t);                          
                         }
                     }
                 }
@@ -1000,14 +960,14 @@ int main()
 			}
 		}
 		total /= round_number;
-		macdrop /= round_number;
-		drop /= round_number;
+		mac_drop /= round_number;
+		buffer_drop /= round_number;
 		avg_t /= round_number;
 		fout << "avg_lifetime : " << avg_t << endl;
 		fout << "avg_total : " << total << endl;
-		fout << "avg_macdrop : " << macdrop << endl;
-		fout << "avg_drop : " << drop << endl;
-		fout << "avg_PLR : " << (drop + macdrop) / total << endl;
+		fout << "avg_macdrop : " << mac_drop << endl;
+		fout << "avg_drop : " << buffer_drop << endl;
+		fout << "avg_PLR : " << (buffer_drop + mac_drop) / total << endl;
 	}
 	return 0;
 }
