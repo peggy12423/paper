@@ -7,16 +7,16 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 100 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 200 //50~100 特別的傳輸用
+#define NODE_BUFFER1 200 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 400 //50~100 特別的傳輸用
 
 #define R 0.25 //壓縮率 設1則沒有壓縮
-#define type3f 360//常規sensing frequency
-#define type4f 480
-#define type5f 720 //720
+#define type3f 90//常規sensing frequency
+#define type4f 120
+#define type5f 150
 #define reservation_energy_time 10000
 #define CHf 120 //CH trans frequency
-#define bomb_switch 0 //0關 1開 是否要使用雙層的開關
+#define bomb_switch 1 //0關 1開 是否要使用雙層的開關
 #define freq_change_switch 0 //0關 1開 是否要使資料量突然暴增的開關
 #define b_t 10800 //大T 每多少秒開一次 小T 每一次開多少秒
 #define s_t 1800
@@ -66,7 +66,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("normal_E-DSR.txt");
+ofstream fout("E-DSR_special.txt");
 N ns[2000];
 S sink;
 double avg_t, drop, macdrop, total;
@@ -623,12 +623,12 @@ void CH_Selection(int s, int e) //s=start e=end !energy的預扣
 	int start = s;
 	int end = e;
 	int CH = s;
-	double re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 120))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
 	double MAX_S = standard(ns[s].dtc, re, E, D);
 	s += 1;
 	for (s; s <= e; s++)//selecting
 	{
-		re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 120))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
+		re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
 		double current_s = standard(ns[s].dtc, re, E, D);
 		if (MAX_S < current_s)
 		{
@@ -989,8 +989,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
-			// special_node_deployed();
+			// node_deployed();
+			special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -1018,11 +1018,11 @@ int main()
 				int c = CheckEnergy();/*有一個節點沒電則等於死亡*/
 				if (c < SINKID)
 				{
-					// cout << "dead node: " << c << endl;
-					// cout << "energy: " << ns[c].energy << endl;
-					// cout << "CH: " << ns[c].CH << endl;
-					// cout << "region: " << ns[c].region1 << endl;
-					// cout << "------------------------" << endl;
+					// fout << "dead node: " << c << endl;
+					// fout << "energy: " << ns[c].energy << endl;
+					// fout << "CH: " << ns[c].CH << endl;
+					// fout << "region: " << ns[c].region1 << endl;
+					// fout << "------------------------" << endl;
 					avg_t += t;
 					die = 1;
 					break;

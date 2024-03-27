@@ -11,9 +11,9 @@
 #define SINK_Y 0
 
 #define R 0.25 //壓縮率 設1則沒有壓縮
-#define type3f 360 //常規sensing frequency
-#define type4f 480
-#define type5f 720
+#define type3f 90 //常規sensing frequency
+#define type4f 120
+#define type5f 150
 #define CHf 120 //CH trans frequency
 #define freq_change_switch 1 //0關 1開 是否要使資料量突然暴增的開關
 #define b_t 10800 //大T 每多少秒開一次 小T 每一次開多少秒
@@ -67,7 +67,7 @@ struct RREQ
 	queue<int>route;
 	int hop_count;
 };
-ofstream fout("special_AODV.txt");
+ofstream fout("AODV_special.txt");
 N ns[2000];
 S sink;
 double avg_t(0);

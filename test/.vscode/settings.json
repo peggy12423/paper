@@ -3,7 +3,8 @@
     "*.embeddedhtml": "html",
     "fstream": "cpp",
     "ostream": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "iterator": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": ""
 }
