@@ -9,13 +9,13 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 100 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 200 //50~100 特別的傳輸用
+#define NODE_BUFFER1 200 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 400 //50~100 特別的傳輸用
 
 #define R 0.25 //壓縮率 設1則沒有壓縮
-#define type3f 360 //常規sensing frequency
-#define type4f 480
-#define type5f 600
+#define type3f 90 //常規sensing frequency
+#define type4f 120
+#define type5f 150
 #define CHf 120 //CH trans frequency
 #define freq_change_switch 0 //0關 1開 是否要使資料量突然暴增的開關
 #define b_t 10800 //大T 每多少秒開一次 小T 每一次開多少秒
@@ -65,7 +65,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("special_NRCA.txt");
+ofstream fout("NRCA_special.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -520,9 +520,9 @@ int main(){
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
+			// node_deployed();
 			special_node_deployed();
-			// packet_init();
+			packet_init();
 
 			/*sink initialization*/
 			sink_init();
