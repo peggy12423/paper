@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/research/my/test/my",
-      "program": "d:/research/my/test/my/build/Debug/outDebug",
+      "cwd": "e:/Peggy/research/my/paper/test/my",
+      "program": "e:/Peggy/research/my/paper/test/my/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

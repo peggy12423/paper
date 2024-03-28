@@ -9,10 +9,10 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 200 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 400 //50~100 特別的傳輸用
+#define NODE_BUFFER1 300 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 600 //50~100 特別的傳輸用
 
-#define R 0.25 //壓縮率 設1則沒有壓縮
+#define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90 //常規sensing frequency
 #define type4f 120
 #define type5f 150

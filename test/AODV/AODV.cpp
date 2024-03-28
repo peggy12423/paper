@@ -10,7 +10,7 @@
 #define SINK_X 400
 #define SINK_Y 0
 
-#define R 0.25 //壓縮率 設1則沒有壓縮
+#define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90 //常規sensing frequency
 #define type4f 120
 #define type5f 150
