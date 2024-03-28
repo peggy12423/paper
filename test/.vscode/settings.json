@@ -5,7 +5,8 @@
     "ostream": "cpp",
     "iostream": "cpp",
     "iterator": "cpp",
-    "cmath": "cpp"
+    "cmath": "cpp",
+    "queue": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

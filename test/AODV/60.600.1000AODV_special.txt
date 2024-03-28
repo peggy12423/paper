@@ -1,0 +1,64 @@
+AODV
+
+------------ Sensors 200 ------------
+avg_lifetime : 12718
+avg_total : 23034.5
+avg_drop : 276.3
+avg_macdrop : 6264
+avg_PLR : 0.283935
+
+------------ Sensors 300 ------------
+avg_lifetime : 10223.3
+avg_total : 26633.5
+avg_drop : 47.33
+avg_macdrop : 7235.1
+avg_PLR : 0.273432
+
+------------ Sensors 400 ------------
+avg_lifetime : 7917.33
+avg_total : 27977.4
+avg_drop : 4.733
+avg_macdrop : 7005.41
+avg_PLR : 0.250564
+
+------------ Sensors 500 ------------
+avg_lifetime : 5850.73
+avg_total : 27135.5
+avg_drop : 0.4733
+avg_macdrop : 6669.64
+avg_PLR : 0.245807
+
+------------ Sensors 600 ------------
+avg_lifetime : 5386.07
+avg_total : 29650.5
+avg_drop : 0.04733
+avg_macdrop : 7215.36
+avg_PLR : 0.243349
+
+------------ Sensors 700 ------------
+avg_lifetime : 4577.61
+avg_total : 30888.5
+avg_drop : 0.004733
+avg_macdrop : 7468.94
+avg_PLR : 0.241803
+
+------------ Sensors 800 ------------
+avg_lifetime : 3644.76
+avg_total : 27708.8
+avg_drop : 0.0004733
+avg_macdrop : 6732.99
+avg_PLR : 0.242992
+
+------------ Sensors 900 ------------
+avg_lifetime : 3719.48
+avg_total : 32065.9
+avg_drop : 4.733e-005
+avg_macdrop : 7686
+avg_PLR : 0.239694
+
+------------ Sensors 1000 ------------
+avg_lifetime : 3258.95
+avg_total : 32337.2
+avg_drop : 4.733e-006
+avg_macdrop : 7612.7
+avg_PLR : 0.235416

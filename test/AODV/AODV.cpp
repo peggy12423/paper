@@ -14,7 +14,7 @@
 #define type3f 90 //常規sensing frequency
 #define type4f 120
 #define type5f 150
-#define CHf 120 //CH trans frequency
+#define CHf 100 //CH trans frequency
 #define freq_change_switch 1 //0關 1開 是否要使資料量突然暴增的開關
 #define b_t 10800 //大T 每多少秒開一次 小T 每一次開多少秒
 #define s_t 1800
