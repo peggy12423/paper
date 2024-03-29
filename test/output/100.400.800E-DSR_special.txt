@@ -1,4 +1,4 @@
-E-DSR
+E-DSR (special)
 
 ------------ Sensors 200 ------------
 avg_time : 35949.1

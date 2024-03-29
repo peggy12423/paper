@@ -34,7 +34,7 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 100
+#define round_number 50
 #define E_NUM 1000
 
 using namespace std;
@@ -65,7 +65,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("NRCA_special.txt");
+ofstream fout("100.400.800NRCA_normal.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -95,11 +95,10 @@ double distance(int a, int b)
 }
 
 void node_deployed(){
-	R2 = S_NUM * 0.25;
-	R3 = S_NUM * 0.5;
-	R4 = S_NUM * 0.75;
-	
-	int i = 0;
+    R2 = S_NUM * 0.25;
+    R3 = S_NUM * 0.5;
+    R4 = S_NUM * 0.75;
+    int i = 0;
 	for (i; i < R2; i++)
 	{
 		ns[i].id = i;
@@ -519,13 +518,19 @@ int main(){
 		/*sensor initialization*/
 		for (int round = 0; round < round_number; round++)
 		{
-			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
-			sink_init();
+			sink.id = SINKID;
+			for (int b = 0; b < SINK_BUFFER_SIZE; b++)
+			{
+				sink.buffer[b].data = -1;
+				sink.buffer[b].dst = -1;
+				sink.buffer[b].src = -1;
+				sink.buffer[b].time = -1;
+			}
 
 			/*firts CH selection*/
 			CH_Selection(0, R2 - 1);
@@ -557,125 +562,65 @@ int main(){
 				int c = CheckEnergy();/*有一個節點沒電則等於死亡*/
 				if (c < SINKID)
 				{
+					/*double avg_re = standard_deviation();
+					fout << t << "  " << avg_re << endl;*/
+					//fout << t << endl;
 					avg_t += t;
+					//fout << "node " << c << " dead !" << endl;
 					die = 1;
+					//print_energy();
+					/*for (int i = 0; i < 4; i++)
+					{
+					//fout << "區域" << i + 1 << "的區域內平均傳輸耗能 = " << cons[i] / trans_time[i] << endl;
+					}
+					for (int i = 0; i < 4; i++)
+					{
+					//fout << "區域" << i + 1 << "的平均傳輸區2耗能 = " << consToR2[i] / ToR2_time[i] << endl;
+					}*/
+					/*int e(0);
+					while (sink.buffer[e].data != -1)
+					{
+					//fout << "src: " << sink.buffer[e].src << " dst: " << sink.buffer[e].dst << " data: " << sink.buffer[e].data << " time: " << sink.buffer[e].time << " sec" << endl;
+					e++;
+					}
+					fout << "total = " << total << endl;
+					fout << "drop = " << drop << endl;
+					fout << "macdrop = " << macdrop << endl;
+					fout << "sink 有" << e << endl; //total封包數*/
 					break;
 				}
-				if (freq_change_switch)
+				
+				if (t % type3f == 0)
 				{
-					if (t % b_t <= s_t) //if in this time slot , then bombing.
+					for (int j = 0; j < S_NUM; j++)
 					{
-						if (b_region == 0)
+						if (ns[j].type == 3) //CH need to sense
 						{
-							b_region = rand() % 4 + 1; //bombing region 1~4 !
-						}
-						bombing = 1;
-					}
-					else //結束爆炸 ,調回參數
-					{
-						b_region = 0;
-						bombing = 0;
-					}
-				}
-				if (bombing)
-				{
-					/*爆炸區*/
-					if (t % bomb_f3 == 0)
-					{
-						for (int j = 0; j < S_NUM; j++)
-						{
-							if (ns[j].type == 3 && ns[j].region1 == b_region)
-							{
-								transaction(j, t);
-							}
-						}
-					}
-					if (t % bomb_f4 == 0)
-					{
-						for (int j = 0; j < S_NUM; j++)
-						{
-							if (ns[j].type == 4 && ns[j].region1 == b_region)
-							{
-								transaction(j, t);
-							}
-						}
-					}
-					if (t % bomb_f5 == 0)
-					{
-						for (int j = 0; j < S_NUM; j++)
-						{
-							if (ns[j].type == 5 && ns[j].region1 == b_region)
-							{
-								transaction(j, t);
-							}
-						}
-					}
-
-					/*非爆炸區*/
-					if (t % type3f == 0)
-					{
-						for (int j = 0; j < S_NUM; j++)
-						{
-							if (ns[j].type == 3 && ns[j].region1 != b_region)
-							{
-								transaction(j, t);
-							}
-						}
-					}
-					if (t % type4f == 0)
-					{
-						for (int j = 0; j < S_NUM; j++)
-						{
-							if (ns[j].type == 4 && ns[j].region1 != b_region)
-							{
-								transaction(j, t);
-							}
-						}
-					}
-					if (t % type5f == 0)
-					{
-						for (int j = 0; j < S_NUM; j++)
-						{
-							if (ns[j].type == 5 && ns[j].region1 != b_region)
-							{
-								transaction(j, t);
-							}
+							transaction(j, t);
 						}
 					}
 				}
-				else//regular trans
+				if (t % type4f == 0)
 				{
-					if (t % type3f == 0)
+					for (int j = 0; j < S_NUM; j++)
 					{
-						for (int j = 0; j < S_NUM; j++)
+						if (ns[j].type == 4) //CH need to sense
 						{
-							if (ns[j].type == 3) //CH need to sense
-							{
-								transaction(j, t);
-							}
-						}
-					}
-					if (t % type4f == 0)
-					{
-						for (int j = 0; j < S_NUM; j++)
-						{
-							if (ns[j].type == 4) //CH need to sense
-							{
-								transaction(j, t);
-							}
-						}
-					}
-					if (t % type5f == 0)
-					{
-						for (int j = 0; j < S_NUM; j++)
-						{
-							if (ns[j].type == 5) //CH need to sense
-							{
-								transaction(j, t);
-							}
+							transaction(j, t);
 						}
 					}
 				}
+				if (t % type5f == 0)
+				{
+					for (int j = 0; j < S_NUM; j++)
+					{
+						if (ns[j].type == 5) //CH need to sense
+						{
+							transaction(j, t);
+						}
+					}
+				}
+				
 
 				if (t % CHf == 0) //每一分鐘傳到sink 1次
 				{
@@ -702,6 +647,7 @@ int main(){
 				}
 				t++;
 			}
+			cout << round+1 << endl;
 		}
 		total /= round_number;
 		macdrop /= round_number;

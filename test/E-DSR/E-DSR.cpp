@@ -66,7 +66,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("100.400.800E-DSR_special.txt");
+ofstream fout("100.400.800E-DSR_normal.txt");
 N ns[2000];
 S sink;
 double avg_t, drop, macdrop, total;
@@ -989,8 +989,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
