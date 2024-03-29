@@ -31,7 +31,7 @@
 #define trans_dis 60 //m 80幾乎可以確定他傳的到sink(AODV)
 
 /*變動實驗參數設定*/
-#define round_number 10
+#define round_number 100
 #define E_NUM 1000
 
 using namespace std;

@@ -7,8 +7,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 700 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 1300 //50~100 特別的傳輸用
+#define NODE_BUFFER1 400 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 800 //50~100 特別的傳輸用
 
 #define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
@@ -16,7 +16,7 @@
 #define type5f 150
 #define reservation_energy_time 10000
 #define CHf 100 //CH trans frequency
-#define bomb_switch 1 //0關 1開 是否要使用雙層的開關
+#define bomb_switch 0 //0關 1開 是否要使用雙層的開關
 #define freq_change_switch 0 //0關 1開 是否要使資料量突然暴增的開關
 #define b_t 10800 //大T 每多少秒開一次 小T 每一次開多少秒
 #define s_t 1800
@@ -34,7 +34,7 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 20
+#define round_number 100
 #define E_NUM 1000
 
 using namespace std;
@@ -66,7 +66,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("100.700.1300E-DSR_special.txt");
+ofstream fout("100.400.800E-DSR_special.txt");
 N ns[2000];
 S sink;
 double avg_t, drop, macdrop, total;

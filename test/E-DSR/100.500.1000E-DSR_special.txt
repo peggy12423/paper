@@ -1,64 +1,64 @@
 E-DSR
 
 ------------ Sensors 200 ------------
-avg_time : 36717.9
-avg_total : 63609.1
-avg_macdrop : 8171.65
+avg_time : 38148
+avg_total : 65438.8
+avg_macdrop : 8381.2
 avg_drop : 0
-avg_PLR : 0.128467
+avg_PLR : 0.128077
 
 ------------ Sensors 300 ------------
-avg_time : 32914
-avg_total : 85971.1
-avg_macdrop : 11053.8
+avg_time : 33519.5
+avg_total : 87738.7
+avg_macdrop : 11304.2
 avg_drop : 0
-avg_PLR : 0.128576
+avg_PLR : 0.12884
 
 ------------ Sensors 400 ------------
-avg_time : 32310.4
-avg_total : 112516
-avg_macdrop : 14468.8
+avg_time : 30933.5
+avg_total : 107505
+avg_macdrop : 13784.3
 avg_drop : 0
-avg_PLR : 0.128593
+avg_PLR : 0.12822
 
 ------------ Sensors 500 ------------
-avg_time : 24502.5
-avg_total : 106438
-avg_macdrop : 13684.3
+avg_time : 27426
+avg_total : 119521
+avg_macdrop : 15377
 avg_drop : 0
-avg_PLR : 0.128566
+avg_PLR : 0.128655
 
 ------------ Sensors 600 ------------
-avg_time : 18003.5
-avg_total : 93953
-avg_macdrop : 12103.9
+avg_time : 16409.5
+avg_total : 85656.3
+avg_macdrop : 11027.7
 avg_drop : 0
-avg_PLR : 0.128829
+avg_PLR : 0.128744
 
 ------------ Sensors 700 ------------
-avg_time : 14399
-avg_total : 87526.2
-avg_macdrop : 11293.3
+avg_time : 13813.5
+avg_total : 84062.4
+avg_macdrop : 10839.4
 avg_drop : 0
-avg_PLR : 0.129027
+avg_PLR : 0.128945
 
 ------------ Sensors 800 ------------
-avg_time : 10575.5
-avg_total : 73470.2
-avg_macdrop : 9480.21
+avg_time : 10551.5
+avg_total : 73336
+avg_macdrop : 9430.4
 avg_drop : 0
-avg_PLR : 0.129035
+avg_PLR : 0.128592
 
 ------------ Sensors 900 ------------
-avg_time : 9180
-avg_total : 71781.3
-avg_macdrop : 9261.97
+avg_time : 7646
+avg_total : 59918.7
+avg_macdrop : 7717.5
 avg_drop : 0
-avg_PLR : 0.12903
+avg_PLR : 0.1288
 
 ------------ Sensors 1000 ------------
-avg_time : 7905.9
-avg_total : 68548.4
-avg_macdrop : 8851.1
-avg_drop : 74.48
-avg_PLR : 0.130208
+avg_time : 9231
+avg_total : 80109.4
+avg_macdrop : 10296.9
+avg_drop : 86.8
+avg_PLR : 0.129619
