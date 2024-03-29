@@ -8,8 +8,13 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
+<<<<<<< HEAD
       "cwd": "e:/Peggy/research/my/paper",
       "program": "e:/Peggy/research/my/paper/build/Debug/outDebug",
+=======
+      "cwd": "d:/Peggy/paper",
+      "program": "d:/Peggy/paper/build/Debug/outDebug",
+>>>>>>> branch1
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
