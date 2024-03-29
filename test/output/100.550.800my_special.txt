@@ -1,4 +1,4 @@
-my
+my (special)
 
 ------------ Sensors 200 ------------
 avg_lifetime : 26237.5

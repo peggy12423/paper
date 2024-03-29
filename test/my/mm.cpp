@@ -30,7 +30,7 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 100
+#define round_number 20
 #define E_NUM 1000
 #define Alpha 0.2
 #define Beta 0.8

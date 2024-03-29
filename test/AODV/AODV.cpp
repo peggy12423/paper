@@ -15,7 +15,7 @@
 #define type4f 120
 #define type5f 150
 #define CHf 100 //CH trans frequency
-#define freq_change_switch 1 //0關 1開 是否要使資料量突然暴增的開關
+#define freq_change_switch 0 //0關 1開 是否要使資料量突然暴增的開關
 #define b_t 10800 //大T 每多少秒開一次 小T 每一次開多少秒
 #define s_t 1800
 #define bomb_f3 45 //爆炸sensing frequency
@@ -31,7 +31,7 @@
 #define trans_dis 60 //m 80幾乎可以確定他傳的到sink(AODV)
 
 /*變動實驗參數設定*/
-#define round_number 100
+#define round_number 50
 #define E_NUM 1000
 
 using namespace std;
@@ -67,7 +67,7 @@ struct RREQ
 	queue<int>route;
 	int hop_count;
 };
-ofstream fout("AODV_special.txt");
+ofstream fout("100.AODV_special.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -457,127 +457,41 @@ int main()
                     //fout << "sink 有" << e << endl; //total封包數,有些會找不到去sink的路徑
                     break;
                 }
-                if (freq_change_switch)
+                if (t % type3f == 0)
                 {
-                    if (t % b_t <= s_t) //if in this time slot , then bombing.
+                    for (int j = 0; j < S_NUM; j++)
                     {
-                        if (b_region == 0)
+                        if (ns[j].type == 3) //CH need to sense
                         {
-                            b_region = rand() % 4 + 1; //bombing region 1~4 !
-                        }
-                        bombing = 1;
-                    }
-                    else //結束爆炸 ,調回參數
-                    {
-                        b_region = 0;
-                        bombing = 0;
-                    }
-                }
-                if (bombing)
-                {
-                    /*爆炸區*/
-                    if (t % bomb_f3 == 0)
-                    {
-                        for (int j = 0; j < S_NUM; j++)
-                        {
-                            if (ns[j].type == 3 && ns[j].region1 == b_region)
-                            {
-                                AODV_routing(j, t);
-                            }
-                        }
-                    }
-                    if (t % bomb_f4 == 0)
-                    {
-                        for (int j = 0; j < S_NUM; j++)
-                        {
-                            if (ns[j].type == 4 && ns[j].region1 == b_region)
-                            {
-                                AODV_routing(j, t);
-                            }
-                        }
-                    }
-                    if (t % bomb_f5 == 0)
-                    {
-                        for (int j = 0; j < S_NUM; j++)
-                        {
-                            if (ns[j].type == 5 && ns[j].region1 == b_region)
-                            {
-                                AODV_routing(j, t);
-                            }
-                        }
-                    }
-
-                    /*非爆炸區*/
-                    if (t % type3f == 0)
-                    {
-                        for (int j = 0; j < S_NUM; j++)
-                        {
-                            if (ns[j].type == 3 && ns[j].region1 != b_region)
-                            {
-                                AODV_routing(j, t);
-                            }
-                        }
-                    }
-                    if (t % type4f == 0)
-                    {
-                        for (int j = 0; j < S_NUM; j++)
-                        {
-                            if (ns[j].type == 4 && ns[j].region1 != b_region)
-                            {
-                                AODV_routing(j, t);
-                            }
-                        }
-                    }
-                    if (t % type5f == 0)
-                    {
-                        for (int j = 0; j < S_NUM; j++)
-                        {
-                            if (ns[j].type == 5 && ns[j].region1 != b_region)
-                            {
-                                AODV_routing(j, t);
-                            }
+                            AODV_routing(j, t);
                         }
                     }
                 }
-                else//regular trans
+                if (t % type4f == 0)
                 {
-                    if (t % type3f == 0)
+                    for (int j = 0; j < S_NUM; j++)
                     {
-                        for (int j = 0; j < S_NUM; j++)
+                        if (ns[j].type == 4) //CH need to sense
                         {
-                            if (ns[j].type == 3) //CH need to sense
-                            {
-                                AODV_routing(j, t);
-                            }
-                        }
-                    }
-                    if (t % type4f == 0)
-                    {
-                        for (int j = 0; j < S_NUM; j++)
-                        {
-                            if (ns[j].type == 4) //CH need to sense
-                            {
-                                AODV_routing(j, t);
-                            }
-                        }
-                    }
-                    if (t % type5f == 0)
-                    {
-                        for (int j = 0; j < S_NUM; j++)
-                        {
-                            if (ns[j].type == 5) //CH need to sense
-                            {
-                                AODV_routing(j, t);
-                            }
+                            AODV_routing(j, t);
                         }
                     }
                 }
-
+                if (t % type5f == 0)
+                {
+                    for (int j = 0; j < S_NUM; j++)
+                    {
+                        if (ns[j].type == 5) //CH need to sense
+                        {
+                            AODV_routing(j, t);
+                        }
+                    }
+                }
                 t++;
             }
             cout << rn+1 << endl;
         }
-        total /= round_number;
+	    total /= round_number;
         avg_t /= round_number;
         drop /= round_number;
         macdrop /= round_number;
