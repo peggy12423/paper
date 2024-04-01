@@ -1,19 +1,5 @@
 my (normal)
 
------------- Sensors 200 ------------
-avg_lifetime : 22202.5
-avg_total : 38473.9
-avg_macdrop : 2479.06
-avg_drop : 10.29
-avg_PLR : 0.0647022
-
------------- Sensors 300 ------------
-avg_lifetime : 21572.3
-avg_total : 56174
-avg_macdrop : 3305
-avg_drop : 123.84
-avg_PLR : 0.0610396
-
 ------------ Sensors 400 ------------
 avg_lifetime : 23888.7
 avg_total : 82868

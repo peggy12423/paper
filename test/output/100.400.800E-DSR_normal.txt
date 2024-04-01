@@ -1,19 +1,5 @@
 E-DSR (normal)
 
------------- Sensors 200 ------------
-avg_time : 31898.9
-avg_total : 55497.1
-avg_macdrop : 7252.38
-avg_drop : 0
-avg_PLR : 0.13068
-
------------- Sensors 300 ------------
-avg_time : 28329
-avg_total : 73904.9
-avg_macdrop : 9674.85
-avg_drop : 0
-avg_PLR : 0.13091
-
 ------------ Sensors 400 ------------
 avg_time : 24377.5
 avg_total : 84754.2

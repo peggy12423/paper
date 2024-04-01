@@ -1,19 +1,5 @@
 E-DSR (special)
 
------------- Sensors 200 ------------
-avg_time : 35949.1
-avg_total : 62645.4
-avg_macdrop : 8018.94
-avg_drop : 0
-avg_PLR : 0.128005
-
------------- Sensors 300 ------------
-avg_time : 33687.7
-avg_total : 87978.7
-avg_macdrop : 11312.8
-avg_drop : 0
-avg_PLR : 0.128585
-
 ------------ Sensors 400 ------------
 avg_time : 31691.6
 avg_total : 110028
