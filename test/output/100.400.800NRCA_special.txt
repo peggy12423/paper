@@ -1,19 +1,5 @@
 NRCA (special)
 
------------- Sensors 200 ------------
-avg_lifetime : 13585
-avg_total : 23503.2
-avg_macdrop : 2580.08
-avg_drop : 0
-avg_PLR : 0.109776
-
------------- Sensors 300 ------------
-avg_lifetime : 7754.7
-avg_total : 20025.7
-avg_macdrop : 2139.74
-avg_drop : 0
-avg_PLR : 0.10685
-
 ------------ Sensors 400 ------------
 avg_lifetime : 2448.09
 avg_total : 8291.37
