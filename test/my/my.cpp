@@ -10,8 +10,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 700 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 900 //50~100 特別的傳輸用
+#define NODE_BUFFER1 750 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 1000 //50~100 特別的傳輸用
 
 #define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
@@ -31,7 +31,7 @@
 
 /*變動實驗參數設定*/
 #define round_number 20
-#define E_NUM 800
+#define E_NUM 400
 #define Alpha 0.2
 #define Beta 0.8
 #define high_density_th1 1.2
@@ -39,7 +39,7 @@
 
 using namespace std;
 
-int S_NUM = 800; //感測器總數
+int S_NUM = 400; //感測器總數
 struct C
 {
 	double x, y;
@@ -1073,7 +1073,7 @@ int main()
 {
 	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
-	fout << "my" << endl;
+	fout << "my (normal)" << endl;
 	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
 		avg_t = 0;
 		buffer_drop = 0;

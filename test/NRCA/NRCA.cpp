@@ -9,8 +9,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 400 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 800 //50~100 特別的傳輸用
+#define NODE_BUFFER1 500 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 1000 //50~100 特別的傳輸用
 
 #define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90 //常規sensing frequency
@@ -34,12 +34,12 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 50
+#define round_number 20
 #define E_NUM 1000
 
 using namespace std;
 
-int S_NUM = 200;
+int S_NUM = 400;
 struct C
 {
 	double x, y;
@@ -65,7 +65,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("100.400.800NRCA_normal.txt");
+ofstream fout("100.500.1000NRCA_normal.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -511,7 +511,7 @@ void transaction(int j, int t)
 
 int main(){
 	srand((unsigned)time(NULL)); //random seed
-	fout << "NRCA" << endl;
+	fout << "NRCA (normal)" << endl;
 	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
 		cout << "sensors: " << S_NUM << endl;
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
