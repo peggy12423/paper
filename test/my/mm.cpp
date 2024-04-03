@@ -10,8 +10,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 550 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 800 //50~100 特別的傳輸用
+#define NODE_BUFFER1 1000 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 1400 //50~100 特別的傳輸用
 
 #define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
@@ -39,7 +39,7 @@
 
 using namespace std;
 
-int S_NUM = 200; //感測器總數
+int S_NUM = 400; //感測器總數
 struct C
 {
 	double x, y;
@@ -66,7 +66,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("100.550.800my_special.txt");
+ofstream fout("output.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -855,15 +855,11 @@ void Packet_Generate(int now, int t) //generate packet 有能耗
 	ns[now].sense.data = ns[now].type;
 	ns[now].sense.time = t;
 	ns[now].energy -= ProbeEnergy;
+	//fout << "node : " << now << "能量減少 "<< ProbeEnergy <<" ,因為產生感測封包 "<< endl;
 }
 void Packet_Dliver(int sender, int CH) // 有能耗
 {
-    double d = distance(sender, CH);
-	if (sender != CH) //CH自己給自己不用扣能量
-	{
-		ns[sender].energy -= TransmitEnergy + d*d*AmplifierEnergy;
-	}
-    int rate = rand() % 100 + 1;
+	int rate = rand() % 100 + 1;
 	if (rate > successful_rate || sender == CH)  /*10% drop rate or CH自己將sense的封包放自己的buffer*/
 	{
 		ns[CH].receive.dst = ns[sender].sense.dst;
@@ -880,12 +876,18 @@ void Packet_Dliver(int sender, int CH) // 有能耗
 		ns[CH].receive.data = -1;
 		ns[CH].receive.time = -1;
 	}
+	double d = distance(sender, CH);
+	if (sender != CH) //CH自己給自己不用扣能量
+	{
+		ns[sender].energy -= TransmitEnergy + d*d*AmplifierEnergy;
+	} //1個封包
 }
 void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
 {
-	if ( ns[CH].receive.src != CH) //不是來自自己的才要扣能量
+	if (ns[CH].receive.src != CH) //不是來自自己的才要扣能量
 	{
 		ns[CH].energy -= ReceiveEnergy;
+		//fout << "node : " << CH << "能量減少 "<< ReceiveEnergy << " ,因為收到來自節點 " << ns[CH].receive.src << " 的封包" << endl;
 	} //drop還算是有收
 	int full(1);
 	for (int a = 0; a < NODE_BUFFER1; a++) //buffer is not full 50 for self-area-sense 50 for other CH 
@@ -954,9 +956,14 @@ void CH2Sink(int CH) //有能耗
 			{
 				mac_drop++;
 			}
+			//fout << "CH ID:" << ns[CH].id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 		}
+		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
+		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
+																							   //fout << "幫別人成功,我的能量只剩" << ns[CH].energy << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
 		clean(CH, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
 	}
 	else      /*自己傳*/
@@ -984,8 +991,12 @@ void CH2Sink(int CH) //有能耗
 				mac_drop++;
 			}
 		}
+		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
+		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																							   //fout << "自己傳,我的能量只剩" << ns[CH].energy << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
 		clean(CH, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
 	}
 }
@@ -1010,7 +1021,7 @@ void CHtoRegion2(int CH1) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 	}
 
 	double rate(0);/*壓縮率0.25*/
-	
+
     for (int b = 0, a = 0; b < NODE_BUFFER1; b++)
     {
         if (ns[CH1].buffer[b].data == -1) //有空的就不用繼續了
@@ -1073,7 +1084,7 @@ int main()
 {
 	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
-	fout << "my" << endl;
+	fout << "my (normal)" << endl;
 	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
 		avg_t = 0;
 		buffer_drop = 0;
@@ -1085,8 +1096,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
