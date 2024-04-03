@@ -67,7 +67,7 @@ struct RREQ
 	queue<int>route;
 	int hop_count;
 };
-ofstream fout("100.AODV_special.txt");
+ofstream fout("100.AODV_normal.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -408,14 +408,14 @@ int main()
 {
 	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
-    fout << "AODV" << endl;
+    fout << "AODV (normal)" << endl;
     for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
 		cout << "sensors: " << S_NUM << endl;
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
         for (int rn = 0; rn < round_number; rn++)
         {
-            // node_deployed();
-            special_node_deployed();
+            node_deployed();
+            // special_node_deployed();
             packet_init();
             /*sink initialization*/
             sink.id = SINKID;

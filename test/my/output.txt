@@ -1,0 +1,8 @@
+my
+
+------------ Sensors 900 ------------
+avg_lifetime : 25676
+avg_total : 200646
+avg_macdrop : 10374.8
+avg_drop : 269.9
+avg_PLR : 0.0530518

@@ -2,20 +2,23 @@
 #include <time.h>
 #include <math.h>
 #include <fstream>
+#include <cstdlib> // 包含rand()和srand()
+#include <ctime>   // 包含time()
+
 #define MAX_energy 6480//j (1.5V*600mA*3600sec*2 = 6480j) 2*3號電池
 #define SINKID 2000
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 200 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 400 //50~100 特別的傳輸用
+#define NODE_BUFFER1 1100 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 1400 //50~100 特別的傳輸用
 
-#define R 0.5 //壓縮率 設1則沒有壓縮
+#define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
 #define type4f 120
 #define type5f 150 //720
 #define reservation_energy_time 10000
-#define CHf 120 //CH trans frequency
+#define CHf 100 //CH trans frequency
 
 /**/
 #define ProbeEnergy 0.03 //j (8*200bit*1.5V*25mA*0.5mS = 0.00375j*8 = 0.03j) !
@@ -27,8 +30,8 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
-#define E_NUM 1000
+#define round_number 20
+#define E_NUM 900
 #define Alpha 0.2
 #define Beta 0.8
 #define high_density_th1 1.2
@@ -36,7 +39,7 @@
 
 using namespace std;
 
-int S_NUM = 200; //感測器總數
+int S_NUM = 900; //感測器總數
 struct C
 {
 	double x, y;
@@ -52,7 +55,6 @@ struct N
 {
 	int id, x, y, CH, type, region1, region2;//region1 for 第一層grid , region2 for 第二層grid
 	double energy;//node information
-    int compress;
     int delay;
 	P receive;
 	P sense;
@@ -64,12 +66,13 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("my_special.txt");
+ofstream fout("output.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
 int R2, R3, R4;
 int R_NUM = S_NUM * 0.25;
+int CH_record[4][3];
 
 double type_a = 33, type_b = 33, type_c = 34; //調整QUERE裡面感測資料的比例
 
@@ -122,7 +125,7 @@ void node_deployed(){
 		ns[i].type = rand() % 3 + 3;//3 4 5
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 1;
-        ns[i].compress = 0;
+		ns[i].dtc = -1;
 		if (ns[i].x <= 100 && ns[i].y <= 100)
 		{
 			ns[i].region2 = 1;
@@ -139,14 +142,14 @@ void node_deployed(){
 		{
 			ns[i].region2 = 4;
 		}
-		//ns[i].dtc = sqrt(pow(abs(ns[i].x - 100), 2) + pow(abs(ns[i].y - 100), 2)); /*距離區中心*/
-		//ns[i].dtc = abs(ns[i].x - 200);/*距離區2*/
-		if (i == R2 - 1)//距離區所有點中心
-		{
-			C center1 = find_center(0, i);
-			set_dtc(center1, 0, i);
-		}
-		//fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 100), 2) + pow(abs(ns[i].y - 100), 2)); /*距離區中心*/
+		// //ns[i].dtc = abs(ns[i].x - 200);/*距離區2*/
+		// if (i == R2 - 1)//距離區所有點中心
+		// {
+		// 	C center1 = find_center(0, i);
+		// 	set_dtc(center1, 0, i);
+		// }
+		// //fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
 	}
 	for (i; i < R3; i++)
 	{
@@ -157,152 +160,7 @@ void node_deployed(){
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 2;
-        ns[i].compress = 0;
-        if (ns[i].x <= 300 && ns[i].y <= 100)
-		{
-			ns[i].region2 = 1;
-		}
-		if (ns[i].x >= 300 && ns[i].y <= 100)
-		{
-			ns[i].region2 = 2;
-		}
-		if (ns[i].x <= 300 && ns[i].y >= 100)
-		{
-			ns[i].region2 = 3;
-		}
-		if (ns[i].x >= 300 && ns[i].y >= 100)
-		{
-			ns[i].region2 = 4;
-		}
-		//ns[i].dtc = sqrt(pow(abs(ns[i].x - 300), 2) + pow(abs(ns[i].y - 100), 2)); /*距離區中心*/
-		//ns[i].dtc = sqrt(pow(abs(ns[i].x - SINKID), 2) + pow(abs(ns[i].y - 0), 2)); /*距離sink*/
-		if (i == R3 - 1)//距離區所有點中心
-		{
-			C center2 = find_center(R2, i);
-			set_dtc(center2, R2, i);
-		}
-		//fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
-	}
-	for (i; i < R4; i++)
-	{
-		ns[i].id = i;
-		ns[i].x = rand() % 200 + 1;
-		ns[i].y = rand() % 200 + 201;
-		ns[i].CH = i;
-		ns[i].type = rand() % 3 + 3;
-		ns[i].energy = MAX_energy;
-		ns[i].region1 = 3;
-        ns[i].compress = 0;
-		if (ns[i].x <= 100 && ns[i].y <= 300)
-		{
-			ns[i].region2 = 1;
-		}
-		if (ns[i].x >= 100 && ns[i].y <= 300)
-		{
-			ns[i].region2 = 2;
-		}
-		if (ns[i].x <= 100 && ns[i].y >= 300)
-		{
-			ns[i].region2 = 3;
-		}
-		if (ns[i].x >= 100 && ns[i].y >= 300)
-		{
-			ns[i].region2 = 4;
-		}
-		//ns[i].dtc = sqrt(pow(abs(ns[i].x - 100), 2) + pow(abs(ns[i].y - 300), 2));/*距離區中心*/
-		//ns[i].dtc = sqrt(pow(abs(ns[i].x - 200), 2) + pow(abs(ns[i].y - 200), 2));/*距離區2*/
-		if (i == R4 - 1)//距離區所有點中心
-		{
-			C center3 = find_center(R3, i);
-			set_dtc(center3, R3, i);
-		}
-		//fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
-	}
-	for (i; i < S_NUM; i++)
-	{
-		ns[i].id = i;
-		ns[i].x = rand() % 200 + 201;
-		ns[i].y = rand() % 200 + 201;
-		ns[i].CH = i;
-		ns[i].type = rand() % 3 + 3;
-		ns[i].energy = MAX_energy;
-		ns[i].region1 = 4;
-        ns[i].compress = 0;
-		if (ns[i].x <= 300 && ns[i].y <= 300)
-		{
-			ns[i].region2 = 1;
-		}
-		if (ns[i].x >= 300 && ns[i].y <= 300)
-		{
-			ns[i].region2 = 2;
-		}
-		if (ns[i].x <= 300 && ns[i].y >= 300)
-		{
-			ns[i].region2 = 3;
-		}
-		if (ns[i].x >= 300 && ns[i].y >= 300)
-		{
-			ns[i].region2 = 4;
-		}
-		//ns[i].dtc = sqrt(pow(abs(ns[i].x - 300), 2) + pow(abs(ns[i].y - 300), 2));/*距離區中心*/
-		//ns[i].dtc = abs(ns[i].y - 200);/*距離區2*/
-		if (i == S_NUM - 1)//距離區所有點中心
-		{
-			C center4 = find_center(R4, i);
-			set_dtc(center4, R4, i);
-		}
-		//fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
-	}
-}
-
-void special_node_deployed(){
-	R2 = S_NUM * 0.2;
-	R3 = S_NUM * 0.5;
-	R4 = S_NUM * 0.6;
-	int i = 0;
-	for (i; i < R2; i++)
-	{
-		ns[i].id = i;
-		ns[i].x = rand() % 200 + 1;
-		ns[i].y = rand() % 200 + 1;
-		ns[i].CH = i;
-		ns[i].type = rand() % 3 + 3;//3 4 5
-		ns[i].energy = MAX_energy;
-		ns[i].region1 = 1;
-        ns[i].compress = 0;
-		if (ns[i].x <= 100 && ns[i].y <= 100)
-		{
-			ns[i].region2 = 1;
-		}
-		if (ns[i].x >= 100 && ns[i].y <= 100)
-		{
-			ns[i].region2 = 2;
-		}
-		if (ns[i].x <= 100 && ns[i].y >= 100)
-		{
-			ns[i].region2 = 3;
-		}
-		if (ns[i].x >= 100 && ns[i].y >= 100)
-		{
-			ns[i].region2 = 4;
-		}
-		if (i == R2 - 1)//距離區所有點中心
-		{
-			C center1 = find_center(0, i);
-			set_dtc(center1, 0, i);
-		}
-		//fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
-	}
-	for (i; i < R3; i++)
-	{
-		ns[i].id = i;
-		ns[i].x = rand() % 200 + 201;
-		ns[i].y = rand() % 200 + 1;
-		ns[i].CH = i;
-		ns[i].type = rand() % 3 + 3;
-		ns[i].energy = MAX_energy;
-		ns[i].region1 = 2;
-        ns[i].compress = 0;
+		ns[i].dtc = -1;
 		if (ns[i].x <= 300 && ns[i].y <= 100)
 		{
 			ns[i].region2 = 1;
@@ -319,12 +177,14 @@ void special_node_deployed(){
 		{
 			ns[i].region2 = 4;
 		}
-		if (i == R3 - 1)//距離區所有點中心
-		{
-			C center2 = find_center(R2, i);
-			set_dtc(center2, R2, i);
-		}
-		//fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 300), 2) + pow(abs(ns[i].y - 100), 2)); /*距離區中心*/
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - SINKID), 2) + pow(abs(ns[i].y - 0), 2)); /*距離sink*/
+		// if (i == R3 - 1)//距離區所有點中心
+		// {
+		// 	C center2 = find_center(R2, i);
+		// 	set_dtc(center2, R2, i);
+		// }
+		// //fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
 	}
 	for (i; i < R4; i++)
 	{
@@ -335,7 +195,7 @@ void special_node_deployed(){
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 3;
-        ns[i].compress = 0;
+		ns[i].dtc = -1;
 		if (ns[i].x <= 100 && ns[i].y <= 300)
 		{
 			ns[i].region2 = 1;
@@ -352,12 +212,14 @@ void special_node_deployed(){
 		{
 			ns[i].region2 = 4;
 		}
-		if (i == R4 - 1)//距離區所有點中心
-		{
-			C center3 = find_center(R3, i);
-			set_dtc(center3, R3, i);
-		}
-		//fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 100), 2) + pow(abs(ns[i].y - 300), 2));/*距離區中心*/
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 200), 2) + pow(abs(ns[i].y - 200), 2));/*距離區2*/
+		// if (i == R4 - 1)//距離區所有點中心
+		// {
+		// 	C center3 = find_center(R3, i);
+		// 	set_dtc(center3, R3, i);
+		// }
+		// //fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
 	}
 	for (i; i < S_NUM; i++)
 	{
@@ -368,7 +230,7 @@ void special_node_deployed(){
 		ns[i].type = rand() % 3 + 3;
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 4;
-        ns[i].compress = 0;
+		ns[i].dtc = -1;
 		if (ns[i].x <= 300 && ns[i].y <= 300)
 		{
 			ns[i].region2 = 1;
@@ -385,12 +247,161 @@ void special_node_deployed(){
 		{
 			ns[i].region2 = 4;
 		}
-		if (i == S_NUM - 1)//距離區所有點中心
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 300), 2) + pow(abs(ns[i].y - 300), 2));/*距離區中心*/
+		// //ns[i].dtc = abs(ns[i].y - 200);/*距離區2*/
+		// if (i == S_NUM - 1)//距離區所有點中心
+		// {
+		// 	C center4 = find_center(R4, i);
+		// 	set_dtc(center4, R4, i);
+		// }
+		// //fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
+	}
+}
+
+void special_node_deployed(){
+	R2 = S_NUM * 0.2;
+	R3 = S_NUM * 0.5;
+	R4 = S_NUM * 0.6;
+	int i = 0;
+		for (i; i < R2; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 1;
+		ns[i].y = rand() % 200 + 1;
+		ns[i].CH = i;
+		ns[i].type = rand() % 3 + 3;//3 4 5
+		ns[i].energy = MAX_energy;
+		ns[i].region1 = 1;
+		ns[i].dtc = -1;
+		if (ns[i].x <= 100 && ns[i].y <= 100)
 		{
-			C center4 = find_center(R4, i);
-			set_dtc(center4, R4, i);
+			ns[i].region2 = 1;
 		}
-		//fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
+		if (ns[i].x >= 100 && ns[i].y <= 100)
+		{
+			ns[i].region2 = 2;
+		}
+		if (ns[i].x <= 100 && ns[i].y >= 100)
+		{
+			ns[i].region2 = 3;
+		}
+		if (ns[i].x >= 100 && ns[i].y >= 100)
+		{
+			ns[i].region2 = 4;
+		}
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 100), 2) + pow(abs(ns[i].y - 100), 2)); /*距離區中心*/
+		// //ns[i].dtc = abs(ns[i].x - 200);/*距離區2*/
+		// if (i == R2 - 1)//距離區所有點中心
+		// {
+		// 	C center1 = find_center(0, i);
+		// 	set_dtc(center1, 0, i);
+		// }
+		// //fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
+	}
+	for (i; i < R3; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 201;
+		ns[i].y = rand() % 200 + 1;
+		ns[i].CH = i;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].region1 = 2;
+		ns[i].dtc = -1;
+		if (ns[i].x <= 300 && ns[i].y <= 100)
+		{
+			ns[i].region2 = 1;
+		}
+		if (ns[i].x >= 300 && ns[i].y <= 100)
+		{
+			ns[i].region2 = 2;
+		}
+		if (ns[i].x <= 300 && ns[i].y >= 100)
+		{
+			ns[i].region2 = 3;
+		}
+		if (ns[i].x >= 300 && ns[i].y >= 100)
+		{
+			ns[i].region2 = 4;
+		}
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 300), 2) + pow(abs(ns[i].y - 100), 2)); /*距離區中心*/
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - SINKID), 2) + pow(abs(ns[i].y - 0), 2)); /*距離sink*/
+		// if (i == R3 - 1)//距離區所有點中心
+		// {
+		// 	C center2 = find_center(R2, i);
+		// 	set_dtc(center2, R2, i);
+		// }
+		// //fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
+	}
+	for (i; i < R4; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 1;
+		ns[i].y = rand() % 200 + 201;
+		ns[i].CH = i;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].region1 = 3;
+		ns[i].dtc = -1;
+		if (ns[i].x <= 100 && ns[i].y <= 300)
+		{
+			ns[i].region2 = 1;
+		}
+		if (ns[i].x >= 100 && ns[i].y <= 300)
+		{
+			ns[i].region2 = 2;
+		}
+		if (ns[i].x <= 100 && ns[i].y >= 300)
+		{
+			ns[i].region2 = 3;
+		}
+		if (ns[i].x >= 100 && ns[i].y >= 300)
+		{
+			ns[i].region2 = 4;
+		}
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 100), 2) + pow(abs(ns[i].y - 300), 2));/*距離區中心*/
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 200), 2) + pow(abs(ns[i].y - 200), 2));/*距離區2*/
+		// if (i == R4 - 1)//距離區所有點中心
+		// {
+		// 	C center3 = find_center(R3, i);
+		// 	set_dtc(center3, R3, i);
+		// }
+		// //fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
+	}
+	for (i; i < S_NUM; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 201;
+		ns[i].y = rand() % 200 + 201;
+		ns[i].CH = i;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].region1 = 4;
+		ns[i].dtc = -1;
+		if (ns[i].x <= 300 && ns[i].y <= 300)
+		{
+			ns[i].region2 = 1;
+		}
+		if (ns[i].x >= 300 && ns[i].y <= 300)
+		{
+			ns[i].region2 = 2;
+		}
+		if (ns[i].x <= 300 && ns[i].y >= 300)
+		{
+			ns[i].region2 = 3;
+		}
+		if (ns[i].x >= 300 && ns[i].y >= 300)
+		{
+			ns[i].region2 = 4;
+		}
+		// //ns[i].dtc = sqrt(pow(abs(ns[i].x - 300), 2) + pow(abs(ns[i].y - 300), 2));/*距離區中心*/
+		// //ns[i].dtc = abs(ns[i].y - 200);/*距離區2*/
+		// if (i == S_NUM - 1)//距離區所有點中心
+		// {
+		// 	C center4 = find_center(R4, i);
+		// 	set_dtc(center4, R4, i);
+		// }
+		// //fout << "node" << ns[i].id << " x : " << ns[i].x << " y : " << ns[i].y << " type : " << ns[i].type << " energy : " << ns[i].energy << " dtc : " << ns[i].dtc << endl;
 	}
 }
 
@@ -426,9 +437,9 @@ void sink_init(){
 	}
 }
 
-double CH_standard(double a, double b, double ENERGY_STANDARD, double DIST_STANDARD) //used to select CH !這個選擇方式目前是造成整個實驗能量消耗不平衡的原因(是否要考慮消耗能量的大小) !放入節點種類參考?
+double CH_standard(double dtc, double re_energy, double ENERGY_STANDARD, double DIST_STANDARD) //used to select CH !這個選擇方式目前是造成整個實驗能量消耗不平衡的原因(是否要考慮消耗能量的大小) !放入節點種類參考?
 {
-	double s = Alpha*(1 - a / DIST_STANDARD) + Beta*(b / ENERGY_STANDARD); //larger is better
+	double s = Alpha*(1 - dtc / DIST_STANDARD) + Beta*(re_energy / ENERGY_STANDARD); //larger is better
 	return s;
 }
 double find_max_energy(int s, int e) //!energy的預扣
@@ -497,105 +508,180 @@ int region_CH_num(int sIndex, int eIndex){
 	return CH_num;
 }
 
+/*改K-means，原有的standard用在選出虛擬分群中心點後的CH選擇*/
 void CH_selection(int sIndex, int eIndex, int region, int (&CH_record)[4][3] ){
 	int CH_num = region_CH_num(sIndex, eIndex);
-	double Energy = find_max_energy(sIndex, eIndex);
-	double Distance = find_max_distance(sIndex, eIndex);
-	int start = sIndex;
-	int end = eIndex;
-	int CH = sIndex;
-	int sCH = -1, tCH = -1;
-	double d = distance(sIndex, ns[sIndex].CH);
-	double reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / (ns[sIndex].type * 30) )*(ProbeEnergy + (TransmitEnergy + d*d*AmplifierEnergy)));
-	double standard[3];
-	standard[0] = CH_standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
-	sIndex += 1;
-	if( CH_num == 2 ){
-		sCH = sIndex;
-		double d2 = distance(sIndex, ns[sIndex].CH);
-		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / (ns[sIndex].type * 30) )*(ProbeEnergy + (TransmitEnergy + d2*d2*AmplifierEnergy)));
-		standard[1] = CH_standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
-		sIndex += 1;
-	}
-	else if( CH_num == 3 ){
-		sCH = sIndex;
-		double d2 = distance(sIndex, ns[sIndex].CH);
-		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / (ns[sIndex].type * 30) )*(ProbeEnergy + (TransmitEnergy + d2*d2*AmplifierEnergy)));
-		standard[1] = CH_standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
-		sIndex += 1;
-		
-		tCH = sIndex;
-		double d3 = distance(sIndex, ns[sIndex].CH);
-		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / (ns[sIndex].type * 30) )*(ProbeEnergy + (TransmitEnergy + d3*d3*AmplifierEnergy)));
-		standard[2] = CH_standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
-		sIndex += 1;
-	}
-
-	for( sIndex; sIndex <= eIndex; sIndex++){    //遞迴找CH、sCh、tCH、fCH
-		d = distance(sIndex, ns[sIndex].CH);
-		reserve_energy = ns[sIndex].energy - (floor(reservation_energy_time / (ns[sIndex].type * 30) )*(ProbeEnergy + (TransmitEnergy + d*d*AmplifierEnergy)));
-		double current_standard = CH_standard(ns[sIndex].dtc, reserve_energy, Energy, Distance);
-		if( standard[0] < current_standard ){
-			if( CH_num == 3 ){    // CH_num = 3
-				standard[2] = standard[1];
-				standard[1] = standard[0];
-				tCH = sCH;
-				sCH = CH;
-			}
-			else if( CH_num == 2 ){    // CH_num = 2
-				standard[1] = standard[0];
-				sCH = CH;
-			}
-			standard[0] = current_standard;
-			CH = ns[sIndex].id;
+	int region_S_NUM = eIndex - sIndex + 1;
+	int CH = rand() % region_S_NUM + sIndex;
+	int sCH = -1;
+	int tCH = -1;
+	int cluster_S_NUM[3] = { 0, 0, 0 };
+	double xy_total[3][2] = { {0, 0}, {0, 0}, {0, 0} };  //記錄三個CH的xy座標總值(要算中心點)
+	if( CH_num > 1){
+		while( sCH == -1 || sCH == CH ){
+			sCH = rand() % region_S_NUM + sIndex;
 		}
-		else if( CH_num > 1 && standard[1] < current_standard){  //有兩個或三個CH時，且當前標準介於最大與第二標準之間
-			if( CH_num == 3 ){   // CH_num =3
-				standard[2] = standard[1];
-				tCH = sCH;
-			}
-			standard[1] = current_standard;
-			sCH = ns[sIndex].id;
-		}
-		else if( CH_num > 2 && standard[2] < current_standard){   //有三個CH時，且當前標準介於第二與第三標準之間
-			standard[2] = current_standard;
-			tCH = ns[sIndex].id;
+	}
+	if( CH_num > 2){
+		while( tCH == -1 || tCH == CH || tCH == sCH){
+			tCH = rand() % region_S_NUM + sIndex;
 		}
 	}
 
-	CH_record[region][0] = CH;
-	CH_record[region][1] = sCH;
-	CH_record[region][2] = tCH;
-
-	for( int j = start; j <= end; j++){   //依照到CH的距離，更改區域內所有節點的CH為選出的CH
-		if( sCH != -1 && tCH != -1 && CH_num == 3){   //CH_num = 3
-			double dist1 = distance(j, CH);
-			double dist2 = distance(j, sCH);
-			double dist3 = distance(j, tCH);
-			if( dist1 <= dist2 && dist1 <= dist3 ){
-				ns[j].CH = CH;
+	for(int m = sIndex; m <= eIndex; m++){   //依最短距離選CH加入分群
+		if( sCH != -1 && tCH != -1 && CH_num == 3){  //CH_num = 3
+			double dist1 = distance(m, CH);
+			double dist2 = distance(m, sCH);
+			double dist3 = distance(m, tCH);
+			if( dist1 <= dist2 && dist1 <= dist3 ){  //加入CH群
+				cluster_S_NUM[0] += 1;
+				ns[m].CH = CH;
+				xy_total[0][0] += ns[m].x;    //用來計算CH群的中心點
+				xy_total[0][1] += ns[m].y;
 			}
-			else if( dist2 <= dist1 && dist2 <= dist3){
-				ns[j].CH = sCH;
+			else if( dist2 <= dist1 && dist2 <= dist3){   //加入sCH群
+				cluster_S_NUM[1] += 1;
+				ns[m].CH = sCH;
+				xy_total[1][0] += ns[m].x;
+				xy_total[1][1] += ns[m].y;
+			}
+			else{    //加入tCH群
+				cluster_S_NUM[2] += 1;
+				ns[m].CH = tCH;
+				xy_total[2][0] += ns[m].x;
+				xy_total[2][1] += ns[m].y;
+			}
+		}
+		else if( sCH != -1 && CH_num == 2){  //CH_num = 2
+			double dist1 = distance(m, CH);
+			double dist2 = distance(m, sCH);
+			if( dist1 <= dist2 ){
+				cluster_S_NUM[0] += 1;
+				ns[m].CH = CH;
+				xy_total[0][0] += ns[m].x;
+				xy_total[0][1] += ns[m].y;
 			}
 			else{
-				ns[j].CH = tCH;
+				cluster_S_NUM[1] += 1;
+				ns[m].CH = sCH;
+				xy_total[1][0] += ns[m].x;
+				xy_total[1][1] += ns[m].y;
 			}
 		}
-        else if( sCH != -1 && CH_num == 2){  //CH_num = 2
-			double dist1 = distance(j, CH);
-			double dist2 = distance(j, sCH);
-			if( dist1 <= dist2){
-				ns[j].CH = CH;
-			}
-			else{
-				ns[j].CH = sCH;
-			}
-		}
-		else{
-			ns[j].CH = CH;
+		else{    //CH_num = 1
+			cluster_S_NUM[0] += 1;
+			ns[m].CH = CH;
+			xy_total[0][0] += ns[m].x;
+			xy_total[0][1] += ns[m].y;
 		}
 	}
+
+	C cluster_center[3];
+	for( int i = 0; i < 3; i++){    //設定三個CH的虛擬中心點
+		cluster_center[i].x = xy_total[i][0] / cluster_S_NUM[i];
+		cluster_center[i].y = xy_total[i][1] / cluster_S_NUM[i];
+	}
+	for(int j = sIndex; j <= eIndex; j++){      //設定各節點到虛擬中心點的距離
+		if( ns[j].CH == CH ){
+			ns[j].dtc = sqrt(pow(abs(ns[j].x - cluster_center[0].x), 2) + pow(abs(ns[j].y - cluster_center[0].y), 2));
+		}
+		else if( ns[j].CH == sCH ){
+			ns[j].dtc = sqrt(pow(abs(ns[j].x - cluster_center[1].x), 2) + pow(abs(ns[j].y - cluster_center[1].y), 2));
+		}
+		else if( ns[j].CH == tCH ){
+			ns[j].dtc = sqrt(pow(abs(ns[j].x - cluster_center[2].x), 2) + pow(abs(ns[j].y - cluster_center[2].y), 2));
+		}
+	}
+
+	int real_CH[3] = {-1, -1, -1};
+	double standard[3] = {0, 0, 0};
+	double cluster_MAX_energy[3] = {0, 0, 0};
+	double cluster_MAX_dtc[3] = {0, 0, 0};
+	double MAX_standard[3];
+	for(int k = sIndex; k <= eIndex; k++){   //找各群中最大剩餘能量與最大到虛擬中心點距離
+		if( ns[k].CH == CH ){    //CH群
+			if( ns[k].energy > cluster_MAX_energy[0] ){
+				cluster_MAX_energy[0] = ns[k].energy;
+			}
+			if( ns[k].dtc > cluster_MAX_dtc[0] ){
+				cluster_MAX_dtc[0] = ns[k].dtc;
+			}
+		}
+		else if( ns[k].CH == sCH ){   //sCH群
+			if( ns[k].energy > cluster_MAX_energy[1] ){
+				cluster_MAX_energy[1] = ns[k].energy;
+			}
+			if( ns[k].dtc > cluster_MAX_dtc[1] ){
+				cluster_MAX_dtc[1] = ns[k].dtc;
+			}
+		}
+		else if( ns[k].CH == tCH ){     //tCH群
+			if( ns[k].energy > cluster_MAX_energy[2] ){
+				cluster_MAX_energy[2] = ns[k].energy;
+			}
+			if( ns[k].dtc > cluster_MAX_dtc[2] ){
+				cluster_MAX_dtc[2] = ns[k].dtc;
+			}
+		}
+	}
+
+	for(int k = sIndex; k <= eIndex; k++){   //先將Max_standard設其中一個才能做後續比較
+		if( ns[k].CH == CH ){    //CH群
+			MAX_standard[0] = CH_standard(ns[k].dtc, ns[k].energy, cluster_MAX_energy[0], cluster_MAX_dtc[0]);
+			// break;
+		}
+	}
+	for(int k = sIndex; k <= eIndex; k++){   //先將Max_standard設其中一個才能做後續比較
+		if( ns[k].CH == sCH ){    //CH群
+			MAX_standard[1] = CH_standard(ns[k].dtc, ns[k].energy, cluster_MAX_energy[1], cluster_MAX_dtc[1]);
+			// break;
+		}
+	}
+	for(int k = sIndex; k <= eIndex; k++){   //先將Max_standard設其中一個才能做後續比較
+		if( ns[k].CH == tCH ){    //CH群
+			MAX_standard[2] = CH_standard(ns[k].dtc, ns[k].energy, cluster_MAX_energy[2], cluster_MAX_dtc[2]);
+			// break;
+		}
+	}
+
+	for(int j = sIndex; j <= eIndex; j++){   //用CH_standard選真實CH
+		double current_standard;
+		if( ns[j].CH == CH ){
+			current_standard = CH_standard(ns[j].dtc, ns[j].energy, cluster_MAX_energy[0], cluster_MAX_dtc[0]);
+			if( current_standard > MAX_standard[0] ){
+				MAX_standard[0] = current_standard;
+				real_CH[0] = ns[j].id;
+			}
+		}
+		else if( ns[j].CH == sCH ){
+			current_standard = CH_standard(ns[j].dtc, ns[j].energy, cluster_MAX_energy[1], cluster_MAX_dtc[1]);
+			if( current_standard > MAX_standard[1] ){
+				MAX_standard[1] = current_standard;
+				real_CH[1] = ns[j].id;
+			}
+		}
+		else if( ns[j].CH == tCH ){
+			current_standard = CH_standard(ns[j].dtc, ns[j].energy, cluster_MAX_energy[2], cluster_MAX_dtc[2]);
+			if( current_standard > MAX_standard[2] ){
+				MAX_standard[2] = current_standard;
+				real_CH[2] = ns[j].id;
+			}
+		}
+	}
+	for(int j = sIndex; j <= eIndex; j++){   //節點的CH換成真實CH
+		if( ns[j].CH == CH ){
+			ns[j].CH == real_CH[0];
+		}
+		else if( ns[j].CH == sCH ){
+			ns[j].CH == real_CH[1];	
+		}
+		else if( ns[j].CH == tCH ){
+			ns[j].CH == real_CH[2];
+		}
+	}
+	CH_record[region][0] = real_CH[0];
+	CH_record[region][1] = real_CH[1];
+	CH_record[region][2] = real_CH[2];
 }
 
 void Packet_Generate(int now, int t) //generate packet 有能耗
@@ -606,17 +692,11 @@ void Packet_Generate(int now, int t) //generate packet 有能耗
 	ns[now].sense.data = ns[now].type;
 	ns[now].sense.time = t;
 	ns[now].energy -= ProbeEnergy;
-    ns[now].compress += 1;
 	//fout << "node : " << now << "能量減少 "<< ProbeEnergy <<" ,因為產生感測封包 "<< endl;
 }
 void Packet_Dliver(int sender, int CH) // 有能耗
 {
-    double d = distance(sender, CH);
-	if (sender != CH) //CH自己給自己不用扣能量
-	{
-		ns[sender].energy -= TransmitEnergy + d*d*AmplifierEnergy;
-	}
-    int rate = rand() % 100 + 1;
+	int rate = rand() % 100 + 1;
 	if (rate > successful_rate || sender == CH)  /*10% drop rate or CH自己將sense的封包放自己的buffer*/
 	{
 		ns[CH].receive.dst = ns[sender].sense.dst;
@@ -627,18 +707,24 @@ void Packet_Dliver(int sender, int CH) // 有能耗
 	}
 	else
 	{
-		mac_drop += 2;
+		mac_drop++;
 		ns[CH].receive.dst = -1;
 		ns[CH].receive.src = -1;
 		ns[CH].receive.data = -1;
 		ns[CH].receive.time = -1;
 	}
+	double d = distance(sender, CH);
+	if (sender != CH) //CH自己給自己不用扣能量
+	{
+		ns[sender].energy -= TransmitEnergy + d*d*AmplifierEnergy;
+	} //1個封包
 }
 void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
 {
-	if ( ns[CH].receive.src != CH) //不是來自自己的才要扣能量
+	if (ns[CH].receive.src != CH) //不是來自自己的才要扣能量
 	{
 		ns[CH].energy -= ReceiveEnergy;
+		//fout << "node : " << CH << "能量減少 "<< ReceiveEnergy << " ,因為收到來自節點 " << ns[CH].receive.src << " 的封包" << endl;
 	} //drop還算是有收
 	int full(1);
 	for (int a = 0; a < NODE_BUFFER1; a++) //buffer is not full 50 for self-area-sense 50 for other CH 
@@ -707,9 +793,14 @@ void CH2Sink(int CH) //有能耗
 			{
 				mac_drop++;
 			}
+			//fout << "CH ID:" << ns[CH].id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 		}
+		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
+		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
+																							   //fout << "幫別人成功,我的能量只剩" << ns[CH].energy << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
 		clean(CH, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
 	}
 	else      /*自己傳*/
@@ -737,8 +828,12 @@ void CH2Sink(int CH) //有能耗
 				mac_drop++;
 			}
 		}
+		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
+		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																							   //fout << "自己傳,我的能量只剩" << ns[CH].energy << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
 		clean(CH, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
 	}
 }
@@ -763,7 +858,7 @@ void CHtoRegion2(int CH1) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 	}
 
 	double rate(0);/*壓縮率0.25*/
-	
+
     for (int b = 0, a = 0; b < NODE_BUFFER1; b++)
     {
         if (ns[CH1].buffer[b].data == -1) //有空的就不用繼續了
@@ -807,37 +902,12 @@ int CheckEnergy()
 	}
 	return SINKID;
 }
-void Reselection_judge(int s, int e, int region, int (&CH_record)[4][3])
-{
-	double avg_energy = find_avg_energy(s, e);
-	if (((avg_energy - ns[ns[s].CH].energy) / avg_energy) >= 0.15) //這個值不一定大於0 , CH的花費不一定比周圍高 ! 因為資料壓縮的關係
-	{
-		CH_selection(s, e, region, CH_record);
-	}
-}
-void CH_Reselection(int (&CH_record)[4][3])
-{
-	Reselection_judge(0, R2 - 1, 0, CH_record);
-	Reselection_judge(R2, R3 - 1, 1, CH_record);
-	Reselection_judge(R3, R4 - 1, 2, CH_record);
-	Reselection_judge(R4, S_NUM - 1, 3, CH_record);
-}
-void transaction(int j, int t, int (&end)[4])
+
+void transaction(int j, int t)
 {
     Packet_Generate(j, t);
-    if( ns[j].compress % 2 == 0){
-        ns[j].delay = t - ns[j].delay;
-        // fout << "Node " << j << " delay time: " << ns[j].delay << endl;
-        Packet_Dliver(j, ns[j].CH);
-        Packet_Receive(ns[j].CH);
-    }
-    else if( j == end[0] || j == end[1] || j == end[2] || j == end[3] ){
-        Packet_Dliver(j, ns[j].CH);
-        Packet_Receive(ns[j].CH);
-    }
-    else{
-        ns[j].delay = t;
-    }
+    Packet_Dliver(j, ns[j].CH);
+    Packet_Receive(ns[j].CH);
 }
 
 /*如果使用資料壓縮  , 是否要以資料量大小做策略 , 感測的耗能相比於CH竟然比較大很多(反映在CH剩餘能量竟然還比平均能量高) due to dtc,比例等等,為何CH選區中心會比選靠近區2還要長壽*/
@@ -863,33 +933,31 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
 			sink_init();
 
-            int CH_record[4][3] = { {-1,-1,-1}, {-1,-1,-1}, {-1,-1,-1}, {-1,-1,-1} };
+            for (int i = 0; i < 4; ++i){
+                for (int j = 0; j < 3; ++j){
+                    CH_record[i][j] = -1;
+                }
+            }
             int start[4] = { 0, R2, R3, R4 };
             int end[4] = { R2-1, R3-1, R4-1, S_NUM-1 };
-            int CH_num[4];
-            for(int i = 0; i <= 3; i++){
-                CH_num[i] = region_CH_num( start[i], end[i] );
-                CH_selection( start[i], end[i], i, CH_record );
-            }
+            CH_selection( start[0], end[0], 0, CH_record );
+            CH_selection( start[1], end[1], 1, CH_record );
+            CH_selection( start[2], end[2], 2, CH_record );
+            CH_selection( start[3], end[3], 3, CH_record );
+            
 			/*traffic start*/
 			int die(0);
 			int t(1);
 			while (!die){
 				int c = CheckEnergy();/*有一個節點沒電則等於死亡*/
-				if (c < SINKID)
-				{
-					// fout << "dead node: " << c << endl;
-					// fout << "energy: " << ns[c].energy << endl;
-					// fout << "CH: " << ns[c].CH << endl;
-					// fout << "region: " << ns[c].region1 << endl;
-					// fout << "------------------------" << endl;
+				if (c < SINKID){
 					avg_t += t;
 					die = 1;
 					break;
@@ -898,21 +966,21 @@ int main()
                 if (t % type3f == 0){
                     for (int j = 0; j < S_NUM; j++){
                         if (ns[j].type == 3){ //CH need to sense
-                            transaction(j, t, end);                          
+                            transaction(j, t);                          
                         }
                     }
                 }
                 if (t % type4f == 0){
                     for (int j = 0; j < S_NUM; j++){
                         if (ns[j].type == 4){//CH need to sense
-                            transaction(j, t, end);                          
+                            transaction(j, t);                          
                         }
                     }
                 }
                 if (t % type5f == 0){
                     for (int j = 0; j < S_NUM; j++){
                         if (ns[j].type == 5){ //CH need to sense
-                            transaction(j, t, end);                          
+                            transaction(j, t);                          
                         }
                     }
                 }
@@ -940,7 +1008,11 @@ int main()
                             CHtoRegion2(CH_record[3][j]);
                         }
                     }
-            		CH_Reselection(CH_record);
+                    CH_selection( start[0], end[0], 0, CH_record );
+                    CH_selection( start[1], end[1], 1, CH_record );
+                    CH_selection( start[2], end[2], 2, CH_record );
+                    CH_selection( start[3], end[3], 3, CH_record );
+
 				}
 				t++;
 			}
@@ -957,4 +1029,3 @@ int main()
 	}
 	return 0;
 }
-
