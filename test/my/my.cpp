@@ -594,7 +594,6 @@ void CH_selection(int sIndex, int eIndex, int region, int (&CH_record)[4][3] ){
 	}
 
 	int real_CH[3] = {-1, -1, -1};
-	double standard[3] = {0, 0, 0};
 	double cluster_MAX_energy[3] = {0, 0, 0};
 	double cluster_MAX_dtc[3] = {0, 0, 0};
 	double MAX_standard[3];
@@ -628,19 +627,16 @@ void CH_selection(int sIndex, int eIndex, int region, int (&CH_record)[4][3] ){
 	for(int k = sIndex; k <= eIndex; k++){   //先將Max_standard設其中一個才能做後續比較
 		if( ns[k].CH == CH ){    //CH群
 			MAX_standard[0] = CH_standard(ns[k].dtc, ns[k].energy, cluster_MAX_energy[0], cluster_MAX_dtc[0]);
-			// break;
 		}
 	}
 	for(int k = sIndex; k <= eIndex; k++){   //先將Max_standard設其中一個才能做後續比較
 		if( ns[k].CH == sCH ){    //CH群
 			MAX_standard[1] = CH_standard(ns[k].dtc, ns[k].energy, cluster_MAX_energy[1], cluster_MAX_dtc[1]);
-			// break;
 		}
 	}
 	for(int k = sIndex; k <= eIndex; k++){   //先將Max_standard設其中一個才能做後續比較
 		if( ns[k].CH == tCH ){    //CH群
 			MAX_standard[2] = CH_standard(ns[k].dtc, ns[k].energy, cluster_MAX_energy[2], cluster_MAX_dtc[2]);
-			// break;
 		}
 	}
 
