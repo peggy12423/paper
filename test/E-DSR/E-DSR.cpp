@@ -2,6 +2,9 @@
 #include <time.h>
 #include <math.h>
 #include <fstream>
+#include <vector>
+#include <algorithm>
+
 #define MAX_energy 6480//j (1.5V*600mA*3600sec*2 = 6480j) 2*3號電池
 #define SINKID 2000
 #define SINK_X 400
@@ -66,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("100.700.1400E-DSR_special.txt");
+ofstream fout("output.txt");
 N ns[2000];
 S sink;
 double avg_t, drop, macdrop, total;
@@ -78,6 +81,7 @@ int toSink(0);
 double SD(0);
 int R2, R3, R4;
 int R_NUM = S_NUM * 0.25;
+vector<int> CHarr = {};
 
 double type_a = 33, type_b = 33, type_c = 34; //調整QUERE裡面感測資料的比例
 void print_energy()
@@ -616,6 +620,14 @@ double find_max_dts(int s, int e, int CH) //只有CH會用到這個function
 	return d;
 }
 
+void add_to_CHarr(vector<int>& CHarr, int num) {
+    // 檢查數字是否已存在於陣列中
+    if (find(CHarr.begin(), CHarr.end(), num) == CHarr.end()) {
+        // 如果數字不存在，加入到陣列中
+        CHarr.push_back(num);
+    }
+}
+
 void CH_Selection(int s, int e) //s=start e=end !energy的預扣
 {
 	double E = find_max_energy(s, e);
@@ -640,7 +652,7 @@ void CH_Selection(int s, int e) //s=start e=end !energy的預扣
 	{
 		ns[start].CH = CH;
 	}
-	//fout << "CH change to " << CH << endl;
+	add_to_CHarr(CHarr, CH);
 }
 
 void Packet_Generate(int now, int t) //generate packet 有能耗
@@ -983,14 +995,15 @@ int main()
 		drop = 0;
 		macdrop = 0;
 		total = 0;
+		int CH_count = 0;
 		cout << "sensors: " << S_NUM << endl;
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
 		/*sensor initialization*/
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -1298,17 +1311,20 @@ int main()
 				}
 				t++;
 			}
+			CH_count += CHarr.size();
+			CHarr.clear();
 		}
 		total /= round_number;
 		macdrop /= round_number;
 		drop /= round_number;
 		avg_t /= round_number;
+		CH_count /= round_number;
+		fout << "CH_count : " << CH_count << endl;
 		fout << "avg_time : " << avg_t << endl;
 		fout << "avg_total : " << total << endl;
 		fout << "avg_macdrop : " << macdrop << endl;
 		fout << "avg_drop : " << drop << endl;
 		fout << "avg_PLR : " << (drop + macdrop) / total << endl;
-		//system("PAUSE");
 	}
 	return 0;
 }

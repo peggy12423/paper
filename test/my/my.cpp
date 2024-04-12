@@ -32,7 +32,7 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 20
+#define round_number 10
 #define E_NUM 1000
 #define Alpha 0.2
 #define Beta 0.8
@@ -41,7 +41,7 @@
 
 using namespace std;
 
-int S_NUM = 400; //感測器總數
+int S_NUM = 1000; //感測器總數
 struct C
 {
 	double x, y;
@@ -68,7 +68,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("output.txt");
+ofstream fout("special_output.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -190,7 +190,7 @@ void special_node_deployed(){
 	R3 = S_NUM * 0.5;
 	R4 = S_NUM * 0.6;
 	int i = 0;
-		for (i; i < R2; i++)
+	for (i; i < R2; i++)
 	{
 		ns[i].id = i;
 		ns[i].x = rand() % 200 + 1;
@@ -200,21 +200,10 @@ void special_node_deployed(){
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 1;
 		ns[i].dtc = -1;
-		if (ns[i].x <= 100 && ns[i].y <= 100)
+		if (i == R2 - 1)//距離區所有點中心
 		{
-			ns[i].region2 = 1;
-		}
-		if (ns[i].x >= 100 && ns[i].y <= 100)
-		{
-			ns[i].region2 = 2;
-		}
-		if (ns[i].x <= 100 && ns[i].y >= 100)
-		{
-			ns[i].region2 = 3;
-		}
-		if (ns[i].x >= 100 && ns[i].y >= 100)
-		{
-			ns[i].region2 = 4;
+			C center1 = find_center(0, i);
+			set_dtc(center1, 0, i);
 		}
 	}
 	for (i; i < R3; i++)
@@ -227,21 +216,10 @@ void special_node_deployed(){
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 2;
 		ns[i].dtc = -1;
-		if (ns[i].x <= 300 && ns[i].y <= 100)
+		if (i == R3 - 1)//距離區所有點中心
 		{
-			ns[i].region2 = 1;
-		}
-		if (ns[i].x >= 300 && ns[i].y <= 100)
-		{
-			ns[i].region2 = 2;
-		}
-		if (ns[i].x <= 300 && ns[i].y >= 100)
-		{
-			ns[i].region2 = 3;
-		}
-		if (ns[i].x >= 300 && ns[i].y >= 100)
-		{
-			ns[i].region2 = 4;
+			C center1 = find_center(R2, i);
+			set_dtc(center1, R2, i);
 		}
 	}
 	for (i; i < R4; i++)
@@ -254,21 +232,10 @@ void special_node_deployed(){
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 3;
 		ns[i].dtc = -1;
-		if (ns[i].x <= 100 && ns[i].y <= 300)
+		if (i == R4 - 1)//距離區所有點中心
 		{
-			ns[i].region2 = 1;
-		}
-		if (ns[i].x >= 100 && ns[i].y <= 300)
-		{
-			ns[i].region2 = 2;
-		}
-		if (ns[i].x <= 100 && ns[i].y >= 300)
-		{
-			ns[i].region2 = 3;
-		}
-		if (ns[i].x >= 100 && ns[i].y >= 300)
-		{
-			ns[i].region2 = 4;
+			C center1 = find_center(R3, i);
+			set_dtc(center1, R3, i);
 		}
 	}
 	for (i; i < S_NUM; i++)
@@ -281,21 +248,10 @@ void special_node_deployed(){
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 4;
 		ns[i].dtc = -1;
-		if (ns[i].x <= 300 && ns[i].y <= 300)
+		if (i == S_NUM - 1)//距離區所有點中心
 		{
-			ns[i].region2 = 1;
-		}
-		if (ns[i].x >= 300 && ns[i].y <= 300)
-		{
-			ns[i].region2 = 2;
-		}
-		if (ns[i].x <= 300 && ns[i].y >= 300)
-		{
-			ns[i].region2 = 3;
-		}
-		if (ns[i].x >= 300 && ns[i].y >= 300)
-		{
-			ns[i].region2 = 4;
+			C center1 = find_center(R4, i);
+			set_dtc(center1, R4, i);
 		}
 	}
 }
@@ -890,8 +846,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
-			// special_node_deployed();
+			// node_deployed();
+			special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
