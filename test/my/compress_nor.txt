@@ -1,0 +1,366 @@
+my
+
+------------ Sensors 400 ------------
+--- time 1000 ---  re_energy: 6429.51
+--- time 2000 ---  re_energy: 6376.2
+--- time 3000 ---  re_energy: 6319.72
+--- time 4000 ---  re_energy: 6265.05
+--- time 5000 ---  re_energy: 6205.74
+--- time 6000 ---  re_energy: 6143.77
+--- time 7000 ---  re_energy: 6087.85
+--- time 8000 ---  re_energy: 6031.56
+--- time 9000 ---  re_energy: 5968.78
+--- time 10000 ---  re_energy: 5913.04
+--- time 11000 ---  re_energy: 5858.19
+--- time 12000 ---  re_energy: 5793.19
+--- time 13000 ---  re_energy: 5734.56
+--- time 14000 ---  re_energy: 5667.36
+--- time 15000 ---  re_energy: 5605.81
+--- time 16000 ---  re_energy: 5552.43
+--- time 17000 ---  re_energy: 5493.5
+--- time 18000 ---  re_energy: 5424.87
+--- time 19000 ---  re_energy: 5371.69
+--- time 20000 ---  re_energy: 5313.28
+--- time 21000 ---  re_energy: 5249.42
+--- time 22000 ---  re_energy: 5191.51
+--- time 23000 ---  re_energy: 5136.05
+--- time 24000 ---  re_energy: 5072.67
+--- time 25000 ---  re_energy: 5010.93
+--- time 26000 ---  re_energy: 4954.51
+--- time 27000 ---  re_energy: 4882.46
+--- time 28000 ---  re_energy: 4820.62
+--- time 29000 ---  re_energy: 4759.06
+--- time 30000 ---  re_energy: 4695.9
+--- time 31000 ---  re_energy: 4638.16
+--- time 32000 ---  re_energy: 4581.77
+--- time 33000 ---  re_energy: 4516.64
+--- time 34000 ---  re_energy: 4458.16
+--- time 35000 ---  re_energy: 4401.38
+--- time 36000 ---  re_energy: 4320.73
+--- time 37000 ---  re_energy: 4268.11
+--- time 38000 ---  re_energy: 4209.81
+--- time 39000 ---  re_energy: 4138.98
+--- time 40000 ---  re_energy: 4079.97
+--- time 41000 ---  re_energy: 4020.31
+--- time 42000 ---  re_energy: 3952.69
+--- time 43000 ---  re_energy: 3896.69
+--- time 44000 ---  re_energy: 3834.24
+--- time 45000 ---  re_energy: 3765.46
+--- time 46000 ---  re_energy: 3702.98
+--- time 47000 ---  re_energy: 3638.42
+--- time 48000 ---  re_energy: 3579.53
+--- time 49000 ---  re_energy: 3516.21
+--- time 50000 ---  re_energy: 3458.74
+--- time 51000 ---  re_energy: 3384.85
+--- time 52000 ---  re_energy: 3326.09
+--- time 53000 ---  re_energy: 3260.58
+--- time 54000 ---  re_energy: 3190.39
+--- time 55000 ---  re_energy: 3125.52
+--- time 56000 ---  re_energy: 3069.93
+--- time 57000 ---  re_energy: 2999.92
+--- time 58000 ---  re_energy: 2938.47
+--- time 59000 ---  re_energy: 2877.5
+--- time 60000 ---  re_energy: 2814.01
+--- time 61000 ---  re_energy: 2756.09
+--- time 62000 ---  re_energy: 2704.35
+--- time 63000 ---  re_energy: 2629.63
+--- time 64000 ---  re_energy: 2571.96
+--- time 65000 ---  re_energy: 2519.79
+CH_count : 359
+avg_lifetime : 65901
+avg_total : 228321
+avg_macdrop : 29945
+avg_drop : 0
+avg_PLR : 0.131153
+
+------------ Sensors 500 ------------
+--- time 1000 ---  re_energy: 6433.7
+--- time 2000 ---  re_energy: 6384.12
+--- time 3000 ---  re_energy: 6333.27
+--- time 4000 ---  re_energy: 6279.38
+--- time 5000 ---  re_energy: 6226.52
+--- time 6000 ---  re_energy: 6171.46
+--- time 7000 ---  re_energy: 6116.63
+--- time 8000 ---  re_energy: 6064.13
+--- time 9000 ---  re_energy: 5995.95
+--- time 10000 ---  re_energy: 5939.58
+--- time 11000 ---  re_energy: 5868.3
+--- time 12000 ---  re_energy: 5809.72
+--- time 13000 ---  re_energy: 5752.02
+--- time 14000 ---  re_energy: 5699.43
+--- time 15000 ---  re_energy: 5630.41
+--- time 16000 ---  re_energy: 5578.24
+--- time 17000 ---  re_energy: 5508.73
+--- time 18000 ---  re_energy: 5437.98
+--- time 19000 ---  re_energy: 5380.87
+--- time 20000 ---  re_energy: 5318.59
+--- time 21000 ---  re_energy: 5245.84
+--- time 22000 ---  re_energy: 5193.08
+--- time 23000 ---  re_energy: 5126.61
+--- time 24000 ---  re_energy: 5059.32
+--- time 25000 ---  re_energy: 4989.64
+--- time 26000 ---  re_energy: 4929.14
+--- time 27000 ---  re_energy: 4862.81
+--- time 28000 ---  re_energy: 4803.71
+--- time 29000 ---  re_energy: 4750.81
+--- time 30000 ---  re_energy: 4681.43
+--- time 31000 ---  re_energy: 4619.69
+--- time 32000 ---  re_energy: 4558.07
+--- time 33000 ---  re_energy: 4492.07
+--- time 34000 ---  re_energy: 4433.03
+--- time 35000 ---  re_energy: 4366.51
+--- time 36000 ---  re_energy: 4292.69
+--- time 37000 ---  re_energy: 4233.22
+--- time 38000 ---  re_energy: 4168.23
+--- time 39000 ---  re_energy: 4105.06
+--- time 40000 ---  re_energy: 4039.73
+--- time 41000 ---  re_energy: 3982.98
+--- time 42000 ---  re_energy: 3914.08
+--- time 43000 ---  re_energy: 3851.67
+--- time 44000 ---  re_energy: 3779.89
+--- time 45000 ---  re_energy: 3709.73
+--- time 46000 ---  re_energy: 3649.29
+--- time 47000 ---  re_energy: 3585.23
+--- time 48000 ---  re_energy: 3512.25
+--- time 49000 ---  re_energy: 3458.53
+--- time 50000 ---  re_energy: 3388.26
+--- time 51000 ---  re_energy: 3322.9
+--- time 52000 ---  re_energy: 3267.06
+CH_count : 432
+avg_lifetime : 52101
+avg_total : 223513
+avg_macdrop : 29231
+avg_drop : 0
+avg_PLR : 0.13078
+
+------------ Sensors 600 ------------
+--- time 1000 ---  re_energy: 6435.14
+--- time 2000 ---  re_energy: 6387.96
+--- time 3000 ---  re_energy: 6338.67
+--- time 4000 ---  re_energy: 6288.31
+--- time 5000 ---  re_energy: 6238.8
+--- time 6000 ---  re_energy: 6185.35
+--- time 7000 ---  re_energy: 6133.42
+--- time 8000 ---  re_energy: 6076.26
+--- time 9000 ---  re_energy: 6020.46
+--- time 10000 ---  re_energy: 5957.46
+--- time 11000 ---  re_energy: 5905.04
+--- time 12000 ---  re_energy: 5851.41
+--- time 13000 ---  re_energy: 5798.83
+--- time 14000 ---  re_energy: 5734.64
+--- time 15000 ---  re_energy: 5669.36
+--- time 16000 ---  re_energy: 5600.63
+--- time 17000 ---  re_energy: 5543.98
+--- time 18000 ---  re_energy: 5482.58
+--- time 19000 ---  re_energy: 5427.15
+--- time 20000 ---  re_energy: 5369.26
+--- time 21000 ---  re_energy: 5316.9
+--- time 22000 ---  re_energy: 5257.43
+--- time 23000 ---  re_energy: 5201.87
+--- time 24000 ---  re_energy: 5131.58
+--- time 25000 ---  re_energy: 5079.15
+--- time 26000 ---  re_energy: 5024.67
+--- time 27000 ---  re_energy: 4957.61
+--- time 28000 ---  re_energy: 4888.84
+--- time 29000 ---  re_energy: 4828.12
+--- time 30000 ---  re_energy: 4764.8
+--- time 31000 ---  re_energy: 4697.61
+--- time 32000 ---  re_energy: 4637.75
+--- time 33000 ---  re_energy: 4574.19
+--- time 34000 ---  re_energy: 4511.82
+--- time 35000 ---  re_energy: 4439.81
+--- time 36000 ---  re_energy: 4360.84
+--- time 37000 ---  re_energy: 4285.44
+--- time 38000 ---  re_energy: 4215.54
+--- time 39000 ---  re_energy: 4148.06
+--- time 40000 ---  re_energy: 4090.47
+--- time 41000 ---  re_energy: 4025.68
+--- time 42000 ---  re_energy: 3944.23
+--- time 43000 ---  re_energy: 3880.72
+--- time 44000 ---  re_energy: 3805.96
+--- time 45000 ---  re_energy: 3732.54
+--- time 46000 ---  re_energy: 3658.28
+--- time 47000 ---  re_energy: 3595.73
+CH_count : 515
+avg_lifetime : 47701
+avg_total : 248921
+avg_macdrop : 32718
+avg_drop : 0
+avg_PLR : 0.131439
+
+------------ Sensors 700 ------------
+--- time 1000 ---  re_energy: 6439.37
+--- time 2000 ---  re_energy: 6392.72
+--- time 3000 ---  re_energy: 6344.47
+--- time 4000 ---  re_energy: 6299.28
+--- time 5000 ---  re_energy: 6252.06
+--- time 6000 ---  re_energy: 6204.59
+--- time 7000 ---  re_energy: 6158.04
+--- time 8000 ---  re_energy: 6105.22
+--- time 9000 ---  re_energy: 6051.49
+--- time 10000 ---  re_energy: 6000.4
+--- time 11000 ---  re_energy: 5936.96
+--- time 12000 ---  re_energy: 5881.75
+--- time 13000 ---  re_energy: 5830.86
+--- time 14000 ---  re_energy: 5771.58
+--- time 15000 ---  re_energy: 5706.57
+--- time 16000 ---  re_energy: 5659.05
+--- time 17000 ---  re_energy: 5606.17
+--- time 18000 ---  re_energy: 5546.87
+--- time 19000 ---  re_energy: 5483.25
+--- time 20000 ---  re_energy: 5424.49
+--- time 21000 ---  re_energy: 5360.1
+--- time 22000 ---  re_energy: 5302.41
+--- time 23000 ---  re_energy: 5248.41
+--- time 24000 ---  re_energy: 5177.66
+--- time 25000 ---  re_energy: 5120.49
+--- time 26000 ---  re_energy: 5053.13
+--- time 27000 ---  re_energy: 4985.72
+--- time 28000 ---  re_energy: 4922.49
+--- time 29000 ---  re_energy: 4859.64
+--- time 30000 ---  re_energy: 4787.57
+--- time 31000 ---  re_energy: 4729.09
+--- time 32000 ---  re_energy: 4668.66
+--- time 33000 ---  re_energy: 4598.83
+--- time 34000 ---  re_energy: 4535.08
+--- time 35000 ---  re_energy: 4469.42
+--- time 36000 ---  re_energy: 4388.56
+--- time 37000 ---  re_energy: 4335.65
+--- time 38000 ---  re_energy: 4268.99
+--- time 39000 ---  re_energy: 4193.85
+--- time 40000 ---  re_energy: 4128.67
+--- time 41000 ---  re_energy: 4053.54
+--- time 42000 ---  re_energy: 3980.41
+CH_count : 590
+avg_lifetime : 42301
+avg_total : 255306
+avg_macdrop : 33119
+avg_drop : 0
+avg_PLR : 0.129723
+
+------------ Sensors 800 ------------
+--- time 1000 ---  re_energy: 6436.49
+--- time 2000 ---  re_energy: 6388.63
+--- time 3000 ---  re_energy: 6336.43
+--- time 4000 ---  re_energy: 6289.45
+--- time 5000 ---  re_energy: 6235.03
+--- time 6000 ---  re_energy: 6181.03
+--- time 7000 ---  re_energy: 6133.31
+--- time 8000 ---  re_energy: 6082.81
+--- time 9000 ---  re_energy: 6022.78
+--- time 10000 ---  re_energy: 5977.8
+--- time 11000 ---  re_energy: 5919.87
+--- time 12000 ---  re_energy: 5865.26
+--- time 13000 ---  re_energy: 5810.17
+--- time 14000 ---  re_energy: 5748.33
+--- time 15000 ---  re_energy: 5682.98
+--- time 16000 ---  re_energy: 5629.87
+--- time 17000 ---  re_energy: 5562.63
+--- time 18000 ---  re_energy: 5486.27
+--- time 19000 ---  re_energy: 5424.2
+--- time 20000 ---  re_energy: 5366
+--- time 21000 ---  re_energy: 5289.94
+--- time 22000 ---  re_energy: 5236.24
+--- time 23000 ---  re_energy: 5156.38
+--- time 24000 ---  re_energy: 5082.85
+--- time 25000 ---  re_energy: 5026.52
+--- time 26000 ---  re_energy: 4947.73
+--- time 27000 ---  re_energy: 4868.9
+--- time 28000 ---  re_energy: 4811.57
+--- time 29000 ---  re_energy: 4747.18
+--- time 30000 ---  re_energy: 4676.95
+--- time 31000 ---  re_energy: 4613.54
+--- time 32000 ---  re_energy: 4539.22
+--- time 33000 ---  re_energy: 4467.44
+--- time 34000 ---  re_energy: 4404.34
+--- time 35000 ---  re_energy: 4336.95
+--- time 36000 ---  re_energy: 4257.76
+CH_count : 675
+avg_lifetime : 36001
+avg_total : 247120
+avg_macdrop : 32535
+avg_drop : 0
+avg_PLR : 0.131657
+
+------------ Sensors 900 ------------
+--- time 1000 ---  re_energy: 6435.85
+--- time 2000 ---  re_energy: 6389.52
+--- time 3000 ---  re_energy: 6342.24
+--- time 4000 ---  re_energy: 6296.47
+--- time 5000 ---  re_energy: 6249.64
+--- time 6000 ---  re_energy: 6201.84
+--- time 7000 ---  re_energy: 6154.2
+--- time 8000 ---  re_energy: 6102.44
+--- time 9000 ---  re_energy: 6046.92
+--- time 10000 ---  re_energy: 6000.93
+--- time 11000 ---  re_energy: 5951.92
+--- time 12000 ---  re_energy: 5889.77
+--- time 13000 ---  re_energy: 5837.34
+--- time 14000 ---  re_energy: 5784.46
+--- time 15000 ---  re_energy: 5731.67
+--- time 16000 ---  re_energy: 5676.96
+--- time 17000 ---  re_energy: 5614.94
+--- time 18000 ---  re_energy: 5564
+--- time 19000 ---  re_energy: 5507.65
+--- time 20000 ---  re_energy: 5442.74
+--- time 21000 ---  re_energy: 5384.95
+--- time 22000 ---  re_energy: 5332.86
+--- time 23000 ---  re_energy: 5276.04
+--- time 24000 ---  re_energy: 5216.36
+--- time 25000 ---  re_energy: 5148.66
+--- time 26000 ---  re_energy: 5085.59
+--- time 27000 ---  re_energy: 5022.18
+--- time 28000 ---  re_energy: 4956.93
+--- time 29000 ---  re_energy: 4898.39
+--- time 30000 ---  re_energy: 4840.38
+--- time 31000 ---  re_energy: 4774.67
+--- time 32000 ---  re_energy: 4704.41
+--- time 33000 ---  re_energy: 4634.18
+--- time 34000 ---  re_energy: 4577.94
+--- time 35000 ---  re_energy: 4508.88
+CH_count : 741
+avg_lifetime : 35101
+avg_total : 272282
+avg_macdrop : 35769
+avg_drop : 0
+avg_PLR : 0.131367
+
+------------ Sensors 1000 ------------
+--- time 1000 ---  re_energy: 6436.08
+--- time 2000 ---  re_energy: 6390.31
+--- time 3000 ---  re_energy: 6338.13
+--- time 4000 ---  re_energy: 6292.34
+--- time 5000 ---  re_energy: 6237.76
+--- time 6000 ---  re_energy: 6182.97
+--- time 7000 ---  re_energy: 6132.09
+--- time 8000 ---  re_energy: 6078.23
+--- time 9000 ---  re_energy: 6016.76
+--- time 10000 ---  re_energy: 5964.98
+--- time 11000 ---  re_energy: 5909.49
+--- time 12000 ---  re_energy: 5850.1
+--- time 13000 ---  re_energy: 5797.29
+--- time 14000 ---  re_energy: 5741.02
+--- time 15000 ---  re_energy: 5689.32
+--- time 16000 ---  re_energy: 5628.05
+--- time 17000 ---  re_energy: 5572.42
+--- time 18000 ---  re_energy: 5512.74
+--- time 19000 ---  re_energy: 5470.07
+--- time 20000 ---  re_energy: 5409.55
+--- time 21000 ---  re_energy: 5352.68
+--- time 22000 ---  re_energy: 5295.49
+--- time 23000 ---  re_energy: 5226.95
+--- time 24000 ---  re_energy: 5168.55
+--- time 25000 ---  re_energy: 5106.07
+--- time 26000 ---  re_energy: 5053.17
+--- time 27000 ---  re_energy: 4987.04
+--- time 28000 ---  re_energy: 4937.53
+--- time 29000 ---  re_energy: 4878.32
+--- time 30000 ---  re_energy: 4808.63
+--- time 31000 ---  re_energy: 4749.65
+--- time 32000 ---  re_energy: 4687.15
+CH_count : 841
+avg_lifetime : 32131
+avg_total : 282351
+avg_macdrop : 36602
+avg_drop : 0
+avg_PLR : 0.129633

@@ -1,0 +1,8 @@
+NRCA
+
+------------ Sensors 600 ------------
+avg_lifetime : 501
+avg_total : 2376
+avg_macdrop : 222
+avg_drop : 0
+avg_PLR : 0.0934343

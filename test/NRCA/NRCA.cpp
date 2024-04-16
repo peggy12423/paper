@@ -34,12 +34,12 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 20
-#define E_NUM 1000
+#define round_number 1
+#define E_NUM 600
 
 using namespace std;
 
-int S_NUM = 400;
+int S_NUM = 600;
 struct C
 {
 	double x, y;
@@ -65,7 +65,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("100.700.1400NRCA_special.txt");
+ofstream fout("re.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -509,6 +509,17 @@ void transaction(int j, int t)
 	Packet_Receive(ns[j].CH);
 }
 
+double remaining_energy()
+{
+	double avg_energy;
+	for (int i = 0; i < S_NUM; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM;
+	return avg_energy;
+}
+
 int main(){
 	srand((unsigned)time(NULL)); //random seed
 	fout << "NRCA" << endl;
@@ -518,8 +529,8 @@ int main(){
 		/*sensor initialization*/
 		for (int round = 0; round < round_number; round++)
 		{
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -644,6 +655,10 @@ int main(){
 					if (countround[2] == 0) { CH_Selection(R3, R4 - 1); }
 					countround[3]--;
 					if (countround[3] == 0) { CH_Selection(R4, S_NUM - 1); }
+				}
+				if( t % 1000 == 0){
+					double re_energy = remaining_energy();
+					fout << "--- time " << t << " ---  re_energy: " << re_energy << endl; 
 				}
 				t++;
 			}

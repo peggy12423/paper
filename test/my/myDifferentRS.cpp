@@ -15,7 +15,7 @@
 #define NODE_BUFFER1 1100 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
 #define NODE_BUFFER2 1400 //50~100 特別的傳輸用
 
-#define R 1 //壓縮率 設1則沒有壓縮
+#define R 0.5 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
 #define type4f 120
 #define type5f 150 //720
@@ -32,16 +32,16 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
-#define E_NUM 1600
+#define round_number 1
+#define E_NUM 1000
 #define Alpha 0.2
 #define Beta 0.8
-#define high_density_th1 1.4
-#define high_density_th2 1.95
+#define high_density_th1 1.2
+#define high_density_th2 1.5
 
 using namespace std;
 
-int S_NUM = 1600; //感測器總數
+int S_NUM = 400; //感測器總數
 struct C
 {
 	double x, y;
@@ -68,13 +68,13 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("RS2_200.txt");
+ofstream fout("compress_nor.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
 int R2, R3, R4;
 int R_NUM = S_NUM * 0.25;
-int CH_record[4][2];
+int CH_record[4][4];
 vector<int> CHarr = {};
 
 double type_a = 33, type_b = 33, type_c = 34; //調整QUERE裡面感測資料的比例
@@ -106,13 +106,13 @@ C find_center(int s, int e) //尋找區域中所有點的中心盡量平均距離
 	return c;
 }
 
-// void set_dtc(C c, int s, int e)
-// {
-// 	for (int i = s; i <= e; i++)
-// 	{
-// 		ns[i].dtc = sqrt(pow(abs(ns[i].x - c.x), 2) + pow(abs(ns[i].y - c.y), 2));
-// 	}
-// }
+void set_dtc(C c, int s, int e)
+{
+	for (int i = s; i <= e; i++)
+	{
+		ns[i].dtc = sqrt(pow(abs(ns[i].x - c.x), 2) + pow(abs(ns[i].y - c.y), 2));
+	}
+}
 
 void node_deployed(){
 	R2 = S_NUM * 0.25;
@@ -129,11 +129,11 @@ void node_deployed(){
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 1;
 		ns[i].dtc = -1;
-		// if (i == R2 - 1)//距離區所有點中心
-		// {
-		// 	C center1 = find_center(0, i);
-		// 	set_dtc(center1, 0, i);
-		// }
+		if (i == R2 - 1)//距離區所有點中心
+		{
+			C center1 = find_center(0, i);
+			set_dtc(center1, 0, i);
+		}
 	}
 	for (i; i < R3; i++)
 	{
@@ -145,11 +145,11 @@ void node_deployed(){
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 2;
 		ns[i].dtc = -1;
-		// if (i == R3 - 1)//距離區所有點中心
-		// {
-		// 	C center1 = find_center(R2, i);
-		// 	set_dtc(center1, R2, i);
-		// }
+		if (i == R3 - 1)//距離區所有點中心
+		{
+			C center1 = find_center(R2, i);
+			set_dtc(center1, R2, i);
+		}
 	}
 	for (i; i < R4; i++)
 	{
@@ -161,11 +161,11 @@ void node_deployed(){
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 3;
 		ns[i].dtc = -1;
-		// if (i == R4 - 1)//距離區所有點中心
-		// {
-		// 	C center1 = find_center(R3, i);
-		// 	set_dtc(center1, R3, i);
-		// }
+		if (i == R4 - 1)//距離區所有點中心
+		{
+			C center1 = find_center(R3, i);
+			set_dtc(center1, R3, i);
+		}
 	}
 	for (i; i < S_NUM; i++)
 	{
@@ -177,84 +177,84 @@ void node_deployed(){
 		ns[i].energy = MAX_energy;
 		ns[i].region1 = 4;
 		ns[i].dtc = -1;
-		// if (i == S_NUM - 1)//距離區所有點中心
-		// {
-		// 	C center1 = find_center(R4, i);
-		// 	set_dtc(center1, R4, i);
-		// }
+		if (i == S_NUM - 1)//距離區所有點中心
+		{
+			C center1 = find_center(R4, i);
+			set_dtc(center1, R4, i);
+		}
 	}
 }
 
-// void special_node_deployed(){
-// 	R2 = S_NUM * 0.2;
-// 	R3 = S_NUM * 0.5;
-// 	R4 = S_NUM * 0.6;
-// 	int i = 0;
-// 	for (i; i < R2; i++)
-// 	{
-// 		ns[i].id = i;
-// 		ns[i].x = rand() % 200 + 1;
-// 		ns[i].y = rand() % 200 + 1;
-// 		ns[i].CH = i;
-// 		ns[i].type = rand() % 3 + 3;//3 4 5
-// 		ns[i].energy = MAX_energy;
-// 		ns[i].region1 = 1;
-// 		ns[i].dtc = -1;
-// 		if (i == R2 - 1)//距離區所有點中心
-// 		{
-// 			C center1 = find_center(0, i);
-// 			set_dtc(center1, 0, i);
-// 		}
-// 	}
-// 	for (i; i < R3; i++)
-// 	{
-// 		ns[i].id = i;
-// 		ns[i].x = rand() % 200 + 201;
-// 		ns[i].y = rand() % 200 + 1;
-// 		ns[i].CH = i;
-// 		ns[i].type = rand() % 3 + 3;
-// 		ns[i].energy = MAX_energy;
-// 		ns[i].region1 = 2;
-// 		ns[i].dtc = -1;
-// 		if (i == R3 - 1)//距離區所有點中心
-// 		{
-// 			C center1 = find_center(R2, i);
-// 			set_dtc(center1, R2, i);
-// 		}
-// 	}
-// 	for (i; i < R4; i++)
-// 	{
-// 		ns[i].id = i;
-// 		ns[i].x = rand() % 200 + 1;
-// 		ns[i].y = rand() % 200 + 201;
-// 		ns[i].CH = i;
-// 		ns[i].type = rand() % 3 + 3;
-// 		ns[i].energy = MAX_energy;
-// 		ns[i].region1 = 3;
-// 		ns[i].dtc = -1;
-// 		if (i == R4 - 1)//距離區所有點中心
-// 		{
-// 			C center1 = find_center(R3, i);
-// 			set_dtc(center1, R3, i);
-// 		}
-// 	}
-// 	for (i; i < S_NUM; i++)
-// 	{
-// 		ns[i].id = i;
-// 		ns[i].x = rand() % 200 + 201;
-// 		ns[i].y = rand() % 200 + 201;
-// 		ns[i].CH = i;
-// 		ns[i].type = rand() % 3 + 3;
-// 		ns[i].energy = MAX_energy;
-// 		ns[i].region1 = 4;
-// 		ns[i].dtc = -1;
-// 		if (i == S_NUM - 1)//距離區所有點中心
-// 		{
-// 			C center1 = find_center(R4, i);
-// 			set_dtc(center1, R4, i);
-// 		}
-// 	}
-// }
+void special_node_deployed(){
+	R2 = S_NUM * 0.2;
+	R3 = S_NUM * 0.5;
+	R4 = S_NUM * 0.6;
+	int i = 0;
+	for (i; i < R2; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 1;
+		ns[i].y = rand() % 200 + 1;
+		ns[i].CH = i;
+		ns[i].type = rand() % 3 + 3;//3 4 5
+		ns[i].energy = MAX_energy;
+		ns[i].region1 = 1;
+		ns[i].dtc = -1;
+		if (i == R2 - 1)//距離區所有點中心
+		{
+			C center1 = find_center(0, i);
+			set_dtc(center1, 0, i);
+		}
+	}
+	for (i; i < R3; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 201;
+		ns[i].y = rand() % 200 + 1;
+		ns[i].CH = i;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].region1 = 2;
+		ns[i].dtc = -1;
+		if (i == R3 - 1)//距離區所有點中心
+		{
+			C center1 = find_center(R2, i);
+			set_dtc(center1, R2, i);
+		}
+	}
+	for (i; i < R4; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 1;
+		ns[i].y = rand() % 200 + 201;
+		ns[i].CH = i;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].region1 = 3;
+		ns[i].dtc = -1;
+		if (i == R4 - 1)//距離區所有點中心
+		{
+			C center1 = find_center(R3, i);
+			set_dtc(center1, R3, i);
+		}
+	}
+	for (i; i < S_NUM; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 201;
+		ns[i].y = rand() % 200 + 201;
+		ns[i].CH = i;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].region1 = 4;
+		ns[i].dtc = -1;
+		if (i == S_NUM - 1)//距離區所有點中心
+		{
+			C center1 = find_center(R4, i);
+			set_dtc(center1, R4, i);
+		}
+	}
+}
 
 void packet_init()
 {
@@ -349,12 +349,12 @@ double node_density(int sIndex, int eIndex, int area){
 
 int region_CH_num(int sIndex, int eIndex){
 	double region_density = node_density(sIndex, eIndex, 40000);
-	int CH_num = 1;
+	int CH_num;
 	if( region_density >= high_density_th2 ){
-		CH_num = 3;
+		CH_num = 4;
 	}
 	else if( region_density >= high_density_th1 ){
-		CH_num = 2;
+		CH_num = 3;
 	}
 	return CH_num;
 }
@@ -367,8 +367,304 @@ void add_to_CHarr(vector<int>& CHarr, int num) {
     }
 }
 
-/*改K-means，原有的standard用在選出虛擬分群中心點後的CH選擇*/
-void CH_selection(int s, int e, int r ){
+void CH_RS0(int s, int e, int r) //s=start e=end !energy的預扣
+{
+	double E = find_max_energy(s, e);
+	double D = find_max_distance(s, e);
+	int start = s;
+	int end = e;
+	int CH = s;
+	int sCH = s+1;
+	double re;
+	re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double MAX_S = CH_standard(ns[s].dtc, re, E, D);
+	re = ns[s+1].energy - (floor(reservation_energy_time / (ns[s+1].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s+1, ns[s+1].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double second_S = CH_standard(ns[s+1].dtc, re, E, D);
+	if(second_S > MAX_S){
+		double temp = MAX_S;
+		MAX_S = second_S;
+		second_S = MAX_S;
+	}
+	s += 2;
+
+	for (s; s <= e; s++)//selecting
+	{
+		re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
+		double current_s = CH_standard(ns[s].dtc, re, E, D);
+		if (MAX_S < current_s)
+		{
+			MAX_S = current_s;
+			CH = ns[s].id;
+		}
+		else if(second_S < current_s && MAX_S > current_s){
+			second_S = current_s;
+			sCH = ns[s].id;
+		}
+	}
+	for (start; start <= end; start++)//start to change CH
+	{
+		double d1, d2;
+		d1 = distance(start, CH);
+		d2 = distance(start, sCH);
+		if( d1 < d2 ){
+			ns[start].CH = CH;
+		}
+		else{
+			ns[start].CH = sCH;		
+		}
+	}
+	add_to_CHarr(CHarr, CH);
+	add_to_CHarr(CHarr, sCH);
+	CH_record[r][0] = CH;
+	CH_record[r][1] = sCH;
+}
+
+void tCH_RS0(int s, int e, int r){
+	double E = find_max_energy(s, e);
+	double D = find_max_distance(s, e);
+	int start = s;
+	int end = e;
+	int CH = s;
+	int sCH = s+1;
+	int tCH = s+2;
+	double re;
+	re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double MAX_S = CH_standard(ns[s].dtc, re, E, D);
+	re = ns[s+1].energy - (floor(reservation_energy_time / (ns[s+1].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s+1, ns[s+1].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double second_S = CH_standard(ns[s+1].dtc, re, E, D);
+	re = ns[s+2].energy - (floor(reservation_energy_time / (ns[s+2].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s+2, ns[s+2].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double third_S = CH_standard(ns[s+2].dtc, re, E, D);
+
+	if(second_S > MAX_S){
+		double temp = MAX_S;
+		MAX_S = second_S;
+		second_S = MAX_S;
+	}if(third_S > MAX_S){
+		double temp = MAX_S;
+		MAX_S = third_S;
+		third_S = MAX_S;
+	}if(third_S > second_S){
+		double temp = second_S;
+		second_S = third_S;
+		third_S = second_S;
+	}
+	s += 3;
+
+	for (s; s <= e; s++)//selecting
+	{
+		re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
+		double current_s = CH_standard(ns[s].dtc, re, E, D);
+		if (MAX_S < current_s){
+			MAX_S = current_s;
+			CH = ns[s].id;
+		}
+		else if(second_S < current_s && MAX_S > current_s){
+			second_S = current_s;
+			sCH = ns[s].id;
+		}
+		else if(third_S < current_s && second_S > current_s){
+			third_S = current_s;
+			tCH = ns[s].id;
+		}
+	}
+	for (start; start <= end; start++)//start to change CH
+	{
+		double d1, d2, d3;
+		d1 = distance(start, CH);
+		d2 = distance(start, sCH);
+		d3 = distance(start, tCH);
+
+		if( d1 <= d2 && d1 <= d3 ){
+			ns[start].CH = CH;
+		}
+		else if( d2 <= d1 && d2 <= d3 ){
+			ns[start].CH = sCH;		
+		}
+		else if( d3 <= d1 && d3 <= d2 ){
+			ns[start].CH = tCH;		
+		}
+	}
+	add_to_CHarr(CHarr, CH);
+	add_to_CHarr(CHarr, sCH);
+	add_to_CHarr(CHarr, tCH);
+	CH_record[r][0] = CH;
+	CH_record[r][1] = sCH;
+	CH_record[r][2] = tCH;
+}
+
+void fCH_RS0(int s, int e, int r){
+	double E = find_max_energy(s, e);
+	double D = find_max_distance(s, e);
+	int start = s;
+	int end = e;
+	int CH = s;
+	int sCH = s+1;
+	int tCH = s+2;
+	int fCH = s+3;
+	double re;
+	re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double MAX_S = CH_standard(ns[s].dtc, re, E, D);
+	re = ns[s+1].energy - (floor(reservation_energy_time / (ns[s+1].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s+1, ns[s+1].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double second_S = CH_standard(ns[s+1].dtc, re, E, D);
+	re = ns[s+2].energy - (floor(reservation_energy_time / (ns[s+2].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s+2, ns[s+2].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double third_S = CH_standard(ns[s+2].dtc, re, E, D);
+	re = ns[s+3].energy - (floor(reservation_energy_time / (ns[s+3].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s+3, ns[s+3].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double fourth_S = CH_standard(ns[s+3].dtc, re, E, D);
+
+	if(second_S > MAX_S){
+		double temp = MAX_S;
+		MAX_S = second_S;
+		second_S = MAX_S;
+	}if(third_S > MAX_S){
+		double temp = MAX_S;
+		MAX_S = third_S;
+		third_S = MAX_S;
+	}if(fourth_S > MAX_S){
+		double temp = MAX_S;
+		MAX_S = fourth_S;
+		fourth_S = MAX_S;
+	}if(third_S > second_S){
+		double temp = second_S;
+		second_S = third_S;
+		third_S = second_S;
+	}if(fourth_S > second_S){
+		double temp = second_S;
+		second_S = fourth_S;
+		fourth_S = second_S;
+	}if(fourth_S > third_S){
+		double temp = third_S;
+		third_S = fourth_S;
+		fourth_S = third_S;
+	}
+	s += 4;
+
+	for (s; s <= e; s++)//selecting
+	{
+		re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
+		double current_s = CH_standard(ns[s].dtc, re, E, D);
+		if (MAX_S < current_s){
+			MAX_S = current_s;
+			CH = ns[s].id;
+		}
+		else if(second_S < current_s && MAX_S > current_s){
+			second_S = current_s;
+			sCH = ns[s].id;
+		}
+		else if(third_S < current_s && second_S > current_s){
+			third_S = current_s;
+			tCH = ns[s].id;
+		}
+		else if(fourth_S < current_s && third_S > current_s){
+			fourth_S = current_s;
+			fCH = ns[s].id;
+		}
+	}
+	for (start; start <= end; start++)//start to change CH
+	{
+		double d1, d2, d3, d4;
+		d1 = distance(start, CH);
+		d2 = distance(start, sCH);
+		d3 = distance(start, tCH);
+		d4 = distance(start, fCH);
+
+		if( d1 <= d2 && d1 <= d3 && d1 <= d4){
+			ns[start].CH = CH;
+		}
+		else if( d2 <= d1 && d2 <= d3 && d2 <= d4){
+			ns[start].CH = sCH;		
+		}
+		else if( d3 <= d1 && d3 <= d2 && d3 <= d4){
+			ns[start].CH = tCH;		
+		}
+		else if( d4 <= d1 && d4 <= d2 && d4 <= d3){
+			ns[start].CH = fCH;		
+		}
+	}
+	add_to_CHarr(CHarr, CH);
+	add_to_CHarr(CHarr, sCH);
+	add_to_CHarr(CHarr, tCH);
+	add_to_CHarr(CHarr, fCH);
+	CH_record[r][0] = CH;
+	CH_record[r][1] = sCH;
+	CH_record[r][2] = tCH;
+	CH_record[r][3] = fCH;
+}
+
+void CH_RS1(int s, int e, int r ){
+	int region_S_NUM = e - s + 1;
+	double E = find_max_energy(s, e);
+	double D = find_max_distance(s, e);
+	int CH = s;
+	int sCH = rand() % region_S_NUM + s;
+	double xy_total[2][2];
+	int cluster_S_NUM[2];
+	double second_S = 0;
+	while( sCH == CH ){
+		sCH = rand() % region_S_NUM + s;
+	}
+	double re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double MAX_S = CH_standard(ns[s].dtc, re, E, D);
+	for (int m = s ; m <= e; m++)//selecting
+	{
+		re = ns[m].energy - (floor(reservation_energy_time / (ns[m].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(m, ns[m].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
+		double current_s = CH_standard(ns[m].dtc, re, E, D);
+		if (MAX_S < current_s)
+		{
+			MAX_S = current_s;
+			CH = ns[m].id;
+		}
+	}
+
+	for (int i = s; i <= e; i++)  //加入隨機CH的群集
+	{
+		double d1, d2;
+		d1 = distance(i, CH);
+		d2 = distance(i, sCH);
+		if( d1 < d2 ){
+			ns[i].CH = CH;
+			xy_total[0][0] += ns[i].x;
+			xy_total[0][1] += ns[i].y;
+			cluster_S_NUM[0] += 1;
+		}
+		else{
+			ns[i].CH = sCH;
+			xy_total[1][0] += ns[i].x;
+			xy_total[1][1] += ns[i].y;		
+			cluster_S_NUM[1] += 1;
+		}
+	}
+
+	C cluster_c[2];
+	cluster_c[0].x = xy_total[0][0] / cluster_S_NUM[0];
+	cluster_c[0].y = xy_total[0][1] / cluster_S_NUM[0];
+	cluster_c[1].x = xy_total[1][0] / cluster_S_NUM[1];
+	cluster_c[1].y = xy_total[1][1] / cluster_S_NUM[1];
+	for(int j = s; j <= e; j++){
+		if(ns[j].CH == CH){
+			ns[j].dtc = sqrt(pow(abs(ns[j].x - cluster_c[0].x), 2) + pow(abs(ns[j].y - cluster_c[0].y), 2));
+		}
+		else if(ns[j].CH == sCH){
+			ns[j].dtc = sqrt(pow(abs(ns[j].x - cluster_c[1].x), 2) + pow(abs(ns[j].y - cluster_c[1].y), 2));
+		}
+		re = ns[j].energy - (floor(reservation_energy_time / (ns[j].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(j, ns[j].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
+		double current_s = CH_standard(ns[j].dtc, re, E, D);
+		if (MAX_S < current_s){
+			MAX_S = current_s;
+			CH = ns[j].id;
+		}
+		else if(second_S < current_s && current_s < MAX_S){
+			second_S = current_s;
+			sCH = ns[j].id;
+		}
+	}
+	
+	add_to_CHarr(CHarr, CH);
+	add_to_CHarr(CHarr, sCH);
+	CH_record[r][0] = CH;
+	CH_record[r][1] = sCH;
+}
+
+void CH_RS2(int s, int e, int r ){
 	int region_S_NUM = e - s + 1;
 	double re;
 	double E = find_max_energy(s, e);
@@ -417,8 +713,12 @@ void CH_selection(int s, int e, int r ){
 		re = ns[j].energy - (floor(reservation_energy_time / (ns[j].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(j, ns[j].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
 		double current_s = CH_standard(ns[j].dtc, re, E, D);
 		if (MAX_S < current_s){
+			double temp_S = MAX_S;
+			int tempCH = CH;
 			MAX_S = current_s;
 			CH = ns[j].id;
+			second_S = temp_S;
+			sCH = tempCH;
 		}
 		else if(second_S < current_s && current_s < MAX_S){
 			second_S = current_s;
@@ -430,6 +730,28 @@ void CH_selection(int s, int e, int r ){
 	add_to_CHarr(CHarr, sCH);
 	CH_record[r][0] = CH;
 	CH_record[r][1] = sCH;
+}
+
+void CH_selection(int* start, int* end){
+	if( S_NUM > 200){
+		for(int i = 0; i <= 3; i++){
+			if(region_CH_num(start[i], end[i]) == 4){
+				fCH_RS0(start[i], end[i], i);
+			}
+			else if(region_CH_num(start[i], end[i]) == 3){
+				tCH_RS0(start[i], end[i], i);
+			}
+			else{
+				CH_RS0(start[i], end[i], i);
+			}
+		}
+	}
+	else{
+		CH_RS2(start[0], end[0], 0);
+		CH_RS2(start[1], end[1], 1);
+		CH_RS2(start[2], end[2], 2);
+		CH_RS2(start[3], end[3], 3);
+	}
 }
 
 void Packet_Generate(int now, int t) //generate packet 有能耗
@@ -658,6 +980,17 @@ void transaction(int j, int t)
     Packet_Receive(ns[j].CH);
 }
 
+double remaining_energy()
+{
+	double avg_energy;
+	for (int i = 0; i < S_NUM; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM;
+	return avg_energy;
+}
+
 /*如果使用資料壓縮  , 是否要以資料量大小做策略 , 感測的耗能相比於CH竟然比較大很多(反映在CH剩餘能量竟然還比平均能量高) due to dtc,比例等等,為何CH選區中心會比選靠近區2還要長壽*/
 /*code中實際上沒有壓縮*/
 /*區域三的平均耗能太高*/
@@ -670,7 +1003,7 @@ int main()
 	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
 	fout << "my" << endl;
-	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 200){
+	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
 		avg_t = 0;
 		buffer_drop = 0;
 		mac_drop = 0;
@@ -690,16 +1023,13 @@ int main()
 			sink_init();
 
             for (int i = 0; i < 4; ++i){
-                for (int j = 0; j < 2; ++j){
+                for (int j = 0; j < 4; ++j){
                     CH_record[i][j] = -1;
                 }
             }
             int start[4] = { 0, R2, R3, R4 };
             int end[4] = { R2-1, R3-1, R4-1, S_NUM-1 };
-            CH_selection( start[0], end[0], 0);
-			CH_selection( start[1], end[1], 1);
-			CH_selection( start[2], end[2], 2);
-			CH_selection( start[3], end[3], 3);
+            CH_selection( start, end );
             
 			/*traffic start*/
 			int die(0);
@@ -736,28 +1066,7 @@ int main()
 				
 
 				if (t % CHf == 0) //每一分鐘傳到sink 1次
-				{
-                    // for(int i = 0; i <= 2; i++){
-                    //     if( CH_record[1][i] != -1 ){
-                    //         CH2Sink(CH_record[1][i]);
-                    //     }
-                    // }
-                    // for(int j = 0; j <= 2; j++){
-                    //     if( CH_record[0][j] != -1 ){
-                    //         CHtoRegion2(CH_record[0][j]);
-                    //     }
-                    // }
-                    // for(int j = 0; j <= 2; j++){
-                    //     if( CH_record[2][j] != -1 ){
-                    //         CHtoRegion2(CH_record[2][j]);
-                    //     }
-                    // }
-                    // for(int j = 0; j <= 2; j++){
-                    //     if( CH_record[3][j] != -1 ){
-                    //         CHtoRegion2(CH_record[3][j]);
-                    //     }
-                    // }
-					
+				{				
 					CH2Sink(CH_record[1][0]);
 					CHtoRegion2(CH_record[0][0]);
 					CHtoRegion2(CH_record[2][0]);
@@ -766,11 +1075,30 @@ int main()
 					CHtoRegion2(CH_record[0][1]);
 					CHtoRegion2(CH_record[2][1]);
 					CHtoRegion2(CH_record[3][1]);
+					//tCH
+					for(int j = 0; j <= 3; j++){
+						if(j == 1 && CH_record[j][2] != -1){
+							CH2Sink(CH_record[j][2]);
+						}
+						else if( j != 1 && CH_record[j][2] != -1){
+							CHtoRegion2(CH_record[j][2]);
+						}
+					}
+					//fCH
+					for(int k = 0; k <= 3; k++){
+						if(k == 1 && CH_record[k][2] != -1){
+							CH2Sink(CH_record[k][3]);
+						}
+						else if( k != 1 && CH_record[k][2] != -1){
+							CHtoRegion2(CH_record[k][3]);
+						}
+					}
 
-                    CH_selection( start[0], end[0], 0);
-                    CH_selection( start[1], end[1], 1);
-                    CH_selection( start[2], end[2], 2);
-                    CH_selection( start[3], end[3], 3);
+                    CH_selection( start, end );
+				}
+				if( t % 1000 == 0){
+					double re_energy = remaining_energy();
+					fout << "--- time " << t << " ---  re_energy: " << re_energy << endl; 
 				}
 				t++;
 			}

@@ -1,0 +1,20 @@
+E-DSR
+
+------------ Sensors 600 ------------
+--- time 1000 ---  re_energy: 6385.84
+--- time 2000 ---  re_energy: 6281.58
+--- time 3000 ---  re_energy: 6179.21
+--- time 4000 ---  re_energy: 6081.78
+--- time 5000 ---  re_energy: 5983.97
+--- time 6000 ---  re_energy: 5869.16
+--- time 7000 ---  re_energy: 5763.43
+--- time 8000 ---  re_energy: 5677.99
+--- time 9000 ---  re_energy: 5584.51
+--- time 10000 ---  re_energy: 5490.22
+--- time 11000 ---  re_energy: 5374.74
+CH_count : 233
+avg_time : 11551
+avg_total : 59592
+avg_macdrop : 7787
+avg_drop : 0
+avg_PLR : 0.130672
