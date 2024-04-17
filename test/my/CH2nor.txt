@@ -1,4 +1,4 @@
-my (normal)
+my
 
 ------------ Sensors 400 ------------
 CH_count : 344

@@ -37,12 +37,12 @@
 #define successful_rate 5 //砞x Θ瞯碞琌100-x%
 
 /*跑笆龟喷把计砞﹚*/
-#define round_number 1
-#define E_NUM 600
+#define round_number 10
+#define E_NUM 1000
 
 using namespace std;
 
-int S_NUM = 600; //稰代竟羆计
+int S_NUM = 400; //稰代竟羆计
 struct C
 {
 	double x, y;
@@ -69,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("re.txt");
+ofstream fout("spe.txt");
 N ns[2000];
 S sink;
 double avg_t, drop, macdrop, total;
@@ -1013,8 +1013,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
-			// special_node_deployed();
+			// node_deployed();
+			special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -1322,7 +1322,7 @@ int main()
 				}
 				if( t % 1000 == 0){
 					double re_energy = remaining_energy();
-					fout << "--- time " << t << " ---  re_energy: " << re_energy << endl; 
+					//fout << "--- time " << t << " ---  re_energy: " << re_energy << endl; 
 				}
 				t++;
 			}

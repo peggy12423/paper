@@ -32,7 +32,7 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 1
+#define round_number 10
 #define E_NUM 1000
 #define Alpha 0.2
 #define Beta 0.8
@@ -1098,7 +1098,7 @@ int main()
 				}
 				if( t % 1000 == 0){
 					double re_energy = remaining_energy();
-					fout << "--- time " << t << " ---  re_energy: " << re_energy << endl; 
+					//fout << "--- time " << t << " ---  re_energy: " << re_energy << endl; 
 				}
 				t++;
 			}
