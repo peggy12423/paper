@@ -3,6 +3,8 @@
 #include <math.h>
 #include <fstream>
 #include <queue>
+#include <vector>
+#include <algorithm>
 
 #define MAX_energy 6480//j (1.5V*600mA*3600sec*2 = 6480j) 2*3號電池
 #define SINKID 2000
@@ -34,7 +36,7 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 20
+#define round_number 10
 #define E_NUM 1000
 
 using namespace std;
@@ -65,13 +67,10 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("100.700.1400NRCA_special.txt");
+ofstream fout("spe0418.txt");
 N ns[2000];
 S sink;
-double avg_t(0);
-double drop(0);
-double macdrop(0);
-double total(0);
+double avg_t, buffer_drop, mac_drop, total;
 double cons[4] = { 0,0,0,0 };
 int trans_time[4] = { 0,0,0,0 };
 double consToR2[4] = { 0,0,0,0 };
@@ -79,6 +78,7 @@ int ToR2_time[4] = { 0,0,0,0 };
 int toSink(0);
 double SD(0);
 int R2, R3, R4;
+vector<int> CHarr = {};
 
 double type_a = 33, type_b = 33, type_c = 34; //調整QUERE裡面感測資料的比例
 
@@ -241,6 +241,14 @@ double find_max_energy(int s, int e) //!energy的預扣
 	return max;
 }
 
+void add_to_CHarr(vector<int>& CHarr, int num) {
+    // 檢查數字是否已存在於陣列中
+    if (find(CHarr.begin(), CHarr.end(), num) == CHarr.end()) {
+        // 如果數字不存在，加入到陣列中
+        CHarr.push_back(num);
+    }
+}
+
 void CH_Selection(int s, int e) //s=start e=end
 {
 	double E = find_max_energy(s, e);
@@ -263,6 +271,7 @@ void CH_Selection(int s, int e) //s=start e=end
 		{
 			CH = CH_cdd.front();
 		}
+		add_to_CHarr(CHarr, CH);
 		CH_cdd.pop();
 	}
 	for (start; start <= end; start++)//start to change CH
@@ -294,7 +303,7 @@ void Packet_Dliver(int sender, int CH) // 有能耗
 	}
 	else
 	{
-		macdrop++;
+		mac_drop++;
 		ns[CH].receive.dst = -1;
 		ns[CH].receive.src = -1;
 		ns[CH].receive.data = -1;
@@ -312,7 +321,6 @@ void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
 	if (ns[CH].receive.src != CH) //不是來自自己的才要扣能量
 	{
 		ns[CH].energy -= ReceiveEnergy;
-		//fout << "node : " << CH << "能量減少 "<< ReceiveEnergy << " ,因為收到來自節點 " << ns[CH].receive.src << " 的封包" << endl;
 	} //drop還算是有收
 	int full(1);
 	for (int a = 0; a < NODE_BUFFER1; a++) //buffer is not full 50 for self-area-sense 50 for other CH 
@@ -330,7 +338,7 @@ void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
 	}
 	if (full == 1) //priority queue buffer , 如果封包被drop掉就不用了(-1)
 	{
-		drop++;
+		buffer_drop++;
 	}
 	ns[CH].receive.dst = -1;
 	ns[CH].receive.src = -1;
@@ -380,7 +388,7 @@ void CH2Sink(int CH) //有能耗
 				start++;
 			}
 			else{
-				macdrop++;
+				mac_drop++;
 			}
 		}
 		//fout << "sink收到" << rate << "個" << endl;
@@ -412,7 +420,7 @@ void CH2Sink(int CH) //有能耗
 			}
 			else
 			{
-				macdrop++;
+				mac_drop++;
 			}
 		}
 		//fout << "sink收到" << rate << "個" << endl;
@@ -448,7 +456,7 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 			}
 			else
 			{
-				macdrop++;
+				mac_drop++;
 			}
 		}
 		clean(CH1, 0, NODE_BUFFER1);
@@ -473,7 +481,7 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 			}
 			else
 			{
-				macdrop++;
+				mac_drop++;
 			}
 		}
 		clean(CH1, NODE_BUFFER1, NODE_BUFFER2);
@@ -483,8 +491,6 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 	ns[CH1].energy -= (TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
 																						  //fout << "node : " << CH1 << "能量減少 "<<(TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
 	ns[dst].energy -= (ReceiveEnergy)*rate;
-	//fout << "node : " << dst << "能量減少 "<< (ReceiveEnergy)*rate<<" ,因為在區域2收到別的資料" << endl;
-	//fout <<"我是節點 "<< dst << " 收到別人的" << endl;
 	CH2Sink(dst);
 }
 
@@ -509,28 +515,38 @@ void transaction(int j, int t)
 	Packet_Receive(ns[j].CH);
 }
 
+double remaining_energy()
+{
+	double avg_energy;
+	for (int i = 0; i < S_NUM; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM;
+	return avg_energy;
+}
+
 int main(){
 	srand((unsigned)time(NULL)); //random seed
 	fout << "NRCA" << endl;
 	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
+		avg_t = 0;
+		buffer_drop = 0;
+		mac_drop = 0;
+		total = 0;
+		int CH_count = 0;
 		cout << "sensors: " << S_NUM << endl;
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
 		/*sensor initialization*/
 		for (int round = 0; round < round_number; round++)
 		{
+			cout << round+1 << endl;
 			// node_deployed();
 			special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
-			sink.id = SINKID;
-			for (int b = 0; b < SINK_BUFFER_SIZE; b++)
-			{
-				sink.buffer[b].data = -1;
-				sink.buffer[b].dst = -1;
-				sink.buffer[b].src = -1;
-				sink.buffer[b].time = -1;
-			}
+			sink_init();
 
 			/*firts CH selection*/
 			CH_Selection(0, R2 - 1);
@@ -545,11 +561,6 @@ int main(){
 			int t(1);
 			while (!die)
 			{
-				/*if (t % 15000 == 0)
-				{
-					double avg_re = standard_deviation();
-					fout << avg_re << endl;
-				}*/
 				if (countround[0] == 0)
 					countround[0] = 10;
 				if (countround[1] == 0)
@@ -558,35 +569,11 @@ int main(){
 					countround[2] = 10;
 				if (countround[3] == 0)
 					countround[3] = 10;
-				//fout << "time = " << t << endl;
 				int c = CheckEnergy();/*有一個節點沒電則等於死亡*/
 				if (c < SINKID)
 				{
-					/*double avg_re = standard_deviation();
-					fout << t << "  " << avg_re << endl;*/
-					//fout << t << endl;
 					avg_t += t;
-					//fout << "node " << c << " dead !" << endl;
 					die = 1;
-					//print_energy();
-					/*for (int i = 0; i < 4; i++)
-					{
-					//fout << "區域" << i + 1 << "的區域內平均傳輸耗能 = " << cons[i] / trans_time[i] << endl;
-					}
-					for (int i = 0; i < 4; i++)
-					{
-					//fout << "區域" << i + 1 << "的平均傳輸區2耗能 = " << consToR2[i] / ToR2_time[i] << endl;
-					}*/
-					/*int e(0);
-					while (sink.buffer[e].data != -1)
-					{
-					//fout << "src: " << sink.buffer[e].src << " dst: " << sink.buffer[e].dst << " data: " << sink.buffer[e].data << " time: " << sink.buffer[e].time << " sec" << endl;
-					e++;
-					}
-					fout << "total = " << total << endl;
-					fout << "drop = " << drop << endl;
-					fout << "macdrop = " << macdrop << endl;
-					fout << "sink 有" << e << endl; //total封包數*/
 					break;
 				}
 				
@@ -621,7 +608,6 @@ int main(){
 					}
 				}
 				
-
 				if (t % CHf == 0) //每一分鐘傳到sink 1次
 				{
 					int CH[4];
@@ -647,17 +633,20 @@ int main(){
 				}
 				t++;
 			}
-			cout << round+1 << endl;
+			CH_count += CHarr.size();
+			CHarr.clear();
 		}
+		CH_count /= round_number;
 		total /= round_number;
-		macdrop /= round_number;
-		drop /= round_number;
+		mac_drop /= round_number;
+		buffer_drop /= round_number;
 		avg_t /= round_number;
+		fout << "CH_count : " << CH_count << endl;
 		fout << "avg_lifetime : " << avg_t << endl;
 		fout << "avg_total : " << total << endl;
-		fout << "avg_macdrop : " << macdrop << endl;
-		fout << "avg_drop : " << drop << endl;
-		fout << "avg_PLR : " << (drop + macdrop) / total << endl;
+		fout << "avg_macdrop : " << mac_drop << endl;
+		fout << "avg_drop : " << buffer_drop << endl;
+		fout << "avg_PLR : " << (buffer_drop + mac_drop) / total << endl;
 	}
 	return 0;
 }

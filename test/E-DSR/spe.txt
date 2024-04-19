@@ -1,4 +1,4 @@
-E-DSR (special)
+E-DSR
 
 ------------ Sensors 400 ------------
 CH_count : 276

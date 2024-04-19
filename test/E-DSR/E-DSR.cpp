@@ -37,7 +37,7 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 20
+#define round_number 10
 #define E_NUM 1000
 
 using namespace std;
@@ -69,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("output.txt");
+ofstream fout("spe.txt");
 N ns[2000];
 S sink;
 double avg_t, drop, macdrop, total;
@@ -977,6 +977,17 @@ void transaction(int j, int t, int v)
 	}
 }
 
+double remaining_energy()
+{
+	double avg_energy;
+	for (int i = 0; i < S_NUM; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM;
+	return avg_energy;
+}
+
 
 /*如果使用資料壓縮  , 是否要以資料量大小做策略 , 感測的耗能相比於CH竟然比較大很多(反映在CH剩餘能量竟然還比平均能量高) due to dtc,比例等等,為何CH選區中心會比選靠近區2還要長壽*/
 /*code中實際上沒有壓縮*/
@@ -1002,8 +1013,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
-			// special_node_deployed();
+			// node_deployed();
+			special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -1308,6 +1319,10 @@ int main()
 					CHtoRegion2(CH[2], 1);
 					CHtoRegion2(CH[3], 1);
 					CH_Reselection();
+				}
+				if( t % 1000 == 0){
+					double re_energy = remaining_energy();
+					//fout << "--- time " << t << " ---  re_energy: " << re_energy << endl; 
 				}
 				t++;
 			}

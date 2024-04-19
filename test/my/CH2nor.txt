@@ -1,4 +1,4 @@
-my (normal)
+my
 
 ------------ Sensors 400 ------------
 CH_count : 344
@@ -41,12 +41,12 @@ avg_drop : 0
 avg_PLR : 0.131463
 
 ------------ Sensors 900 ------------
-CH_count : 631
-avg_lifetime : 12871
-avg_total : 100793
-avg_macdrop : 13217
+CH_count : 667
+avg_lifetime : 13909
+avg_total : 108599
+avg_macdrop : 14213.6
 avg_drop : 0
-avg_PLR : 0.13113
+avg_PLR : 0.130882
 
 ------------ Sensors 1000 ------------
 CH_count : 617
