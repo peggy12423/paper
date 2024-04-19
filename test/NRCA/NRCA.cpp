@@ -67,7 +67,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("nor.txt");
+ofstream fout("spe0418.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -271,13 +271,13 @@ void CH_Selection(int s, int e) //s=start e=end
 		{
 			CH = CH_cdd.front();
 		}
+		add_to_CHarr(CHarr, CH);
 		CH_cdd.pop();
 	}
 	for (start; start <= end; start++)//start to change CH
 	{
 		ns[start].CH = CH;
 	}
-	add_to_CHarr(CHarr, CH);
 }
 
 void Packet_Generate(int now, int t) //generate packet ¦³¯à¯Ó
@@ -541,8 +541,8 @@ int main(){
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
-			// special_node_deployed();
+			// node_deployed();
+			special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/

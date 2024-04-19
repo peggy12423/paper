@@ -1,0 +1,25 @@
+my
+
+------------ Sensors 600 ------------
+CH_count : 498
+avg_lifetime : 24933
+avg_total : 129996
+avg_macdrop : 16698.9
+avg_drop : 0
+avg_PLR : 0.128457
+
+------------ Sensors 800 ------------
+CH_count : 611
+avg_lifetime : 19031
+avg_total : 132413
+avg_macdrop : 17021.6
+avg_drop : 0
+avg_PLR : 0.128549
+
+------------ Sensors 1000 ------------
+CH_count : 631
+avg_lifetime : 14846
+avg_total : 128771
+avg_macdrop : 16622.2
+avg_drop : 0
+avg_PLR : 0.129084

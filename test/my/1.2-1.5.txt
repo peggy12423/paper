@@ -1,9 +1,0 @@
-my
-
------------- Sensors 600 ------------
-CH_count : 510
-avg_lifetime : 30182
-avg_total : 157609
-avg_macdrop : 20325.8
-avg_drop : 0
-avg_PLR : 0.128964

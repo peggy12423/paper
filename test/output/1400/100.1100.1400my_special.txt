@@ -17,12 +17,12 @@ avg_drop : 0
 avg_PLR : 0.128282
 
 ------------ Sensors 600 ------------
-CH_count : 512
-avg_lifetime : 31168
-avg_total : 161773
-avg_macdrop : 20768.8
+CH_count : 501
+avg_lifetime : 27386
+avg_total : 142224
+avg_macdrop : 18330.5
 avg_drop : 0
-avg_PLR : 0.128382
+avg_PLR : 0.128885
 
 ------------ Sensors 700 ------------
 CH_count : 559
