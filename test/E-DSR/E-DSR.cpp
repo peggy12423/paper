@@ -13,7 +13,7 @@
 #define NODE_BUFFER1 700 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
 #define NODE_BUFFER2 1400 //50~100 特別的傳輸用
 
-#define R 1 //壓縮率 設1則沒有壓縮
+#define R 0.5 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
 #define type4f 120
 #define type5f 150
@@ -37,12 +37,12 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
+#define round_number 2
 #define E_NUM 1000
 
 using namespace std;
 
-int S_NUM = 400; //感測器總數
+int S_NUM = 800; //感測器總數
 struct C
 {
 	double x, y;
@@ -69,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("spe.txt");
+ofstream fout("output.txt");
 N ns[2000];
 S sink;
 double avg_t, drop, macdrop, total;

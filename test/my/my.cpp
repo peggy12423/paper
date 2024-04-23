@@ -33,11 +33,11 @@
 
 /*變動實驗參數設定*/
 #define round_number 10
-#define E_NUM 1600
+#define E_NUM 400
 #define Alpha 0.2
 #define Beta 0.8
-#define high_density_th1 1.4
-#define high_density_th2 1.95
+#define high_density_th1 1.2
+#define high_density_th2 1.6
 
 using namespace std;
 
@@ -68,7 +68,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("RS0_200.txt");
+ofstream fout("comp0.5_nor.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -899,28 +899,7 @@ int main()
 				
 
 				if (t % CHf == 0) //每一分鐘傳到sink 1次
-				{
-                    // for(int i = 0; i <= 2; i++){
-                    //     if( CH_record[1][i] != -1 ){
-                    //         CH2Sink(CH_record[1][i]);
-                    //     }
-                    // }
-                    // for(int j = 0; j <= 2; j++){
-                    //     if( CH_record[0][j] != -1 ){
-                    //         CHtoRegion2(CH_record[0][j]);
-                    //     }
-                    // }
-                    // for(int j = 0; j <= 2; j++){
-                    //     if( CH_record[2][j] != -1 ){
-                    //         CHtoRegion2(CH_record[2][j]);
-                    //     }
-                    // }
-                    // for(int j = 0; j <= 2; j++){
-                    //     if( CH_record[3][j] != -1 ){
-                    //         CHtoRegion2(CH_record[3][j]);
-                    //     }
-                    // }
-					
+				{				
 					CH2Sink(CH_record[1][0]);
 					CHtoRegion2(CH_record[0][0]);
 					CHtoRegion2(CH_record[2][0]);

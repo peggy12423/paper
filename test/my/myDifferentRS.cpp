@@ -15,7 +15,7 @@
 #define NODE_BUFFER1 1100 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
 #define NODE_BUFFER2 1400 //50~100 特別的傳輸用
 
-#define R 1 //壓縮率 設1則沒有壓縮
+#define R 0.5 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
 #define type4f 120
 #define type5f 150 //720
@@ -36,8 +36,8 @@
 #define E_NUM 1000
 #define Alpha 0.2
 #define Beta 0.8
-#define high_density_th1 1.7
-#define high_density_th2 1.7
+#define high_density_th1 1.2
+#define high_density_th2 1.6
 
 using namespace std;
 
@@ -68,7 +68,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("1.7-1.7.txt");
+ofstream fout("output.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -1003,7 +1003,7 @@ int main()
 	/*sensor initialization*/
 	srand((unsigned)time(NULL)); //random seed
 	fout << "my" << endl;
-	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 200){
+	for( S_NUM ; S_NUM <= E_NUM ; S_NUM += 100){
 		avg_t = 0;
 		buffer_drop = 0;
 		mac_drop = 0;
