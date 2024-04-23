@@ -32,9 +32,8 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define roundnumber 5
+#define roundnumber 1
 #define E_NUM 1000 //感測器總數
-// #define R 0.5 //壓縮率 設1則沒有壓縮
 
 using namespace std;
 int S_NUM = 1000;
@@ -400,8 +399,8 @@ int main()
 		for (int rn = 0; rn < roundnumber; rn++)
 		{
 			cout << rn+1 << endl;
-			node_deployed();
-			// special_node_deployed();
+			// node_deployed();
+			special_node_deployed();
 			packet_init();
 			/*sink initialization*/
 			sink.id = SINKID;

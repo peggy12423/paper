@@ -33,7 +33,7 @@
 
 /*跑笆龟喷把计砞﹚*/
 #define round_number 10
-#define E_NUM 1000
+#define E_NUM 500
 #define Alpha 0.2
 #define Beta 0.8
 #define high_density_th1 1.2
@@ -41,7 +41,7 @@
 
 using namespace std;
 
-int S_NUM = 800; //稰代竟羆计
+int S_NUM = 500; //稰代竟羆计
 struct C
 {
 	double x, y;
@@ -1015,8 +1015,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
