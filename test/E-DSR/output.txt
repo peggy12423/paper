@@ -1,0 +1,33 @@
+E-DSR
+
+------------ Sensors 400 ------------
+CH_count : 293
+avg_time : 57540
+avg_total : 200966
+avg_macdrop : 25880.7
+avg_drop : 0
+avg_PLR : 0.128781
+
+------------ Sensors 500 ------------
+CH_count : 394
+avg_time : 56349
+avg_total : 244424
+avg_macdrop : 31419.8
+avg_drop : 0
+avg_PLR : 0.128546
+
+------------ Sensors 600 ------------
+CH_count : 491
+avg_time : 55767
+avg_total : 290480
+avg_macdrop : 37357.8
+avg_drop : 0
+avg_PLR : 0.128607
+
+------------ Sensors 700 ------------
+CH_count : 571
+avg_time : 53624
+avg_total : 326750
+avg_macdrop : 42244.8
+avg_drop : 0
+avg_PLR : 0.129288

@@ -1,0 +1,50 @@
+REBM
+
+------------ Sensors 400 ------------
+avg_t : 49885
+avg_total : 275775
+avg_drop : 0
+avg_macdrop : 136858
+avg_PLR : 0.496266
+
+------------ Sensors 500 ------------
+avg_t : 49225
+avg_total : 436094
+avg_drop : 0
+avg_macdrop : 231696
+avg_PLR : 0.531299
+
+------------ Sensors 600 ------------
+avg_t : 47227
+avg_total : 457733
+avg_drop : 0
+avg_macdrop : 252478
+avg_PLR : 0.551583
+
+------------ Sensors 700 ------------
+avg_t : 42769
+avg_total : 707770
+avg_drop : 0
+avg_macdrop : 408566
+avg_PLR : 0.577258
+
+------------ Sensors 800 ------------
+avg_t : 40701
+avg_total : 747280
+avg_drop : 0
+avg_macdrop : 450587
+avg_PLR : 0.60297
+
+------------ Sensors 900 ------------
+avg_t : 39991
+avg_total : 1.05737e+006
+avg_drop : 0
+avg_macdrop : 682999
+avg_PLR : 0.645942
+
+------------ Sensors 1000 ------------
+avg_t : 39037
+avg_total : 1.22676e+006
+avg_drop : 0
+avg_macdrop : 793568
+avg_PLR : 0.64688

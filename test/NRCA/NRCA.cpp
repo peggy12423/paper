@@ -14,7 +14,6 @@
 #define NODE_BUFFER1 700 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
 #define NODE_BUFFER2 1400 //50~100 特別的傳輸用
 
-#define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90 //常規sensing frequency
 #define type4f 120
 #define type5f 150
@@ -38,6 +37,7 @@
 /*變動實驗參數設定*/
 #define round_number 10
 #define E_NUM 1000
+#define R 0.5 //壓縮率 設1則沒有壓縮
 
 using namespace std;
 
@@ -67,7 +67,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("spe0418.txt");
+ofstream fout("NRCA_comp0.5_spe.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
