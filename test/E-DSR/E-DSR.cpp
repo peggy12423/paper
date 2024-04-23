@@ -37,12 +37,12 @@
 #define successful_rate 5 //砞x Θ瞯碞琌100-x%
 
 /*跑笆龟喷把计砞﹚*/
-#define round_number 2
-#define E_NUM 1000
+#define round_number 10
+#define E_NUM 700
 
 using namespace std;
 
-int S_NUM = 800; //稰代竟羆计
+int S_NUM = 400; //稰代竟羆计
 struct C
 {
 	double x, y;

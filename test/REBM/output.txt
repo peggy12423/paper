@@ -1,8 +1,8 @@
 REBM
 
------------- Sensors 1000 ------------
-avg_t : 48151
-avg_total : 1.20908e+006
+------------ Sensors 800 ------------
+avg_t : 50761
+avg_total : 935982
 avg_drop : 0
-avg_macdrop : 793926
-avg_PLR : 0.656635
+avg_macdrop : 581058
+avg_PLR : 0.6208

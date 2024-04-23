@@ -32,11 +32,11 @@
 #define successful_rate 5 //砞x Θ瞯碞琌100-x%
 
 /*跑笆龟喷把计砞﹚*/
-#define roundnumber 1
-#define E_NUM 1000 //稰代竟羆计
+#define roundnumber 2
+#define E_NUM 800 //稰代竟羆计
 
 using namespace std;
-int S_NUM = 1000;
+int S_NUM = 800;
 struct P
 {
 	int src;
@@ -399,8 +399,8 @@ int main()
 		for (int rn = 0; rn < roundnumber; rn++)
 		{
 			cout << rn+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			packet_init();
 			/*sink initialization*/
 			sink.id = SINKID;
