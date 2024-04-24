@@ -1,0 +1,57 @@
+Optimal of LEACH
+
+------------ Sensors 400 ------------
+CH_count : 317
+avg_lifetime : 5171
+avg_total : 17935.7
+avg_macdrop : 188
+avg_drop : 0
+avg_PLR : 0.0104819
+
+------------ Sensors 500 ------------
+CH_count : 391
+avg_lifetime : 5081
+avg_total : 21969.7
+avg_macdrop : 240.7
+avg_drop : 0
+avg_PLR : 0.010956
+
+------------ Sensors 600 ------------
+CH_count : 473
+avg_lifetime : 3751
+avg_total : 19383.9
+avg_macdrop : 203.5
+avg_drop : 0
+avg_PLR : 0.0104984
+
+------------ Sensors 700 ------------
+CH_count : 557
+avg_lifetime : 2681
+avg_total : 16116.9
+avg_macdrop : 164.9
+avg_drop : 0
+avg_PLR : 0.0102315
+
+------------ Sensors 800 ------------
+CH_count : 633
+avg_lifetime : 2221
+avg_total : 15277.4
+avg_macdrop : 155.1
+avg_drop : 0
+avg_PLR : 0.0101523
+
+------------ Sensors 900 ------------
+CH_count : 715
+avg_lifetime : 1881
+avg_total : 14285.6
+avg_macdrop : 140.3
+avg_drop : 0
+avg_PLR : 0.00982108
+
+------------ Sensors 1000 ------------
+CH_count : 787
+avg_lifetime : 1161
+avg_total : 9727.5
+avg_macdrop : 99.3
+avg_drop : 0
+avg_PLR : 0.0102082

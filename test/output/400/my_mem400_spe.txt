@@ -33,20 +33,20 @@ avg_drop : 8184.5
 avg_PLR : 0.148675
 
 ------------ Sensors 800 ------------
-CH_count : 663
-avg_lifetime : 58931
-avg_total : 408588
-avg_macdrop : 51234.8
-avg_drop : 16499.2
-avg_PLR : 0.165776
+CH_count : 661
+avg_lifetime : 59201
+avg_total : 411849
+avg_macdrop : 51378.6
+avg_drop : 17381
+avg_PLR : 0.166953
 
 ------------ Sensors 900 ------------
-CH_count : 738
-avg_lifetime : 56513
-avg_total : 467377
-avg_macdrop : 57670.9
-avg_drop : 29490
-avg_PLR : 0.18649
+CH_count : 745
+avg_lifetime : 57357
+avg_total : 449576
+avg_macdrop : 55524.6
+avg_drop : 27937.5
+avg_PLR : 0.185646
 
 ------------ Sensors 1000 ------------
 CH_count : 809
