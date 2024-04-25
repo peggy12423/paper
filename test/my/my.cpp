@@ -32,12 +32,13 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
+#define round_number 20
 #define E_NUM 1000
 #define Alpha 0.2
 #define Beta 0.8
 #define high_density_th1 1.2
-#define high_density_th2 1.6
+#define high_density_th2 1.7
+#define low_density_th 0.7
 
 using namespace std;
 
@@ -68,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("my_mem800_spe2.txt");
+ofstream fout("nor_800.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -420,12 +421,15 @@ double node_density(int sIndex, int eIndex, int area){
 
 int region_CH_num(int sIndex, int eIndex){
 	double region_density = node_density(sIndex, eIndex, 40000);
-	int CH_num;
+	int CH_num = 2;
 	if( region_density >= high_density_th2 ){
 		CH_num = 4;
 	}
 	else if( region_density >= high_density_th1 ){
 		CH_num = 3;
+	}
+	else if( region_density <= low_density_th ){
+		CH_num = 1;
 	}
 	return CH_num;
 }
@@ -439,6 +443,36 @@ void add_to_CHarr(vector<int>& CHarr, int num) {
 }
 
 void CH_RS0(int s, int e, int r) //s=start e=end !energy的預扣
+{
+	double E = find_max_energy(s, e);
+	double D = find_max_distance(s, e);
+	int start = s;
+	int end = e;
+	int CH = s;
+	double re;
+	re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷 120是指倍數
+	double MAX_S = CH_standard(ns[s].dtc, re, E, D);
+	s += 1;
+
+	for (s; s <= e; s++)//selecting
+	{
+		re = ns[s].energy - (floor(reservation_energy_time / (ns[s].type * 30))*(ProbeEnergy + (TransmitEnergy + pow(distance(s, ns[s].CH), 2)*AmplifierEnergy)));//扣掉預約能量來比會比較公平,就算是負數應該也能做判斷
+		double current_s = CH_standard(ns[s].dtc, re, E, D);
+		if (MAX_S < current_s)
+		{
+			MAX_S = current_s;
+			CH = ns[s].id;
+		}
+	}
+	for (start; start <= end; start++)//start to change CH
+	{
+		ns[start].CH = CH;
+	}
+	add_to_CHarr(CHarr, CH);
+	CH_record[r][0] = CH;
+}
+
+void sCH_RS0(int s, int e, int r) //s=start e=end !energy的預扣
 {
 	double E = find_max_energy(s, e);
 	double D = find_max_distance(s, e);
@@ -669,8 +703,11 @@ void CH_selection(int* start, int* end){
 		else if(region_CH_num(start[i], end[i]) == 3){
 			tCH_RS0(start[i], end[i], i);
 		}
-		else{
+		else if(region_CH_num(start[i], end[i]) == 1){
 			CH_RS0(start[i], end[i], i);
+		}
+		else{
+			sCH_RS0(start[i], end[i], i);
 		}
 	}
 }
@@ -931,9 +968,9 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
+			node_deployed();
 			// special_node_deployed();
-			special2_node_deployed();
+			// special2_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -988,10 +1025,19 @@ int main()
 					CHtoRegion2(CH_record[0][0]);
 					CHtoRegion2(CH_record[2][0]);
 					CHtoRegion2(CH_record[3][0]);
-					CH2Sink(CH_record[1][1]);
-					CHtoRegion2(CH_record[0][1]);
-					CHtoRegion2(CH_record[2][1]);
-					CHtoRegion2(CH_record[3][1]);
+					// CH2Sink(CH_record[1][1]);
+					// CHtoRegion2(CH_record[0][1]);
+					// CHtoRegion2(CH_record[2][1]);
+					// CHtoRegion2(CH_record[3][1]);
+					//sCH
+					for(int j = 0; j <= 3; j++){
+						if(j == 1 && CH_record[j][1] != -1){
+							CH2Sink(CH_record[j][1]);
+						}
+						else if( j != 1 && CH_record[j][1] != -1){
+							CHtoRegion2(CH_record[j][1]);
+						}
+					}
 					//tCH
 					for(int j = 0; j <= 3; j++){
 						if(j == 1 && CH_record[j][2] != -1){
@@ -1003,10 +1049,10 @@ int main()
 					}
 					//fCH
 					for(int k = 0; k <= 3; k++){
-						if(k == 1 && CH_record[k][2] != -1){
+						if(k == 1 && CH_record[k][3] != -1){
 							CH2Sink(CH_record[k][3]);
 						}
-						else if( k != 1 && CH_record[k][2] != -1){
+						else if( k != 1 && CH_record[k][3] != -1){
 							CHtoRegion2(CH_record[k][3]);
 						}
 					}
