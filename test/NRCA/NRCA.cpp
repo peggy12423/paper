@@ -683,6 +683,10 @@ int main(){
 					countround[3]--;
 					if (countround[3] == 0) { CH_Selection(R4, S_NUM - 1); }
 				}
+				if( t % 500 == 0){
+					double re_energy = remaining_energy();
+					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				}
 				t++;
 			}
 			CH_count += CHarr.size();

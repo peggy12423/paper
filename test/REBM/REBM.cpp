@@ -383,6 +383,17 @@ int CheckEnergy()
 	return SINKID;
 }
 
+double remaining_energy()
+{
+	double avg_energy;
+	for (int i = 0; i < S_NUM; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM;
+	return avg_energy;
+}
+
 int main()
 {
 	/*sensor initialization*/
@@ -543,7 +554,10 @@ int main()
 						}
 					}
 				}
-
+				// if( t % 500 == 0){
+				// 	double re_energy = remaining_energy();
+				// 	fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				// }
 				t++;
 			}
 		}

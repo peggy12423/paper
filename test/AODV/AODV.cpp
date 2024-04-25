@@ -67,7 +67,7 @@ struct RREQ
 	queue<int>route;
 	int hop_count;
 };
-ofstream fout("100.AODV_normal.txt");
+ofstream fout("AODV_normal.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -404,6 +404,17 @@ int CheckEnergy()
 	return SINKID;
 }
 
+double remaining_energy()
+{
+	double avg_energy;
+	for (int i = 0; i < S_NUM; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM;
+	return avg_energy;
+}
+
 int main()
 {
 	/*sensor initialization*/
@@ -442,19 +453,7 @@ int main()
                 if (c < SINKID)
                 {
                     avg_t += t;
-                    //fout << "node " << c << " dead !" << endl;
                     die = 1;
-                    //print_energy();
-                    /*int e(0);
-                    while (sink.buffer[e].data != -1)
-                    {
-                    e++;
-                    }*/
-                    //fout << t << endl;
-                    //fout << "total = " << total << endl;
-                    //fout << "drop = " << drop << endl;
-                    //fout << "macdrop = " << macdrop << endl;
-                    //fout << "sink 有" << e << endl; //total封包數,有些會找不到去sink的路徑
                     break;
                 }
                 if (t % type3f == 0)
@@ -487,6 +486,10 @@ int main()
                         }
                     }
                 }
+				// if( t % 500 == 0){
+				// 	double re_energy = remaining_energy();
+				// 	fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				// }
                 t++;
             }
             cout << rn+1 << endl;

@@ -1137,14 +1137,6 @@ double remaining_energy()
 	return avg_energy;
 }
 
-
-/*如果使用資料壓縮  , 是否要以資料量大小做策略 , 感測的耗能相比於CH竟然比較大很多(反映在CH剩餘能量竟然還比平均能量高) due to dtc,比例等等,為何CH選區中心會比選靠近區2還要長壽*/
-/*code中實際上沒有壓縮*/
-/*區域三的平均耗能太高*/
-/*目標:合*/
-/*門檻,判斷,第二層的traffic控制*/
-/*2區爆炸怎麼辦*/
-/*CH判斷參數怎麼改*/
 int main()
 {
 	/*sensor initialization*/
@@ -1183,20 +1175,9 @@ int main()
 			int t(1);
 			while (!die)
 			{
-				/*if(t % 15000 == 0)
-				{
-				double avg_re = standard_deviation();
-				fout << avg_re << endl;
-				}*/
-				//fout << "time = " << t << endl;
 				int c = CheckEnergy();/*有一個節點沒電則等於死亡*/
 				if (c < SINKID)
 				{
-					// fout << "dead node: " << c << endl;
-					// fout << "energy: " << ns[c].energy << endl;
-					// fout << "CH: " << ns[c].CH << endl;
-					// fout << "region: " << ns[c].region1 << endl;
-					// fout << "------------------------" << endl;
 					avg_t += t;
 					die = 1;
 					break;
@@ -1470,10 +1451,10 @@ int main()
 					CHtoRegion2(CH[3], 1);
 					CH_Reselection();
 				}
-				if( t % 1000 == 0){
-					double re_energy = remaining_energy();
-					//fout << "--- time " << t << " ---  re_energy: " << re_energy << endl; 
-				}
+				// if( t % 500 == 0){
+				// 	double re_energy = remaining_energy();
+				// 	fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				// }
 				t++;
 			}
 			CH_count += CHarr.size();
