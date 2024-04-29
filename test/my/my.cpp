@@ -12,8 +12,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 400 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 800 //50~100 特別的傳輸用
+#define NODE_BUFFER1 300 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 600 //50~100 特別的傳輸用
 
 #define R 0.5 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
@@ -69,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("new_spe_800.txt");
+ofstream fout("0429new_nor_600.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -909,13 +909,13 @@ void CHtoRegion2(int CH1) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 }
 
 void CH_toNext_CH(int CH1, int r, int* start, int* end){
+	int dst = start[r];
 	double d1 = distance(CH1, start[r]);
 	double d2 = distance(start[r], SINKID);
 	double E = find_max_energy( start[r], end[r] );
 	double D = find_max_dts(start[r], end[r], CH1); 
 	double MAX_s = CH_standard(pow(d1, 2)+pow(d2, 2), ns[start[r]].energy, E, D);
-	int dst = -1;
-	for(int i = start[r]+1; i < start[r+1]; i++){
+	for(int i = (start[r]+1); i < start[r+1]; i++){
 		d1 = distance(CH1, i);
 		d2 = distance(i, SINKID);
 		double s = CH_standard(pow(d1, 2)+pow(d2, 2), ns[i].energy, E, D);
@@ -1005,8 +1005,8 @@ int main()
 		{
 			int r2_low_density = 0;
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			// special2_node_deployed();
 			packet_init();
 			if( region_CH_num(R2, R3-1) == 1){  //看R2是否節點超少
@@ -1064,6 +1064,10 @@ int main()
 					if( r2_low_density == 0){  //R2沒有過少節點
 						//各區的第一個CH
 						CH2Sink(CH_record[1][0]);
+						// CH_toNext_CH(CH_record[0][0], 1, start, end);
+						// CH_toNext_CH(CH_record[2][0], 1, start, end);
+						// CH_toNext_CH(CH_record[3][0], 1, start, end);
+
 						CHtoRegion2(CH_record[0][0]);
 						CHtoRegion2(CH_record[2][0]);
 						CHtoRegion2(CH_record[3][0]);
@@ -1097,16 +1101,18 @@ int main()
 					}
 					else{  //R2節點超少
 						int next_CH_region = 0;
-						if( R2 >= (S_NUM-R4) ){
-							next_CH_region = 1; 
+						int R1_snum = end[0] - start[0];
+						int R4_snum = end[3] - start[3];
+						if( R1_snum > R4_snum ){
+							next_CH_region = 1;
 						}else{
 							next_CH_region = 4;
 						}
 						//各區的第一個CH
 						CH2Sink(CH_record[1][0]);
 						CH_toNext_CH(CH_record[0][0], next_CH_region-1, start, end);
-						CH_toNext_CH(CH_record[2][0], next_CH_region, start, end);
-						CH_toNext_CH(CH_record[3][0], next_CH_region, start, end);
+						CH_toNext_CH(CH_record[2][0], next_CH_region-1, start, end);
+						CH_toNext_CH(CH_record[3][0], next_CH_region-1, start, end);
 						//各區的sCH
 						for(int j = 0; j <= 3; j++){
 							if(j == 1 && CH_record[1][1] != -1){  //R2的CH
