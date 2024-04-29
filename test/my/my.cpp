@@ -12,8 +12,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 300 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 600 //50~100 特別的傳輸用
+#define NODE_BUFFER1 200 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 400 //50~100 特別的傳輸用
 
 #define R 0.5 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
@@ -37,7 +37,7 @@
 #define Alpha 0.2
 #define Beta 0.8
 #define high_density_th1 1.2
-#define high_density_th2 1.7
+#define high_density_th2 1.6
 #define low_density_th 0.7
 
 using namespace std;
@@ -69,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("0429new_nor_600.txt");
+ofstream fout("new_nor_400.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -1060,7 +1060,6 @@ int main()
 				
 				if (t % CHf == 0) //每一分鐘傳到sink 1次
 				{
-					/*4/26 normal測試已完成而且ok，剩spe2(r2_low_density!=0)場景的要看*/	
 					if( r2_low_density == 0){  //R2沒有過少節點
 						//各區的第一個CH
 						CH2Sink(CH_record[1][0]);
