@@ -1,0 +1,57 @@
+NRCA
+
+------------ Sensors 400 ------------
+CH_count : 18
+avg_lifetime : 15921
+avg_total : 55148.7
+avg_macdrop : 5898.9
+avg_drop : 0
+avg_PLR : 0.106964
+
+------------ Sensors 500 ------------
+CH_count : 19
+avg_lifetime : 7801
+avg_total : 33584.7
+avg_macdrop : 3507.2
+avg_drop : 0
+avg_PLR : 0.104429
+
+------------ Sensors 600 ------------
+CH_count : 19
+avg_lifetime : 2631
+avg_total : 13672.6
+avg_macdrop : 1440.4
+avg_drop : 0
+avg_PLR : 0.105349
+
+------------ Sensors 700 ------------
+CH_count : 21
+avg_lifetime : 841
+avg_total : 4772
+avg_macdrop : 503.4
+avg_drop : 0
+avg_PLR : 0.10549
+
+------------ Sensors 800 ------------
+CH_count : 25
+avg_lifetime : 761
+avg_total : 4803.8
+avg_macdrop : 503.8
+avg_drop : 0
+avg_PLR : 0.104875
+
+------------ Sensors 900 ------------
+CH_count : 21
+avg_lifetime : 681
+avg_total : 4932.6
+avg_macdrop : 503.8
+avg_drop : 0
+avg_PLR : 0.102137
+
+------------ Sensors 1000 ------------
+CH_count : 22
+avg_lifetime : 601
+avg_total : 5009.4
+avg_macdrop : 503.6
+avg_drop : 0
+avg_PLR : 0.100531

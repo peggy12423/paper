@@ -12,8 +12,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 300 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 600 //50~100 特別的傳輸用
+#define NODE_BUFFER1 400 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 800 //50~100 特別的傳輸用
 
 #define R 0.5 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
@@ -32,13 +32,13 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
+#define round_number 20
 #define E_NUM 1000
 #define Alpha 0.2
 #define Beta 0.8
-#define high_density_th1 1.7
-#define high_density_th2 1.7
-#define low_density_th 0.3
+#define high_density_th1 1.2
+#define high_density_th2 1.6
+#define low_density_th 0.7
 
 using namespace std;
 
@@ -69,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("0.3-1.7-1.7_spe2.txt");
+ofstream fout("new_spe2_800.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -77,6 +77,7 @@ int R2, R3, R4;
 int R_NUM = S_NUM * 0.25;
 int CH_record[4][4];
 vector<int> CHarr = {};
+int r2_low_density = 0;
 
 double type_a = 33, type_b = 33, type_c = 34; //調整QUERE裡面感測資料的比例
 
@@ -420,17 +421,15 @@ double node_density(int sIndex, int eIndex, int area){
 }
 
 int region_CH_num(int sIndex, int eIndex){
-	// double region_density = node_density(sIndex, eIndex, 40000);
-	int region_S_NUM = eIndex - sIndex + 1;
-	int snum = S_NUM/4;
+	double region_density = node_density(sIndex, eIndex, 40000);
 	int CH_num = 2;
-	if( region_S_NUM >= snum*high_density_th2 ){
+	if( region_density >= high_density_th2 ){
 		CH_num = 4;
 	}
-	else if( region_S_NUM >= snum*high_density_th1 ){
+	else if( region_density >= high_density_th1 ){
 		CH_num = 3;
 	}
-	else if( region_S_NUM <= snum*low_density_th ){
+	else if( region_density <= low_density_th ){
 		CH_num = 1;
 	}
 	return CH_num;
@@ -707,6 +706,7 @@ void CH_selection(int* start, int* end){
 		}
 		else if(region_CH_num(start[i], end[i]) == 1){
 			CH_RS0(start[i], end[i], i);
+			if( start[i] == )
 		}
 		else{
 			sCH_RS0(start[i], end[i], i);
@@ -823,9 +823,14 @@ void CH2Sink(int CH) //有能耗
 			{
 				mac_drop++;
 			}
+			//fout << "CH ID:" << ns[CH].id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 		}
+		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
+		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
+																							   //fout << "幫別人成功,我的能量只剩" << ns[CH].energy << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
 		clean(CH, NODE_BUFFER1, NODE_BUFFER2); /*傳完之後刪除掉*/
 	}
 	else      /*自己傳*/
@@ -853,8 +858,12 @@ void CH2Sink(int CH) //有能耗
 				mac_drop++;
 			}
 		}
+		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
+		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																							   //fout << "自己傳,我的能量只剩" << ns[CH].energy << endl;
+																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
 		clean(CH, 0, NODE_BUFFER1); /*傳完之後刪除掉*/
 	}
 }
@@ -903,28 +912,62 @@ void CHtoRegion2(int CH1) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
     }
     clean(CH1, 0, NODE_BUFFER1);
 	rate = ceil(rate * R);
+	//fout << rate << endl;
 	ns[CH1].energy -= (TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																						  //fout << "node : " << CH1 << "能量減少 "<<(TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
 	ns[dst].energy -= (ReceiveEnergy)*rate;
 	CH2Sink(dst);
 }
 
-void CH_toNext_CH(int CH1, int r, int* start, int* end){
-	int dst = start[r];
-	double d1 = distance(CH1, start[r]);
-	double d2 = distance(start[r], SINKID);
-	double E = find_max_energy( start[r], end[r] );
-	double D = find_max_dts(start[r], end[r], CH1); 
-	double MAX_s = CH_standard(pow(d1, 2)+pow(d2, 2), ns[start[r]].energy, E, D);
-	for(int i = (start[r]+1); i < start[r+1]; i++){
-		d1 = distance(CH1, i);
-		d2 = distance(i, SINKID);
-		double s = CH_standard(pow(d1, 2)+pow(d2, 2), ns[i].energy, E, D);
-		if(MAX_s < s){
-			dst = i;
+void CH_toNext_CH(int CH1, int Region){
+	/*取CH到2區+2區到sink的距離相加與其剩餘能量值做加權*/
+	int CH = CH_record[Region][0];
+	int sCH = CH_record[Region][1];
+	int tCH = CH_record[Region][2];
+	int fCH = CH_record[Region][3];
+
+	/*4/26改道這邊*/
+	for (start; start <= end; start++)//start to change CH
+	{
+		double d1, d2, d3, d4;
+		d1 = distance(start, CH);
+		d2 = distance(start, sCH);
+		d3 = distance(start, tCH);
+		d4 = distance(start, fCH);
+
+		if( d1 <= d2 && d1 <= d3 && d1 <= d4){
+			ns[start].CH = CH;
+		}
+		else if( d2 <= d1 && d2 <= d3 && d2 <= d4){
+			ns[start].CH = sCH;		
+		}
+		else if( d3 <= d1 && d3 <= d2 && d3 <= d4){
+			ns[start].CH = tCH;		
+		}
+		else if( d4 <= d1 && d4 <= d2 && d4 <= d3){
+			ns[start].CH = fCH;		
 		}
 	}
-	
+	int r = 
+	int dst = R2;
+	double d1 = distance(CH1, R2); //別區到某點
+	double d2 = distance(R2, SINKID);  //某點到sink
+	double E = find_max_energy(R2, R3 - 1);
+	double D = find_max_dts(R2, R3 - 1, CH1); //d1+d2的最大值
+	double MAX_s = CH_standard(pow(d1, 2) + pow(d2, 2), ns[R2].energy, E, D); //取d1+d2相加的最小值 standard本就是取距離越近越好 此值越大越好
+	for (int b = R2 + 1; b < R3; b++)
+	{
+		d1 = distance(CH1, b);
+		d2 = distance(b, SINKID);
+		double s = CH_standard(pow(d1, 2) + pow(d2, 2), ns[b].energy, E, D);
+		if (MAX_s < s)
+		{
+			dst = b;
+		}
+	}
+
 	double rate(0);/*壓縮率0.25*/
+
     for (int b = 0, a = 0; b < NODE_BUFFER1; b++)
     {
         if (ns[CH1].buffer[b].data == -1) //有空的就不用繼續了
@@ -948,7 +991,9 @@ void CH_toNext_CH(int CH1, int r, int* start, int* end){
     }
     clean(CH1, 0, NODE_BUFFER1);
 	rate = ceil(rate * R);
+	//fout << rate << endl;
 	ns[CH1].energy -= (TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
+																						  //fout << "node : " << CH1 << "能量減少 "<<(TransmitEnergy + pow(distance(CH1, dst), 2)*AmplifierEnergy)*rate<<", 因為傳輸給區域2" << endl;
 	ns[dst].energy -= (ReceiveEnergy)*rate;
 	CH2Sink(dst);
 }
@@ -1003,15 +1048,11 @@ int main()
 		/*sensor initialization*/
 		for (int round = 0; round < round_number; round++)
 		{
-			int r2_low_density = 0;
 			cout << round+1 << endl;
 			// node_deployed();
 			// special_node_deployed();
 			special2_node_deployed();
 			packet_init();
-			if( region_CH_num(R2, R3-1) == 1){  //看R2是否節點超少
-				r2_low_density = 1;
-			}
 
 			/*sink initialization*/
 			sink_init();
@@ -1058,15 +1099,17 @@ int main()
                     }
                 }
 				
+				
 				if (t % CHf == 0) //每一分鐘傳到sink 1次
-				{
-					if( r2_low_density == 0){  //R2沒有過少節點
-						//各區的第一個CH
+				{				
+					if( r2_low_density == 1){
+						CH2Sink(CH_record[0][0]);
+						CH2Sink(CH_record[0][1]);
+						CH2Sink(CH_record[0][2]);
+						CH2Sink(CH_record[0][3]);
+					}
+					else{
 						CH2Sink(CH_record[1][0]);
-						// CH_toNext_CH(CH_record[0][0], 1, start, end);
-						// CH_toNext_CH(CH_record[2][0], 1, start, end);
-						// CH_toNext_CH(CH_record[3][0], 1, start, end);
-
 						CHtoRegion2(CH_record[0][0]);
 						CHtoRegion2(CH_record[2][0]);
 						CHtoRegion2(CH_record[3][0]);
@@ -1095,48 +1138,6 @@ int main()
 							}
 							else if( k != 1 && CH_record[k][3] != -1){
 								CHtoRegion2(CH_record[k][3]);
-							}
-						}
-					}
-					else{  //R2節點超少
-						int next_CH_region = 0;
-						int R1_snum = end[0] - start[0];
-						int R4_snum = end[3] - start[3];
-						if( R1_snum > R4_snum ){
-							next_CH_region = 1;
-						}else{
-							next_CH_region = 4;
-						}
-						//各區的第一個CH
-						CH2Sink(CH_record[1][0]);
-						CH_toNext_CH(CH_record[0][0], next_CH_region-1, start, end);
-						CH_toNext_CH(CH_record[2][0], next_CH_region-1, start, end);
-						CH_toNext_CH(CH_record[3][0], next_CH_region-1, start, end);
-						//各區的sCH
-						for(int j = 0; j <= 3; j++){
-							if(j == 1 && CH_record[1][1] != -1){  //R2的CH
-								CH2Sink(CH_record[j][1]);
-							}
-							else if( j != 1 && CH_record[j][1] != -1){
-								CH_toNext_CH(CH_record[j][1], next_CH_region-1, start, end);
-							}
-						}
-						//各區的tCH
-						for(int j = 0; j <= 3; j++){
-							if(j == 1 && CH_record[1][2] != -1){
-								CH2Sink(CH_record[1][2]);
-							}
-							else if( j != 1 && CH_record[j][2] != -1){
-								CH_toNext_CH(CH_record[j][2], next_CH_region-1, start, end);
-							}
-						}
-						//各區的fCH
-						for(int k = 0; k <= 3; k++){
-							if(k == 1 && CH_record[1][3] != -1){
-								CH2Sink(CH_record[1][3]);
-							}
-							else if( k != 1 && CH_record[k][3] != -1){
-								CH_toNext_CH(CH_record[k][3], next_CH_region-1, start, end);
 							}
 						}
 					}
