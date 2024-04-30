@@ -37,7 +37,7 @@
 /*變動實驗參數設定*/
 #define round_number 10
 #define E_NUM 1000
-#define R 0.5 //壓縮率 設1則沒有壓縮
+#define R 0.75 //壓縮率 設1則沒有壓縮
 
 using namespace std;
 
@@ -67,7 +67,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("NRCA_mem600_spe.txt");
+ofstream fout("NRCA_0.75comp.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -592,8 +592,8 @@ int main(){
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			// special2_node_deployed();
 			packet_init();
 

@@ -11,8 +11,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 400 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 800 //50~100 特別的傳輸用
+#define NODE_BUFFER1 300 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 600 //50~100 特別的傳輸用
 
 #define type3f 90//常規sensing frequency
 #define type4f 120
@@ -34,7 +34,7 @@
 #define round_interval 100
 #define Per 0.8  //CH預期數量
 #define Pro 0.5  //節點成為CH的機率
-#define R 0.5 //壓縮率 設1則沒有壓縮
+#define R 0.75 //壓縮率 設1則沒有壓縮
 
 using namespace std;
 
@@ -64,7 +64,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("Oleach_mem800_spe2.txt");
+ofstream fout("Oleach_0.75comp.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -555,9 +555,9 @@ int main()
 		for (int r = 0; r < round_number; r++)
         {
             cout << r+1 << endl;
-            // node_deployed();
+            node_deployed();
             // special_node_deployed();
-			special2_node_deployed();
+			// special2_node_deployed();
             packet_init();
 
             /*sink initialization*/

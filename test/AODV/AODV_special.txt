@@ -1,18 +1,4 @@
-AODV
-
------------- Sensors 200 ------------
-avg_lifetime : 11844.4
-avg_total : 20543.3
-avg_drop : 158.3
-avg_macdrop : 5643.6
-avg_PLR : 0.282423
-
------------- Sensors 300 ------------
-avg_lifetime : 9141.29
-avg_total : 23607.1
-avg_drop : 32.786
-avg_macdrop : 6149.85
-avg_PLR : 0.261897
+AODV (special)
 
 ------------ Sensors 400 ------------
 avg_lifetime : 7103.63

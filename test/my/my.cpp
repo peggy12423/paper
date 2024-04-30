@@ -15,7 +15,7 @@
 #define NODE_BUFFER1 300 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
 #define NODE_BUFFER2 600 //50~100 特別的傳輸用
 
-#define R 0.5 //壓縮率 設1則沒有壓縮
+#define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
 #define type4f 120
 #define type5f 150 //720
@@ -38,7 +38,7 @@
 #define Beta 0.8
 #define high_density_th1 1.7
 #define high_density_th2 1.7
-#define low_density_th 0.3
+#define low_density_th 0.7
 
 using namespace std;
 
@@ -69,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("0.3-1.7-1.7_spe2.txt");
+ofstream fout("no-comp.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -1005,9 +1005,9 @@ int main()
 		{
 			int r2_low_density = 0;
 			cout << round+1 << endl;
-			// node_deployed();
+			node_deployed();
 			// special_node_deployed();
-			special2_node_deployed();
+			// special2_node_deployed();
 			packet_init();
 			if( region_CH_num(R2, R3-1) == 1){  //看R2是否節點超少
 				r2_low_density = 1;

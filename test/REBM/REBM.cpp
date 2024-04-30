@@ -33,10 +33,10 @@
 
 /*跑笆龟喷把计砞﹚*/
 #define roundnumber 2
-#define E_NUM 800 //稰代竟羆计
+#define E_NUM 1000 //稰代竟羆计
 
 using namespace std;
-int S_NUM = 800;
+int S_NUM = 400;
 struct P
 {
 	int src;
@@ -63,7 +63,7 @@ struct S
 	P buffer[SINKBUFFER];//buffer
 };
 
-ofstream fout("output.txt");
+ofstream fout("REBM_special2.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -157,6 +157,54 @@ void special_node_deployed(){
 	R2 = S_NUM * 0.2;
 	R3 = S_NUM * 0.5;
 	R4 = S_NUM * 0.6;
+
+	int i = 0;
+	for (i; i < R2; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 1;
+		ns[i].y = rand() % 200 + 1;
+		ns[i].type = rand() % 3 + 3;//3 4 5
+		ns[i].energy = MAX_energy;
+		ns[i].non = 0;
+		ns[i].region1 = 1;
+	}
+	for (i; i < R3; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 201;
+		ns[i].y = rand() % 200 + 1;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].non = 0;
+		ns[i].region1 = 2;
+	}
+	for (i; i < R4; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 1;
+		ns[i].y = rand() % 200 + 201;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].non = 0;
+		ns[i].region1 = 3;
+	}
+	for (i; i < S_NUM; i++)
+	{
+		ns[i].id = i;
+		ns[i].x = rand() % 200 + 201;
+		ns[i].y = rand() % 200 + 201;
+		ns[i].type = rand() % 3 + 3;
+		ns[i].energy = MAX_energy;
+		ns[i].non = 0;
+		ns[i].region1 = 4;
+	}
+}
+
+void special2_node_deployed(){
+	R2 = S_NUM * 0.4;
+	R3 = S_NUM * 0.5;
+	R4 = S_NUM * 0.9;
 
 	int i = 0;
 	for (i; i < R2; i++)
@@ -410,8 +458,9 @@ int main()
 		for (int rn = 0; rn < roundnumber; rn++)
 		{
 			cout << rn+1 << endl;
-			node_deployed();
+			// node_deployed();
 			// special_node_deployed();
+			special2_node_deployed();
 			packet_init();
 			/*sink initialization*/
 			sink.id = SINKID;
