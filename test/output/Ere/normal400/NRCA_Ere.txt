@@ -1,0 +1,19 @@
+NRCA
+
+------------ Sensors 400 ------------
+------time 2000------  Remaining energy: 6391.69
+------time 4000------  Remaining energy: 6306.8
+------time 6000------  Remaining energy: 6222.41
+------time 8000------  Remaining energy: 6147.64
+------time 10000------  Remaining energy: 6063.45
+------time 12000------  Remaining energy: 5976.87
+------time 14000------  Remaining energy: 5892.35
+------time 16000------  Remaining energy: 5806.97
+------time 18000------  Remaining energy: 5713.94
+------time 20000------  Remaining energy: 5625.69
+CH_count : 19
+avg_lifetime : 20901
+avg_total : 71902
+avg_macdrop : 7430
+avg_drop : 0
+avg_PLR : 0.103335

@@ -1,0 +1,12 @@
+AODV (normal)
+
+------------ Sensors 400 ------------
+------time 2000------  Remaining energy: 6433.54
+------time 4000------  Remaining energy: 6386.16
+------time 6000------  Remaining energy: 6337.96
+------time 8000------  Remaining energy: 6291.54
+avg_lifetime : 8011
+avg_total : 27986
+avg_drop : 0
+avg_macdrop : 7276
+avg_PLR : 0.259987

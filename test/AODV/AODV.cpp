@@ -30,8 +30,8 @@
 #define trans_dis 60 //m 80幾乎可以確定他傳的到sink(AODV)
 
 /*變動實驗參數設定*/
-#define round_number 10
-#define E_NUM 1000
+#define round_number 1
+#define E_NUM 400
 
 using namespace std;
 int S_NUM = 400;
@@ -66,7 +66,7 @@ struct RREQ
 	queue<int>route;
 	int hop_count;
 };
-ofstream fout("AODV_special2.txt");
+ofstream fout("AODV_Ere.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -476,8 +476,8 @@ int main()
         for (int rn = 0; rn < round_number; rn++)
         {
             // node_deployed();
-            // special_node_deployed();
-			special2_node_deployed();
+            special_node_deployed();
+			// special2_node_deployed();
 			
             packet_init();
             /*sink initialization*/
@@ -538,10 +538,10 @@ int main()
                         }
                     }
                 }
-				// if( t % 500 == 0){
-				// 	double re_energy = remaining_energy();
-				// 	fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
-				// }
+				if( t % 2000 == 0){
+					double re_energy = remaining_energy();
+					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				}
                 t++;
             }
             cout << rn+1 << endl;

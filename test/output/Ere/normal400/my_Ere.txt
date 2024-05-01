@@ -1,0 +1,41 @@
+my
+
+------------ Sensors 400 ------------
+------time 2000------  Remaining energy: 6391.58
+------time 4000------  Remaining energy: 6296.62
+------time 6000------  Remaining energy: 6197.47
+------time 8000------  Remaining energy: 6105.74
+------time 10000------  Remaining energy: 6001.49
+------time 12000------  Remaining energy: 5892.79
+------time 14000------  Remaining energy: 5789.12
+------time 16000------  Remaining energy: 5686.7
+------time 18000------  Remaining energy: 5571.84
+------time 20000------  Remaining energy: 5467.83
+------time 22000------  Remaining energy: 5346.52
+------time 24000------  Remaining energy: 5232.51
+------time 26000------  Remaining energy: 5128.26
+------time 28000------  Remaining energy: 5006.34
+------time 30000------  Remaining energy: 4887.94
+------time 32000------  Remaining energy: 4777.92
+------time 34000------  Remaining energy: 4665.98
+------time 36000------  Remaining energy: 4542.73
+------time 38000------  Remaining energy: 4432.48
+------time 40000------  Remaining energy: 4318.78
+------time 42000------  Remaining energy: 4197.7
+------time 44000------  Remaining energy: 4083.19
+------time 46000------  Remaining energy: 3953.78
+------time 48000------  Remaining energy: 3841.51
+------time 50000------  Remaining energy: 3728.45
+------time 52000------  Remaining energy: 3621.39
+------time 54000------  Remaining energy: 3495.9
+------time 56000------  Remaining energy: 3393.18
+------time 58000------  Remaining energy: 3284.28
+------time 60000------  Remaining energy: 3162.28
+------time 62000------  Remaining energy: 3039.41
+------time 64000------  Remaining energy: 2917.53
+CH_count : 328
+avg_lifetime : 65701
+avg_total : 229226
+avg_macdrop : 30137
+avg_drop : 0
+avg_PLR : 0.131473

@@ -29,12 +29,12 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
-#define E_NUM 1000
+#define round_number 1
+#define E_NUM 400
 #define round_interval 100
 #define Per 0.8  //CH預期數量
 #define Pro 0.5  //節點成為CH的機率
-#define R 0.75 //壓縮率 設1則沒有壓縮
+#define R 0.5 //壓縮率 設1則沒有壓縮
 
 using namespace std;
 
@@ -64,7 +64,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("Oleach_0.75comp.txt");
+ofstream fout("OLeach_Ere.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -555,9 +555,9 @@ int main()
 		for (int r = 0; r < round_number; r++)
         {
             cout << r+1 << endl;
-            node_deployed();
+            // node_deployed();
             // special_node_deployed();
-			// special2_node_deployed();
+			special2_node_deployed();
             packet_init();
 
             /*sink initialization*/
@@ -632,10 +632,10 @@ int main()
                     round++;
                     CH_set(round);
                 }
-				// if( t % 500 == 0){
-				// 	double re_energy = remaining_energy();
-				// 	fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
-				// }
+				if( t % 2000 == 0){
+					double re_energy = remaining_energy();
+					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				}
                 t++;
             }
 			CH_count += CHarr.size();

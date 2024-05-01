@@ -35,9 +35,9 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
-#define E_NUM 1000
-#define R 0.75 //壓縮率 設1則沒有壓縮
+#define round_number 1
+#define E_NUM 400
+#define R 0.5 //壓縮率 設1則沒有壓縮
 
 using namespace std;
 
@@ -67,7 +67,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("NRCA_0.75comp.txt");
+ofstream fout("NRCA_Ere.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -592,9 +592,9 @@ int main(){
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			node_deployed();
+			// node_deployed();
 			// special_node_deployed();
-			// special2_node_deployed();
+			special2_node_deployed();
 			packet_init();
 
 			/*sink initialization*/
@@ -683,7 +683,7 @@ int main(){
 					countround[3]--;
 					if (countround[3] == 0) { CH_Selection(R4, S_NUM - 1); }
 				}
-				if( t % 500 == 0){
+				if( t % 2000 == 0){
 					double re_energy = remaining_energy();
 					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
 				}

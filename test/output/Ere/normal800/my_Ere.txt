@@ -1,0 +1,39 @@
+my
+
+------------ Sensors 400 ------------
+------time 2000------  Remaining energy: 6389.86
+------time 4000------  Remaining energy: 6296.28
+------time 6000------  Remaining energy: 6200.38
+------time 8000------  Remaining energy: 6104.87
+------time 10000------  Remaining energy: 6003.66
+------time 12000------  Remaining energy: 5889.85
+------time 14000------  Remaining energy: 5785.07
+------time 16000------  Remaining energy: 5669.85
+------time 18000------  Remaining energy: 5551.3
+------time 20000------  Remaining energy: 5438.91
+------time 22000------  Remaining energy: 5313.22
+------time 24000------  Remaining energy: 5182.91
+------time 26000------  Remaining energy: 5064.09
+------time 28000------  Remaining energy: 4921.22
+------time 30000------  Remaining energy: 4796.6
+------time 32000------  Remaining energy: 4666.14
+------time 34000------  Remaining energy: 4536.02
+------time 36000------  Remaining energy: 4410.26
+------time 38000------  Remaining energy: 4275.45
+------time 40000------  Remaining energy: 4145.08
+------time 42000------  Remaining energy: 4011
+------time 44000------  Remaining energy: 3879.63
+------time 46000------  Remaining energy: 3751.92
+------time 48000------  Remaining energy: 3612.16
+------time 50000------  Remaining energy: 3485.18
+------time 52000------  Remaining energy: 3365.26
+------time 54000------  Remaining energy: 3227.13
+------time 56000------  Remaining energy: 3094.57
+------time 58000------  Remaining energy: 2972.57
+------time 60000------  Remaining energy: 2838.71
+CH_count : 333
+avg_lifetime : 60301
+avg_total : 211156
+avg_macdrop : 27496
+avg_drop : 0
+avg_PLR : 0.130217

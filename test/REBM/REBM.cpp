@@ -32,8 +32,8 @@
 #define successful_rate 5 //砞x Θ瞯碞琌100-x%
 
 /*跑笆龟喷把计砞﹚*/
-#define roundnumber 2
-#define E_NUM 1000 //稰代竟羆计
+#define roundnumber 1
+#define E_NUM 400 //稰代竟羆计
 
 using namespace std;
 int S_NUM = 400;
@@ -63,7 +63,7 @@ struct S
 	P buffer[SINKBUFFER];//buffer
 };
 
-ofstream fout("REBM_special2.txt");
+ofstream fout("REBM_Ere.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -459,8 +459,8 @@ int main()
 		{
 			cout << rn+1 << endl;
 			// node_deployed();
-			// special_node_deployed();
-			special2_node_deployed();
+			special_node_deployed();
+			// special2_node_deployed();
 			packet_init();
 			/*sink initialization*/
 			sink.id = SINKID;
@@ -603,10 +603,10 @@ int main()
 						}
 					}
 				}
-				// if( t % 500 == 0){
-				// 	double re_energy = remaining_energy();
-				// 	fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
-				// }
+				if( t % 2000 == 0){
+					double re_energy = remaining_energy();
+					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				}
 				t++;
 			}
 		}
