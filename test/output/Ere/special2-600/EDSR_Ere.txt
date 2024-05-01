@@ -1,0 +1,34 @@
+E-DSR
+
+------------ Sensors 400 ------------
+------time 2000------  Remaining energy: 6361.69
+------time 4000------  Remaining energy: 6230.67
+------time 6000------  Remaining energy: 6086.27
+------time 8000------  Remaining energy: 5953.71
+------time 10000------  Remaining energy: 5816.36
+------time 12000------  Remaining energy: 5668.61
+------time 14000------  Remaining energy: 5524.72
+------time 16000------  Remaining energy: 5385.21
+------time 18000------  Remaining energy: 5230.71
+------time 20000------  Remaining energy: 5101.35
+------time 22000------  Remaining energy: 4943.96
+------time 24000------  Remaining energy: 4793.19
+------time 26000------  Remaining energy: 4667.24
+------time 28000------  Remaining energy: 4504.85
+------time 30000------  Remaining energy: 4330.81
+------time 32000------  Remaining energy: 4194.27
+------time 34000------  Remaining energy: 4050.43
+------time 36000------  Remaining energy: 3902.79
+------time 38000------  Remaining energy: 3777.15
+------time 40000------  Remaining energy: 3639.29
+------time 42000------  Remaining energy: 3496.38
+------time 44000------  Remaining energy: 3360.76
+------time 46000------  Remaining energy: 3211.5
+------time 48000------  Remaining energy: 3054.13
+------time 50000------  Remaining energy: 2908.26
+CH_count : 336
+avg_time : 50401
+avg_total : 176652
+avg_macdrop : 24375
+avg_drop : 0
+avg_PLR : 0.137983

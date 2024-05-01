@@ -11,8 +11,8 @@
 #define SINK_X 400
 #define SINK_Y 0
 #define SINK_BUFFER_SIZE 5000000
-#define NODE_BUFFER1 700 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
-#define NODE_BUFFER2 1400 //50~100 特別的傳輸用
+#define NODE_BUFFER1 300 //0~49 一般CH接收CM用 node_buffer 40Kbytes (200格) 改了這個參數 下面的bomb也要改
+#define NODE_BUFFER2 600 //50~100 特別的傳輸用
 
 #define type3f 90//常規sensing frequency
 #define type4f 120
@@ -29,8 +29,8 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
-#define E_NUM 1000
+#define round_number 1
+#define E_NUM 400
 #define round_interval 100
 #define Per 0.8  //CH預期數量
 #define Pro 0.5  //節點成為CH的機率
@@ -64,7 +64,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("Oleach_comp0.5_spe.txt");
+ofstream fout("OLeach_Ere.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -136,6 +136,53 @@ void special_node_deployed(){
 	R2 = S_NUM * 0.2;
 	R3 = S_NUM * 0.5;
 	R4 = S_NUM * 0.6;
+	int i = 0;
+    for (i; i < R2; i++)
+    {
+        ns[i].id = i;
+        ns[i].x = rand() % 200 + 1;
+        ns[i].y = rand() % 200 + 1;
+        ns[i].type = rand() % 3 + 3;//3 4 5
+        ns[i].energy = MAX_energy;
+        ns[i].region1 = 1;
+        ns[i].random_num = (rand() % 101 )* 0.01;
+    }
+    for (i; i < R3; i++)
+    {
+        ns[i].id = i;
+        ns[i].x = rand() % 200 + 201;
+        ns[i].y = rand() % 200 + 1;
+        ns[i].type = rand() % 3 + 3;
+        ns[i].energy = MAX_energy;
+        ns[i].region1 = 2;
+        ns[i].random_num = (rand() % 101) * 0.01;
+    }
+    for (i; i < R4; i++)
+    {
+        ns[i].id = i;
+        ns[i].x = rand() % 200 + 1;
+        ns[i].y = rand() % 200 + 201;
+        ns[i].type = rand() % 3 + 3;
+        ns[i].energy = MAX_energy;
+        ns[i].region1 = 3;
+        ns[i].random_num = (rand() % 101) * 0.01;
+    }
+    for (i; i < S_NUM; i++)
+    {
+        ns[i].id = i;
+        ns[i].x = rand() % 200 + 201;
+        ns[i].y = rand() % 200 + 201;
+        ns[i].type = rand() % 3 + 3;
+        ns[i].energy = MAX_energy;
+        ns[i].region1 = 4;
+        ns[i].random_num = (rand() % 101) * 0.01;
+    }
+}
+
+void special2_node_deployed(){
+	R2 = S_NUM * 0.4;
+	R3 = S_NUM * 0.5;
+	R4 = S_NUM * 0.9;
 	int i = 0;
     for (i; i < R2; i++)
     {
@@ -480,6 +527,17 @@ void CH2Sink(int CH) //有能耗
 	}
 }
 
+double remaining_energy()
+{
+	double avg_energy;
+	for (int i = 0; i < S_NUM; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM;
+	return avg_energy;
+}
+
 int main()
 {
 	/*sensor initialization*/
@@ -498,7 +556,8 @@ int main()
         {
             cout << r+1 << endl;
             // node_deployed();
-            special_node_deployed();
+            // special_node_deployed();
+			special2_node_deployed();
             packet_init();
 
             /*sink initialization*/
@@ -573,6 +632,10 @@ int main()
                     round++;
                     CH_set(round);
                 }
+				if( t % 2000 == 0){
+					double re_energy = remaining_energy();
+					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				}
                 t++;
             }
 			CH_count += CHarr.size();

@@ -1,0 +1,37 @@
+REBM
+
+------------ Sensors 400 ------------
+------time 2000------  Remaining energy: 6414.07
+------time 4000------  Remaining energy: 6347.05
+------time 6000------  Remaining energy: 6278.86
+------time 8000------  Remaining energy: 6213.96
+------time 10000------  Remaining energy: 6146.15
+------time 12000------  Remaining energy: 6078.03
+------time 14000------  Remaining energy: 6012.59
+------time 16000------  Remaining energy: 5946.1
+------time 18000------  Remaining energy: 5877.18
+------time 20000------  Remaining energy: 5812.17
+------time 22000------  Remaining energy: 5745.59
+------time 24000------  Remaining energy: 5677.92
+------time 26000------  Remaining energy: 5612.78
+------time 28000------  Remaining energy: 5545.17
+------time 30000------  Remaining energy: 5477.48
+------time 32000------  Remaining energy: 5412.02
+------time 34000------  Remaining energy: 5345.52
+------time 36000------  Remaining energy: 5276.4
+------time 38000------  Remaining energy: 5210.93
+------time 40000------  Remaining energy: 5144.68
+------time 42000------  Remaining energy: 5076.84
+------time 44000------  Remaining energy: 5011.82
+------time 46000------  Remaining energy: 4944.33
+------time 48000------  Remaining energy: 4876.46
+------time 50000------  Remaining energy: 4811.3
+------time 52000------  Remaining energy: 4744.8
+------time 54000------  Remaining energy: 4675.67
+------time 56000------  Remaining energy: 4610.52
+------time 58000------  Remaining energy: 4544.26
+avg_t : 58141
+avg_total : 383304
+avg_drop : 0
+avg_macdrop : 182192
+avg_PLR : 0.47532

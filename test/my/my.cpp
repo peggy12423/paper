@@ -18,7 +18,7 @@
 #define R 0.5 //壓縮率 設1則沒有壓縮
 #define type3f 90//常規sensing frequency
 #define type4f 120
-#define type5f 150 //720
+#define type5f 150 
 #define reservation_energy_time 10000
 #define CHf 100 //CH trans frequency
 
@@ -32,11 +32,11 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 10
-#define E_NUM 1000
+#define round_number 1
+#define E_NUM 400
 #define Alpha 0.2
 #define Beta 0.8
-#define high_density_th1 1.7
+#define high_density_th1 1.2
 #define high_density_th2 1.7
 #define low_density_th 0.3
 
@@ -69,7 +69,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("0.3-1.7-1.7_spe2.txt");
+ofstream fout("my_Ere.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -1142,10 +1142,10 @@ int main()
 					}
                     CH_selection( start, end );
 				}
-				// if( t % 500 == 0){
-				// 	double re_energy = remaining_energy();
-				// 	fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
-				// }
+				if( t % 2000 == 0){
+					double re_energy = remaining_energy();
+					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				}
 				t++;
 			}
 			CH_count += CHarr.size();

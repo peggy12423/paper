@@ -10,7 +10,6 @@
 #define SINK_X 400
 #define SINK_Y 0
 
-#define R 1 //壓縮率 設1則沒有壓縮
 #define type3f 90 //常規sensing frequency
 #define type4f 120
 #define type5f 150
@@ -31,11 +30,11 @@
 #define trans_dis 60 //m 80幾乎可以確定他傳的到sink(AODV)
 
 /*變動實驗參數設定*/
-#define round_number 50
-#define E_NUM 1000
+#define round_number 1
+#define E_NUM 400
 
 using namespace std;
-int S_NUM = 200;
+int S_NUM = 400;
 struct P
 {
 	int src;
@@ -67,7 +66,7 @@ struct RREQ
 	queue<int>route;
 	int hop_count;
 };
-ofstream fout("100.AODV_normal.txt");
+ofstream fout("AODV_Ere.txt");
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -151,6 +150,57 @@ void special_node_deployed(){
 	R2 = S_NUM * 0.2;  //region 1
 	R3 = S_NUM * 0.5;  //region 2
 	R4 = S_NUM * 0.6;  //region 3 
+	int i = 0;
+    for (i; i < R2; i++)
+    {
+        ns[i].id = i;
+        ns[i].x = rand() % 200 + 1;
+        ns[i].y = rand() % 200 + 1;
+        ns[i].type = rand() % 3 + 3;//3 4 5
+        ns[i].energy = MAX_energy;
+        ns[i].visited = 0;
+        ns[i].non = 0;
+        ns[i].region1 = 1;
+    }
+    for (i; i < R3; i++)
+    {
+        ns[i].id = i;
+        ns[i].x = rand() % 200 + 201;
+        ns[i].y = rand() % 200 + 1;
+        ns[i].type = rand() % 3 + 3;
+        ns[i].energy = MAX_energy;
+        ns[i].visited = 0;
+        ns[i].non = 0;
+        ns[i].region1 = 2;
+    }
+    for (i; i < R4; i++)
+    {
+        ns[i].id = i;
+        ns[i].x = rand() % 200 + 1;
+        ns[i].y = rand() % 200 + 201;
+        ns[i].type = rand() % 3 + 3;
+        ns[i].energy = MAX_energy;
+        ns[i].visited = 0;
+        ns[i].non = 0;
+        ns[i].region1 = 3;
+    }
+    for (i; i < S_NUM; i++)
+    {
+        ns[i].id = i;
+        ns[i].x = rand() % 200 + 201;
+        ns[i].y = rand() % 200 + 201;
+        ns[i].type = rand() % 3 + 3;
+        ns[i].energy = MAX_energy;
+        ns[i].visited = 0;
+        ns[i].non = 0;
+        ns[i].region1 = 4;
+    }
+}
+
+void special2_node_deployed(){
+	R2 = S_NUM * 0.4;  //region 1
+	R3 = S_NUM * 0.5;  //region 2
+	R4 = S_NUM * 0.9;  //region 3 
 	int i = 0;
     for (i; i < R2; i++)
     {
@@ -404,6 +454,17 @@ int CheckEnergy()
 	return SINKID;
 }
 
+double remaining_energy()
+{
+	double avg_energy;
+	for (int i = 0; i < S_NUM; i++)
+	{
+		avg_energy += ns[i].energy;
+	}
+	avg_energy /= S_NUM;
+	return avg_energy;
+}
+
 int main()
 {
 	/*sensor initialization*/
@@ -414,8 +475,10 @@ int main()
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
         for (int rn = 0; rn < round_number; rn++)
         {
-            node_deployed();
-            // special_node_deployed();
+            // node_deployed();
+            special_node_deployed();
+			// special2_node_deployed();
+			
             packet_init();
             /*sink initialization*/
             sink.id = SINKID;
@@ -442,19 +505,7 @@ int main()
                 if (c < SINKID)
                 {
                     avg_t += t;
-                    //fout << "node " << c << " dead !" << endl;
                     die = 1;
-                    //print_energy();
-                    /*int e(0);
-                    while (sink.buffer[e].data != -1)
-                    {
-                    e++;
-                    }*/
-                    //fout << t << endl;
-                    //fout << "total = " << total << endl;
-                    //fout << "drop = " << drop << endl;
-                    //fout << "macdrop = " << macdrop << endl;
-                    //fout << "sink 有" << e << endl; //total封包數,有些會找不到去sink的路徑
                     break;
                 }
                 if (t % type3f == 0)
@@ -487,6 +538,10 @@ int main()
                         }
                     }
                 }
+				if( t % 2000 == 0){
+					double re_energy = remaining_energy();
+					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
+				}
                 t++;
             }
             cout << rn+1 << endl;

@@ -1,0 +1,61 @@
+AODV (normal)
+
+------------ Sensors 400 ------------
+------time 2000------  Remaining energy: 6427.99
+------time 4000------  Remaining energy: 6375.09
+avg_lifetime : 4951
+avg_total : 17292
+avg_drop : 0
+avg_macdrop : 4960
+avg_PLR : 0.286838
+
+------------ Sensors 500 ------------
+------time 2000------  Remaining energy: 6430.27
+------time 4000------  Remaining energy: 6379.47
+------time 6000------  Remaining energy: 6327.68
+avg_lifetime : 11432
+avg_total : 45463
+avg_drop : 0
+avg_macdrop : 12400
+avg_PLR : 0.272749
+
+------------ Sensors 600 ------------
+------time 2000------  Remaining energy: 6430.35
+------time 4000------  Remaining energy: 6379.72
+avg_lifetime : 15993
+avg_total : 68899
+avg_drop : 0
+avg_macdrop : 18750
+avg_PLR : 0.272137
+
+------------ Sensors 700 ------------
+------time 2000------  Remaining energy: 6429.12
+avg_lifetime : 19714
+avg_total : 91179
+avg_drop : 0
+avg_macdrop : 24693
+avg_PLR : 0.270819
+
+------------ Sensors 800 ------------
+------time 2000------  Remaining energy: 6427.92
+avg_lifetime : 22835
+avg_total : 112495
+avg_drop : 0
+avg_macdrop : 30254
+avg_PLR : 0.268936
+
+------------ Sensors 900 ------------
+------time 2000------  Remaining energy: 6429.06
+avg_lifetime : 25956
+avg_total : 136209
+avg_drop : 0
+avg_macdrop : 36494
+avg_PLR : 0.267926
+
+------------ Sensors 1000 ------------
+------time 2000------  Remaining energy: 6429.76
+avg_lifetime : 29287
+avg_total : 164779
+avg_drop : 0
+avg_macdrop : 43872
+avg_PLR : 0.266248

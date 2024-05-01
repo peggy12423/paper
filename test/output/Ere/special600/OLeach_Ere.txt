@@ -1,0 +1,11 @@
+Optimal of LEACH
+
+------------ Sensors 400 ------------
+------time 2000------  Remaining energy: 6244.52
+------time 4000------  Remaining energy: 5983.28
+CH_count : 323
+avg_lifetime : 4301
+avg_total : 14772
+avg_macdrop : 141
+avg_drop : 0
+avg_PLR : 0.00954509
