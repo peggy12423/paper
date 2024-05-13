@@ -29,8 +29,8 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 1
-#define E_NUM 400
+#define round_number 20
+#define E_NUM 1000
 #define round_interval 100
 #define Per 0.8  //CH預期數量
 #define Pro 0.5  //節點成為CH的機率
@@ -39,6 +39,7 @@
 using namespace std;
 
 int S_NUM = 400; //感測器總數
+int Ere_switch = 0; //1代表要輸出Ere
 struct P
 {
 	int src;
@@ -64,7 +65,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("OLeach_Ere.txt");
+ofstream fout("OLeach_spe2.txt");
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -632,7 +633,7 @@ int main()
                     round++;
                     CH_set(round);
                 }
-				if( t % 2000 == 0){
+				if( (Ere_switch == 1) && (t % 2000 == 0) ){
 					double re_energy = remaining_energy();
 					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
 				}
