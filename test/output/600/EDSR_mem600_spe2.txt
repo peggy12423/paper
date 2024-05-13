@@ -2,7 +2,11 @@ E-DSR
 
 ------------ Sensors 400 ------------
 CH_count : 337
+<<<<<<< HEAD
 avg_time : 44949
+=======
+avg_time : 42541
+>>>>>>> branch1
 avg_total : 156386
 avg_macdrop : 21574.1
 avg_drop : 0

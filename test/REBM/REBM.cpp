@@ -32,11 +32,21 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
+<<<<<<< HEAD
 #define roundnumber 1
 #define E_NUM 400 //感測器總數
 
 using namespace std;
 int S_NUM = 400;
+=======
+#define roundnumber 20
+#define E_NUM 1000 //感測器總數
+
+using namespace std;
+int S_NUM = 400;
+int Ere_switch = 0; //1代表要輸出Ere
+
+>>>>>>> branch1
 struct P
 {
 	int src;
@@ -63,7 +73,11 @@ struct S
 	P buffer[SINKBUFFER];//buffer
 };
 
+<<<<<<< HEAD
 ofstream fout("REBM_Ere.txt");
+=======
+ofstream fout("REBM_spe2.txt");
+>>>>>>> branch1
 N ns[2000];
 S sink;
 double avg_t(0);
@@ -459,8 +473,13 @@ int main()
 		{
 			cout << rn+1 << endl;
 			// node_deployed();
+<<<<<<< HEAD
 			special_node_deployed();
 			// special2_node_deployed();
+=======
+			// special_node_deployed();
+			special2_node_deployed();
+>>>>>>> branch1
 			packet_init();
 			/*sink initialization*/
 			sink.id = SINKID;
@@ -603,7 +622,11 @@ int main()
 						}
 					}
 				}
+<<<<<<< HEAD
 				if( t % 2000 == 0){
+=======
+				if( (Ere_switch == 1) && (t % 2000 == 0) ){
+>>>>>>> branch1
 					double re_energy = remaining_energy();
 					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
 				}

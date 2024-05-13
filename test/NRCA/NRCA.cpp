@@ -42,6 +42,8 @@
 using namespace std;
 
 int S_NUM = 400;
+int Ere_switch = 0; //1代表要輸出Ere
+
 struct C
 {
 	double x, y;
@@ -67,7 +69,11 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
+<<<<<<< HEAD
 ofstream fout("NRCA_Ere.txt");
+=======
+ofstream fout("NRCA_spe2.txt");
+>>>>>>> branch1
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -683,7 +689,11 @@ int main(){
 					countround[3]--;
 					if (countround[3] == 0) { CH_Selection(R4, S_NUM - 1); }
 				}
+<<<<<<< HEAD
 				if( t % 2000 == 0){
+=======
+				if( (Ere_switch == 1) && (t % 2000 == 0) ){
+>>>>>>> branch1
 					double re_energy = remaining_energy();
 					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
 				}

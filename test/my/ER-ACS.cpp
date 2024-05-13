@@ -43,6 +43,10 @@
 using namespace std;
 
 int S_NUM = 400; //感測器總數
+<<<<<<< HEAD:test/my/my.cpp
+=======
+int Ere_switch = 0; //1代表要輸出Ere
+>>>>>>> branch1:test/my/ER-ACS.cpp
 struct C
 {
 	double x, y;
@@ -69,7 +73,11 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
+<<<<<<< HEAD:test/my/my.cpp
 ofstream fout("my_Ere.txt");
+=======
+ofstream fout("ER-ACS_spe2.txt");
+>>>>>>> branch1:test/my/ER-ACS.cpp
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -1063,10 +1071,13 @@ int main()
 					if( r2_low_density == 0){  //R2沒有過少節點
 						//各區的第一個CH
 						CH2Sink(CH_record[1][0]);
+<<<<<<< HEAD:test/my/my.cpp
 						// CH_toNext_CH(CH_record[0][0], 1, start, end);
 						// CH_toNext_CH(CH_record[2][0], 1, start, end);
 						// CH_toNext_CH(CH_record[3][0], 1, start, end);
 
+=======
+>>>>>>> branch1:test/my/ER-ACS.cpp
 						CHtoRegion2(CH_record[0][0]);
 						CHtoRegion2(CH_record[2][0]);
 						CHtoRegion2(CH_record[3][0]);
@@ -1142,7 +1153,11 @@ int main()
 					}
                     CH_selection( start, end );
 				}
+<<<<<<< HEAD:test/my/my.cpp
 				if( t % 2000 == 0){
+=======
+				if( (Ere_switch == 1) && (t % 2000 == 0)){
+>>>>>>> branch1:test/my/ER-ACS.cpp
 					double re_energy = remaining_energy();
 					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
 				}
