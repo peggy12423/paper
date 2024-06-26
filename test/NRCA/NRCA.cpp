@@ -35,8 +35,8 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-#define round_number 1
-#define E_NUM 400
+#define round_number 10
+#define E_NUM 1000
 #define R 0.5 //壓縮率 設1則沒有壓縮
 
 using namespace std;
@@ -72,7 +72,7 @@ struct S
 ofstream fout("NRCA_spe2.txt");
 N ns[2000];
 S sink;
-double avg_t, buffer_drop, mac_drop, total;
+double avg_t, buffer_drop, mac_drop, total, recv;
 double cons[4] = { 0,0,0,0 };
 int trans_time[4] = { 0,0,0,0 };
 double consToR2[4] = { 0,0,0,0 };
@@ -324,13 +324,13 @@ void CH_Selection(int s, int e) //s=start e=end
 		{
 			CH = CH_cdd.front();
 		}
-		add_to_CHarr(CHarr, CH);
 		CH_cdd.pop();
 	}
 	for (start; start <= end; start++)//start to change CH
 	{
 		ns[start].CH = CH;
 	}
+	add_to_CHarr(CHarr, CH);
 }
 
 void Packet_Generate(int now, int t) //generate packet 有能耗
@@ -352,7 +352,6 @@ void Packet_Dliver(int sender, int CH) // 有能耗
 		ns[CH].receive.src = ns[sender].sense.src;
 		ns[CH].receive.data = ns[sender].sense.data;
 		ns[CH].receive.time = ns[sender].sense.time;
-		//fout << "node id: "<<ns[CH].id<<" receive the packet type "<<sender.type <<" from node "<<sender.id << " at " << ns[CH].receive.time<<" sec"<< endl;
 	}
 	else
 	{
@@ -366,7 +365,6 @@ void Packet_Dliver(int sender, int CH) // 有能耗
 	if (sender != CH) //CH自己給自己不用扣能量
 	{
 		ns[sender].energy -= TransmitEnergy + d*d*AmplifierEnergy;
-		//fout << "node : " << sender << "能量減少 "<< TransmitEnergy + d*d*AmplifierEnergy <<" ,因為傳送給節點 " << CH << " 感測封包" << endl;
 	} //1個封包
 }
 void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
@@ -389,7 +387,7 @@ void Packet_Receive(int CH) //buffer滿了要變成priority queue 有能耗
 			break;
 		}
 	}
-	if (full == 1) //priority queue buffer , 如果封包被drop掉就不用了(-1)
+	if (full == 1 && ns[CH].receive.data != -1) //priority queue buffer , 如果封包被drop掉就不用了(-1)
 	{
 		buffer_drop++;
 	}
@@ -439,14 +437,13 @@ void CH2Sink(int CH) //有能耗
 				sink.buffer[start].src = ns[CH].buffer[b].src;
 				sink.buffer[start].time = ns[CH].buffer[b].time;
 				start++;
+				recv++;
 			}
 			else{
 				mac_drop++;
 			}
 		}
-		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
-		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做) 因為可知合併的size必在packet的大小之中
 																							   //fout << "幫別人成功,我的能量只剩" << ns[CH].energy << endl;
 																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫別人傳給sink" << endl;
@@ -470,15 +467,14 @@ void CH2Sink(int CH) //有能耗
 				sink.buffer[start].src = ns[CH].buffer[b].src;
 				sink.buffer[start].time = ns[CH].buffer[b].time;
 				start++;
+				recv++;
 			}
 			else
 			{
 				mac_drop++;
 			}
 		}
-		//fout << "sink收到" << rate << "個" << endl;
 		rate = ceil(rate * R);
-		//fout << rate << endl;
 		ns[CH].energy -= (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate; //將data合併之後一次傳送 所以耗能這樣算(合併未做)
 																							   //fout << "自己傳,我的能量只剩" << ns[CH].energy << endl;
 																							   //fout << "node : " << CH << "能量減少 "<< (TransmitEnergy + pow(distance(CH, SINKID), 2)*AmplifierEnergy)*rate <<" ,因為幫自己傳給sink" << endl;
@@ -488,11 +484,11 @@ void CH2Sink(int CH) //有能耗
 void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能耗
 {
 	/*取CH到2區+2區到sink的距離相加與其剩餘能量值做加權*/
-	int dst = ns[R2].CH;
+	int dst = R2;
 	double rate(0);/*壓縮率0.25*/
 	if (v == 1)
 	{
-		for (int b = 0; b < NODE_BUFFER1; b++)
+		for (int b = 0, a = 0; b < NODE_BUFFER1; b++)
 		{
 			if (ns[CH1].buffer[b].data == -1) //有空的就不用繼續了
 			{
@@ -502,10 +498,11 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 			if (d > successful_rate)
 			{
 				rate = b + 1;
-				ns[dst].buffer[NODE_BUFFER1 + b].data = ns[CH1].buffer[b].data;
-				ns[dst].buffer[NODE_BUFFER1 + b].dst = ns[CH1].buffer[b].dst;
-				ns[dst].buffer[NODE_BUFFER1 + b].src = ns[CH1].buffer[b].src;
-				ns[dst].buffer[NODE_BUFFER1 + b].time = ns[CH1].buffer[b].time;
+				ns[dst].buffer[NODE_BUFFER1 + a].data = ns[CH1].buffer[b].data;
+				ns[dst].buffer[NODE_BUFFER1 + a].dst = ns[CH1].buffer[b].dst;
+				ns[dst].buffer[NODE_BUFFER1 + a].src = ns[CH1].buffer[b].src;
+				ns[dst].buffer[NODE_BUFFER1 + a].time = ns[CH1].buffer[b].time;
+				a++;
 			}
 			else
 			{
@@ -517,7 +514,7 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 	}
 	if (v == 2)
 	{
-		for (int b = NODE_BUFFER1; b < NODE_BUFFER2; b++)
+		for (int b = NODE_BUFFER1, a = NODE_BUFFER1; b < NODE_BUFFER2; b++)
 		{
 			if (ns[CH1].buffer[b].data == -1) //有空的就不用繼續了
 			{
@@ -527,10 +524,11 @@ void CHtoRegion2(int CH1, int v) //除了2區以外的區域都丟到2區裡面能量最高的 有能
 			if (d > successful_rate)
 			{
 				rate = b + 1 - NODE_BUFFER1;
-				ns[dst].buffer[b].data = ns[CH1].buffer[b].data;
-				ns[dst].buffer[b].dst = ns[CH1].buffer[b].dst;
-				ns[dst].buffer[b].src = ns[CH1].buffer[b].src;
-				ns[dst].buffer[b].time = ns[CH1].buffer[b].time;
+				ns[dst].buffer[a].data = ns[CH1].buffer[b].data;
+				ns[dst].buffer[a].dst = ns[CH1].buffer[b].dst;
+				ns[dst].buffer[a].src = ns[CH1].buffer[b].src;
+				ns[dst].buffer[a].time = ns[CH1].buffer[b].time;
+				a++;
 			}
 			else
 			{
@@ -587,6 +585,7 @@ int main(){
 		buffer_drop = 0;
 		mac_drop = 0;
 		total = 0;
+		recv = 0;
 		int CH_count = 0;
 		cout << "sensors: " << S_NUM << endl;
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
@@ -699,12 +698,14 @@ int main(){
 		mac_drop /= round_number;
 		buffer_drop /= round_number;
 		avg_t /= round_number;
+		recv /= round_number;
 		fout << "CH_count : " << CH_count << endl;
 		fout << "avg_lifetime : " << avg_t << endl;
 		fout << "avg_total : " << total << endl;
 		fout << "avg_macdrop : " << mac_drop << endl;
+		fout << "RECV : " << recv << endl;
 		fout << "avg_drop : " << buffer_drop << endl;
-		fout << "avg_PLR : " << (buffer_drop + mac_drop) / total << endl;
+		fout << "avg_PLR : " << (total - recv) / total << endl;
 	}
 	return 0;
 }
