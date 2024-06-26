@@ -29,13 +29,8 @@
 #define successful_rate 5 //設x 成功率就是100-x%
 
 /*變動實驗參數設定*/
-<<<<<<< HEAD
-#define round_number 1
-#define E_NUM 400
-=======
 #define round_number 20
 #define E_NUM 1000
->>>>>>> branch1
 #define round_interval 100
 #define Per 0.8  //CH預期數量
 #define Pro 0.5  //節點成為CH的機率
@@ -70,11 +65,7 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-<<<<<<< HEAD
-ofstream fout("OLeach_Ere.txt");
-=======
 ofstream fout("OLeach_spe2.txt");
->>>>>>> branch1
 N ns[2000];
 S sink;
 double avg_t, buffer_drop, mac_drop, total;
@@ -642,11 +633,7 @@ int main()
                     round++;
                     CH_set(round);
                 }
-<<<<<<< HEAD
-				if( t % 2000 == 0){
-=======
 				if( (Ere_switch == 1) && (t % 2000 == 0) ){
->>>>>>> branch1
 					double re_energy = remaining_energy();
 					fout << "------time " << t << "------  " << "Remaining energy: " << re_energy << endl;
 				}

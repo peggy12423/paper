@@ -71,10 +71,10 @@ struct S
 	int id;//node information
 	P buffer[SINK_BUFFER_SIZE];//buffer
 };
-ofstream fout("EDSR_spe.txt");
+ofstream fout("EDSR_nor.txt");
 N ns[2000];
 S sink;
-double avg_t, drop, macdrop, total;
+double avg_t, drop, macdrop, total, recv;
 double cons[4] = { 0,0,0,0 };
 int trans_time[4] = { 0,0,0,0 };
 double consToR2[4] = { 0,0,0,0 };
@@ -914,6 +914,7 @@ void CH2Sink(int CH) //有能耗
 				sink.buffer[start].src = ns[CH].buffer[b].src;
 				sink.buffer[start].time = ns[CH].buffer[b].time;
 				start++;
+                recv++;
 			}
 			else
 			{
@@ -948,6 +949,7 @@ void CH2Sink(int CH) //有能耗
 				sink.buffer[start].time = ns[CH].buffer[b].time;
 				//fout << "CH ID:" << ns[CH].id << " src: " << sink.buffer[start].src << " dst: " << sink.buffer[start].dst << " data: " << sink.buffer[start].data << " time: " << sink.buffer[start].time << " sec" << endl;
 				start++;
+                recv++;
 			}
 			else
 			{
@@ -1068,7 +1070,7 @@ void g2toCH(int CH1, int CH2) //CH1 傳送 CH2 收
 		}
 		else
 		{
-			macdrop++;
+			// macdrop++;
 		}
 	}
 	rate = ceil(rate * R);
@@ -1149,6 +1151,7 @@ int main()
 		drop = 0;
 		macdrop = 0;
 		total = 0;
+        recv = 0;
 		int CH_count = 0;
 		cout << "sensors: " << S_NUM << endl;
 		fout << endl << "------------ Sensors " << S_NUM << " ------------" << endl;
@@ -1156,8 +1159,8 @@ int main()
 		for (int round = 0; round < round_number; round++)
 		{
 			cout << round+1 << endl;
-			// node_deployed();
-			special_node_deployed();
+			node_deployed();
+			// special_node_deployed();
 			// special2_node_deployed();
 			packet_init();
 
@@ -1467,12 +1470,14 @@ int main()
 		drop /= round_number;
 		avg_t /= round_number;
 		CH_count /= round_number;
+        recv /= round_number;
 		fout << "CH_count : " << CH_count << endl;
 		fout << "avg_time : " << avg_t << endl;
 		fout << "avg_total : " << total << endl;
 		fout << "avg_macdrop : " << macdrop << endl;
+		fout << "RECV : " << recv << endl;
 		fout << "avg_drop : " << drop << endl;
-		fout << "avg_PLR : " << (drop + macdrop) / total << endl;
+		fout << "avg_PLR : " << (total - recv) / total << endl;
 	}
 	return 0;
 }
